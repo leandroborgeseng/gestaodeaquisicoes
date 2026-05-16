@@ -5,6 +5,7 @@ import { Icons } from "@/components/Icons";
 import { fmtBRL, fmtNum, STATUS_LABELS } from "@/lib/utils";
 import Link from "next/link";
 import { Decimal } from "@prisma/client/runtime/library";
+import { ItemFilters } from "@/components/ItemFilters";
 
 export const dynamic = "force-dynamic";
 
@@ -74,7 +75,7 @@ export default async function ItensPage({ searchParams }: { searchParams: Search
           </div>
 
           {/* Filter bar */}
-          <FilterBar current={searchParams} />
+          <ItemFilters current={searchParams} />
 
           {/* Table */}
           <div className="card" style={{ marginTop: 14 }}>

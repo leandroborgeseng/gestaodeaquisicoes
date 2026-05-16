@@ -1,51 +1,80 @@
 "use client";
 
-const meses = ["Jan", "Fev", "Mar", "Abr", "Mai", "Jun", "Jul"];
-const evolucao = [
-  { mes: 0, ref: 0.4, ctr: 0.3 }, { mes: 1, ref: 1.8, ctr: 1.5 },
-  { mes: 2, ref: 6.2, ctr: 5.4 }, { mes: 3, ref: 14.5, ctr: 13.1 },
-  { mes: 4, ref: 19.4, ctr: 18.42, current: true },
-  { mes: 5, ref: 23.1, ctr: null }, { mes: 6, ref: 25.0, ctr: null },
-];
+const STATUS_COLORS: Record<string, string> = {
+  PENDENTE: "oklch(0.72 0.04 240)",
+  COTACAO_EM_ANDAMENTO: "oklch(0.68 0.08 200)",
+  COTACAO_CONCLUIDA: "oklch(0.60 0.10 200)",
+  CONTRATADO: "oklch(0.52 0.12 175)",
+  ENTREGA_PARCIAL: "oklch(0.62 0.11 95)",
+  ENTREGUE: "oklch(0.55 0.12 130)",
+  NF_RECEBIDA: "oklch(0.55 0.10 150)",
+  EM_TESTE: "oklch(0.52 0.10 240)",
+  CONCLUIDO: "oklch(0.46 0.10 175)",
+  CANCELADO: "oklch(0.60 0.04 25)",
+};
 
-export function RelatoriosCharts() {
-  const W = 560, H = 200, padL = 36, padR = 12, padT = 14, padB = 26;
-  const maxY = 26;
-  const x = (i: number) => padL + (i / (evolucao.length - 1)) * (W - padL - padR);
-  const y = (v: number) => padT + (1 - v / maxY) * (H - padT - padB);
+const STATUS_LABELS: Record<string, string> = {
+  PENDENTE: "Pendente",
+  COTACAO_EM_ANDAMENTO: "Cotação inic.",
+  COTACAO_CONCLUIDA: "Cotação concl.",
+  CONTRATADO: "Contratado",
+  ENTREGA_PARCIAL: "Entrega parcial",
+  ENTREGUE: "Entregue",
+  NF_RECEBIDA: "NF recebida",
+  EM_TESTE: "Em teste",
+  CONCLUIDO: "Concluído",
+  CANCELADO: "Cancelado",
+};
 
-  const refPath = evolucao.map((d, i) => `${i === 0 ? "M" : "L"} ${x(i)} ${y(d.ref)}`).join(" ");
-  const ctrData = evolucao.filter((d) => d.ctr != null);
-  const ctrPath = ctrData.map((d) => `${evolucao.indexOf(d) === 0 ? "M" : "L"} ${x(d.mes)} ${y(d.ctr!)}`).join(" ");
-  const fillPath = ctrPath + ` L ${x(ctrData[ctrData.length - 1].mes)} ${y(0)} L ${x(0)} ${y(0)} Z`;
-  const cur = evolucao.find((d) => d.current);
+interface Props {
+  byStatus: { status: string; n: number }[];
+  totalItems: number;
+}
+
+export function RelatoriosCharts({ byStatus, totalItems }: Props) {
+  if (totalItems === 0) {
+    return <div style={{ padding: "20px 0", color: "var(--fg-faint)", fontSize: 12 }}>Sem dados.</div>;
+  }
+
+  const max = Math.max(...byStatus.map((s) => s.n));
+  const h = 130;
 
   return (
-    <svg viewBox={`0 0 ${W} ${H}`} style={{ width: "100%", height: H, display: "block" }}>
-      {[0, 5, 10, 15, 20, 25].map((v) => (
-        <g key={v}>
-          <line x1={padL} y1={y(v)} x2={W - padR} y2={y(v)} stroke="var(--line-soft)" />
-          <text x={padL - 6} y={y(v) + 3} fontSize="9.5" fill="var(--fg-faint)" textAnchor="end" fontFamily="var(--font-mono)">{v === 0 ? "0" : v + "M"}</text>
-        </g>
-      ))}
-      {evolucao.map((d, i) => (
-        <text key={i} x={x(i)} y={H - padB + 14} fontSize="10" fill="var(--fg-dim)" textAnchor="middle" fontFamily="var(--font-mono)">{meses[i]}</text>
-      ))}
-      <path d={fillPath} fill="var(--accent)" opacity="0.08" />
-      <path d={refPath} fill="none" stroke="var(--fg)" strokeOpacity="0.4" strokeWidth="1.5" strokeDasharray="4 3" />
-      <path d={ctrPath} fill="none" stroke="var(--accent)" strokeWidth="2" />
-      {ctrData.map((d, i) => (
-        <circle key={i} cx={x(d.mes)} cy={y(d.ctr!)} r={d.current ? 4.5 : 3} fill="var(--bg-panel)" stroke="var(--accent)" strokeWidth="2" />
-      ))}
-      {cur && (
-        <g>
-          <line x1={x(cur.mes)} y1={y(cur.ctr!)} x2={x(cur.mes)} y2={H - padB} stroke="var(--accent)" strokeOpacity="0.3" strokeDasharray="2 3" />
-          <g transform={`translate(${x(cur.mes) + 8}, ${y(cur.ctr!) - 14})`}>
-            <rect x="0" y="0" width="78" height="22" rx="4" fill="var(--bg-panel)" stroke="var(--accent-line)" />
-            <text x="6" y="14" fontSize="10.5" fill="var(--fg)" fontWeight="600" fontFamily="var(--font-mono)">R$ 18,42M</text>
-          </g>
-        </g>
-      )}
-    </svg>
+    <div>
+      <div style={{ display: "flex", alignItems: "flex-end", gap: 6, height: h, marginBottom: 8 }}>
+        {byStatus.map((s) => {
+          const bh = Math.max(4, (s.n / max) * (h - 24));
+          const color = STATUS_COLORS[s.status] ?? "var(--accent)";
+          return (
+            <div key={s.status} style={{ flex: 1, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "flex-end", gap: 4, height: "100%" }}>
+              <span style={{ fontSize: 10, color: "var(--fg-dim)", fontVariantNumeric: "tabular-nums" }}>{s.n}</span>
+              <div style={{ width: "100%", maxWidth: 48, height: bh, borderRadius: "4px 4px 0 0", background: color }} />
+            </div>
+          );
+        })}
+      </div>
+      <div style={{ display: "flex", gap: 6, borderTop: "1px solid var(--line)", paddingTop: 6 }}>
+        {byStatus.map((s) => (
+          <div key={s.status} style={{ flex: 1, textAlign: "center" }}>
+            <div style={{ fontSize: 9.5, color: "var(--fg-faint)", fontFamily: "var(--font-mono)", lineHeight: 1.3, wordBreak: "break-word" }}>
+              {STATUS_LABELS[s.status] ?? s.status}
+            </div>
+          </div>
+        ))}
+      </div>
+
+      <div style={{ display: "flex", flexWrap: "wrap", gap: 8, marginTop: 14 }}>
+        {byStatus.map((s) => {
+          const pct = ((s.n / totalItems) * 100).toFixed(0);
+          return (
+            <div key={s.status} style={{ display: "flex", alignItems: "center", gap: 5, fontSize: 11 }}>
+              <span style={{ width: 8, height: 8, borderRadius: 2, background: STATUS_COLORS[s.status] ?? "var(--accent)", flexShrink: 0 }} />
+              <span style={{ color: "var(--fg-dim)" }}>{STATUS_LABELS[s.status] ?? s.status}</span>
+              <span className="mono" style={{ color: "var(--fg-faint)" }}>{pct}%</span>
+            </div>
+          );
+        })}
+      </div>
+    </div>
   );
 }

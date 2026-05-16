@@ -264,32 +264,6 @@ export default async function DashboardPage() {
                     </div>
                   </div>
                 ))}
-                {/* Static mock alerts */}
-                {[
-                  { item: "EQ-007", titulo: "Foco Cirúrgico LED", motivo: "Acima do valor FNS sem justificativa", severidade: "alta" },
-                  { item: "EQ-002", titulo: "Monitor Multiparamétrico", motivo: "NF registrada há 8 dias sem teste iniciado", severidade: "media" },
-                ].map((a, i) => (
-                  <div key={`mock-${i}`} style={{
-                    display: "flex", gap: 10, padding: "10px 14px",
-                    borderBottom: i < 1 ? "1px solid var(--line-soft)" : "0",
-                  }}>
-                    <div style={{
-                      width: 26, height: 26, borderRadius: 5, flexShrink: 0,
-                      background: a.severidade === "alta" ? "var(--danger-soft)" : "var(--warn-soft)",
-                      color: a.severidade === "alta" ? "var(--danger)" : "var(--warn)",
-                      display: "grid", placeItems: "center",
-                    }}>
-                      <Icons.Alert style={{ width: 13, height: 13 }} />
-                    </div>
-                    <div style={{ flex: 1, minWidth: 0 }}>
-                      <div style={{ display: "flex", alignItems: "baseline", gap: 8, marginBottom: 2 }}>
-                        <span className="mono" style={{ fontSize: 11, color: "var(--fg-dim)" }}>{a.item}</span>
-                        <span style={{ fontSize: 12.5, fontWeight: 500 }}>{a.titulo}</span>
-                      </div>
-                      <div style={{ fontSize: 11.5, color: "var(--fg-dim)", lineHeight: 1.4 }}>{a.motivo}</div>
-                    </div>
-                  </div>
-                ))}
               </div>
             </div>
           </div>

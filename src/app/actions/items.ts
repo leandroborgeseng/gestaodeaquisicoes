@@ -1,0 +1,269 @@
+"use server";
+
+import { prisma } from "@/lib/prisma";
+import { auth } from "@/lib/auth";
+import { revalidatePath } from "next/cache";
+import { StatusProcesso } from "@prisma/client";
+
+async function requireAuth() {
+  const session = await auth();
+  if (!session?.user) throw new Error("Não autorizado");
+  return session.user;
+}
+
+function parseDecimal(val: string | null | undefined): number | undefined {
+  if (!val) return undefined;
+  const n = parseFloat(val.replace(/[^0-9.,]/g, "").replace(",", "."));
+  return isNaN(n) ? undefined : n;
+}
+
+export async function publicarObservacao(itemId: string, texto: string) {
+  const user = await requireAuth();
+  if (!texto.trim()) return { error: "Texto obrigatório" };
+  await prisma.observacao.create({ data: { itemId, autorId: user.id, texto: texto.trim() } });
+  await prisma.log.create({ data: { itemId, autorId: user.id, acao: "OBSERVACAO_ADICIONADA" } });
+  revalidatePath(`/itens/${itemId}`);
+  return { success: true };
+}
+
+export async function atualizarStatus(itemId: string, novoStatus: StatusProcesso) {
+  const user = await requireAuth();
+  if (user.role === "FORNECEDOR") return { error: "Sem permissão" };
+  await prisma.item.update({ where: { id: itemId }, data: { statusProcesso: novoStatus } });
+  await prisma.log.create({ data: { itemId, autorId: user.id, acao: "STATUS_ALTERADO" } });
+  revalidatePath(`/itens/${itemId}`);
+  revalidatePath("/itens");
+  return { success: true };
+}
+
+export async function registrarCotacao(itemId: string, formData: FormData) {
+  const user = await requireAuth();
+  if (user.role === "FORNECEDOR") return { error: "Sem permissão" };
+
+  const dataInicio = formData.get("dataInicio") as string;
+  const dataConclusao = formData.get("dataConclusao") as string;
+  const observacao = formData.get("observacao") as string;
+
+  const existing = await prisma.cotacao.findUnique({ where: { itemId } });
+  const payload = {
+    dataInicio: dataInicio ? new Date(dataInicio) : null,
+    dataConclusao: dataConclusao ? new Date(dataConclusao) : null,
+    observacao: observacao || null,
+  };
+
+  if (existing) {
+    await prisma.cotacao.update({ where: { itemId }, data: payload });
+  } else {
+    await prisma.cotacao.create({ data: { itemId, ...payload } });
+  }
+
+  const item = await prisma.item.findUnique({ where: { id: itemId }, select: { statusProcesso: true } });
+  if (item?.statusProcesso === "PENDENTE") {
+    await prisma.item.update({ where: { id: itemId }, data: { statusProcesso: "COTACAO_EM_ANDAMENTO" } });
+  }
+  if (dataConclusao) {
+    await prisma.item.update({ where: { id: itemId }, data: { statusProcesso: "COTACAO_CONCLUIDA" } });
+  }
+
+  await prisma.log.create({ data: { itemId, autorId: user.id, acao: "COTACAO_REGISTRADA" } });
+  revalidatePath(`/itens/${itemId}`);
+  return { success: true };
+}
+
+export async function registrarContrato(itemId: string, formData: FormData) {
+  const user = await requireAuth();
+  if (user.role === "FORNECEDOR") return { error: "Sem permissão" };
+
+  const fornecedorNome = (formData.get("fornecedor") as string)?.trim();
+  const numeroContrato = formData.get("numeroContrato") as string;
+  const dataAssinatura = formData.get("dataAssinatura") as string;
+  const dataVigencia = formData.get("dataVigencia") as string;
+  const valor = parseDecimal(formData.get("valor") as string);
+
+  if (!fornecedorNome) return { error: "Fornecedor obrigatório" };
+
+  const fornecedor = await prisma.fornecedor.findFirst({
+    where: { nome: { equals: fornecedorNome, mode: "insensitive" } },
+  });
+  if (!fornecedor) {
+    const partial = await prisma.fornecedor.findFirst({
+      where: { nome: { contains: fornecedorNome, mode: "insensitive" } },
+    });
+    if (!partial) return { error: `Fornecedor "${fornecedorNome}" não encontrado` };
+  }
+
+  const forn = fornecedor ?? await prisma.fornecedor.findFirst({
+    where: { nome: { contains: fornecedorNome, mode: "insensitive" } },
+  });
+
+  const existing = await prisma.contratacao.findUnique({ where: { itemId } });
+  const payload = {
+    fornecedorId: forn!.id,
+    numeroContrato: numeroContrato || null,
+    valorContratado: valor ?? undefined,
+    dataAssinatura: dataAssinatura ? new Date(dataAssinatura) : null,
+    dataVigencia: dataVigencia ? new Date(dataVigencia) : null,
+  };
+
+  if (existing) {
+    await prisma.contratacao.update({ where: { itemId }, data: payload });
+  } else {
+    await prisma.contratacao.create({ data: { itemId, ...payload } });
+  }
+
+  await prisma.item.update({ where: { id: itemId }, data: { statusProcesso: "CONTRATADO" } });
+  await prisma.log.create({ data: { itemId, autorId: user.id, acao: "CONTRATO_REGISTRADO" } });
+  revalidatePath(`/itens/${itemId}`);
+  return { success: true };
+}
+
+export async function registrarEntrega(itemId: string, formData: FormData) {
+  const user = await requireAuth();
+
+  const qtd = parseInt(formData.get("qtd") as string) || 0;
+  const dataEntrega = formData.get("dataEntrega") as string;
+  const dataPrevisao = formData.get("dataPrevisao") as string;
+  const responsavel = formData.get("responsavel") as string;
+  const local = formData.get("local") as string;
+  const observacao = formData.get("observacao") as string;
+
+  await prisma.entrega.create({
+    data: {
+      itemId, qtdEntregue: qtd,
+      dataEntrega: dataEntrega ? new Date(dataEntrega) : null,
+      dataPrevisao: dataPrevisao ? new Date(dataPrevisao) : null,
+      responsavel: responsavel || null,
+      local: local || null,
+      observacao: observacao || null,
+    },
+  });
+
+  const item = await prisma.item.findUnique({ where: { id: itemId }, select: { statusProcesso: true, faseUnicaQtd: true } });
+  const totalEntregue = await prisma.entrega.aggregate({ where: { itemId }, _sum: { qtdEntregue: true } });
+  const totalQtd = totalEntregue._sum.qtdEntregue ?? 0;
+  const qtdTotal = item?.faseUnicaQtd ?? 0;
+
+  if (qtdTotal > 0 && totalQtd >= qtdTotal) {
+    await prisma.item.update({ where: { id: itemId }, data: { statusProcesso: "ENTREGUE" } });
+  } else if (totalQtd > 0) {
+    await prisma.item.update({ where: { id: itemId }, data: { statusProcesso: "ENTREGA_PARCIAL" } });
+  }
+
+  await prisma.log.create({ data: { itemId, autorId: user.id, acao: "ENTREGA_REGISTRADA" } });
+  revalidatePath(`/itens/${itemId}`);
+  return { success: true };
+}
+
+export async function registrarNF(itemId: string, formData: FormData) {
+  const user = await requireAuth();
+
+  const numero = formData.get("numero") as string;
+  const serie = formData.get("serie") as string;
+  const emissora = formData.get("emissora") as string;
+  const dataEmissao = formData.get("dataEmissao") as string;
+  const dataEntrada = formData.get("dataEntrada") as string;
+  const valor = parseDecimal(formData.get("valor") as string);
+  const chaveNfe = formData.get("chaveNfe") as string;
+
+  if (!numero) return { error: "Número da NF obrigatório" };
+
+  await prisma.notaFiscal.create({
+    data: {
+      itemId, numero,
+      serie: serie || null,
+      emissora: emissora || null,
+      dataEmissao: dataEmissao ? new Date(dataEmissao) : null,
+      dataEntrada: dataEntrada ? new Date(dataEntrada) : null,
+      valor: valor ?? undefined,
+      chaveNfe: chaveNfe || null,
+    },
+  });
+
+  await prisma.item.update({ where: { id: itemId }, data: { statusProcesso: "NF_RECEBIDA" } });
+  await prisma.log.create({ data: { itemId, autorId: user.id, acao: "NF_REGISTRADA" } });
+  revalidatePath(`/itens/${itemId}`);
+  return { success: true };
+}
+
+export async function registrarTeste(itemId: string, formData: FormData) {
+  const user = await requireAuth();
+
+  const dataRealizado = formData.get("dataRealizado") as string;
+  const responsavel = formData.get("responsavel") as string;
+  const resultado = formData.get("resultado") as string;
+  const observacao = formData.get("observacao") as string;
+
+  await prisma.testeInicial.create({
+    data: {
+      itemId,
+      dataRealizado: dataRealizado ? new Date(dataRealizado) : null,
+      responsavel: responsavel || null,
+      resultado: resultado || null,
+      observacao: observacao || null,
+    },
+  });
+
+  if (resultado === "APROVADO") {
+    await prisma.item.update({ where: { id: itemId }, data: { statusProcesso: "CONCLUIDO" } });
+  } else {
+    await prisma.item.update({ where: { id: itemId }, data: { statusProcesso: "EM_TESTE" } });
+  }
+
+  await prisma.log.create({ data: { itemId, autorId: user.id, acao: "TESTE_REGISTRADO" } });
+  revalidatePath(`/itens/${itemId}`);
+  return { success: true };
+}
+
+export async function criarUsuario(formData: FormData) {
+  const user = await requireAuth();
+  if (user.role !== "ADMIN") return { error: "Sem permissão" };
+
+  const nome = formData.get("nome") as string;
+  const email = formData.get("email") as string;
+  const role = formData.get("role") as string;
+  const password = formData.get("password") as string;
+  const fornecedorNome = formData.get("fornecedorNome") as string;
+
+  if (!nome || !email || !password) return { error: "Preencha todos os campos obrigatórios" };
+
+  const bcrypt = await import("bcryptjs");
+  const hashed = await bcrypt.hash(password, 12);
+
+  let fornecedorId: string | undefined;
+  if (role === "FORNECEDOR" && fornecedorNome) {
+    const f = await prisma.fornecedor.findFirst({ where: { nome: { contains: fornecedorNome, mode: "insensitive" } } });
+    if (f) fornecedorId = f.id;
+  }
+
+  try {
+    await prisma.user.create({ data: { name: nome, email, role: role as any, password: hashed, fornecedorId } });
+  } catch (e: any) {
+    if (e.code === "P2002") return { error: "E-mail já cadastrado" };
+    throw e;
+  }
+
+  revalidatePath("/usuarios");
+  return { success: true };
+}
+
+export async function criarFornecedor(formData: FormData) {
+  const user = await requireAuth();
+  if (user.role !== "ADMIN") return { error: "Sem permissão" };
+
+  const nome = (formData.get("nome") as string)?.trim();
+  const cnpj = formData.get("cnpj") as string;
+  const email = formData.get("email") as string;
+  const telefone = formData.get("telefone") as string;
+
+  if (!nome) return { error: "Nome obrigatório" };
+
+  try {
+    await prisma.fornecedor.create({ data: { nome, cnpj: cnpj || null, email: email || null, telefone: telefone || null } });
+  } catch (e: any) {
+    if (e.code === "P2002") return { error: "Fornecedor com este nome já existe" };
+    throw e;
+  }
+
+  revalidatePath("/fornecedores");
+  return { success: true };
+}

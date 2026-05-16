@@ -2,6 +2,7 @@ import { prisma } from "@/lib/prisma";
 import { Topbar } from "@/components/Topbar";
 import { Icons } from "@/components/Icons";
 import { fmtBRL } from "@/lib/utils";
+import { CadastrarFornecedorModal } from "@/components/modals/GestaoModals";
 
 export const dynamic = "force-dynamic";
 
@@ -22,12 +23,7 @@ export default async function FornecedoresPage() {
   return (
     <>
       <Topbar crumbs={["3Colinas", "Cadastros", "Fornecedores"]}>
-        <button className="btn">
-          <Icons.Upload style={{ width: 12, height: 12 }} /> Importar CSV
-        </button>
-        <button className="btn primary">
-          <Icons.Plus style={{ width: 12, height: 12 }} /> Cadastrar fornecedor
-        </button>
+        <CadastrarFornecedorModal />
       </Topbar>
 
       <div className="content">

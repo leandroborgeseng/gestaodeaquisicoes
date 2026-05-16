@@ -1,8 +1,16 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useTransition } from "react";
 import { Icons } from "@/components/Icons";
 import { fmtBRL } from "@/lib/utils";
+import { publicarObservacao } from "@/app/actions/items";
+import {
+  RegistrarCotacaoModal,
+  RegistrarContratoModal,
+  RegistrarEntregaModal,
+  RegistrarNFModal,
+  RegistrarTesteModal,
+} from "@/components/modals/ItemModals";
 
 interface ItemData {
   id: string;
@@ -39,7 +47,22 @@ const TABS = [
 
 export function ItemTabs({ item }: { item: ItemData }) {
   const [activeTab, setActiveTab] = useState("geral");
-  const menorValor = item.orcamentos.reduce((min, o) => o.valor < (min?.valor ?? Infinity) ? o : min, item.orcamentos[0]);
+  const [obsText, setObsText] = useState("");
+  const [obsPending, startObsTransition] = useTransition();
+  const menorValor = item.orcamentos.reduce(
+    (min, o) => o.valor < (min?.valor ?? Infinity) ? o : min,
+    item.orcamentos[0]
+  );
+
+  const fornecedoresOrcamento = item.orcamentos.map((o) => o.fornecedor);
+
+  function handlePublicar() {
+    if (!obsText.trim()) return;
+    startObsTransition(async () => {
+      await publicarObservacao(item.id, obsText);
+      setObsText("");
+    });
+  }
 
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: 0 }}>
@@ -70,10 +93,18 @@ export function ItemTabs({ item }: { item: ItemData }) {
       <div style={{ display: "grid", gridTemplateColumns: "minmax(0,1fr) 300px", gap: 16 }}>
         <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
           {activeTab === "geral" && <TabGeral item={item} menorValor={menorValor} />}
-          {activeTab === "orc" && <TabOrcamentos item={item} menorValor={menorValor} />}
-          {activeTab === "cot" && <TabCotacao item={item} />}
-          {activeTab === "ctr" && <TabContratacao item={item} />}
-          {activeTab === "ent" && <TabEntregas item={item} />}
+          {activeTab === "orc" && (
+            <TabOrcamentos item={item} menorValor={menorValor} />
+          )}
+          {activeTab === "cot" && (
+            <TabCotacao item={item} />
+          )}
+          {activeTab === "ctr" && (
+            <TabContratacao item={item} fornecedores={fornecedoresOrcamento} />
+          )}
+          {activeTab === "ent" && (
+            <TabEntregas item={item} />
+          )}
           {activeTab === "nf" && <TabNotasFiscais item={item} />}
           {activeTab === "tst" && <TabTestes item={item} />}
           {activeTab === "his" && <TabHistorico item={item} />}
@@ -81,7 +112,6 @@ export function ItemTabs({ item }: { item: ItemData }) {
 
         {/* Right rail */}
         <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
-          {/* Value card */}
           {item.contratacao?.valor && (
             <div className="card" style={{ padding: "14px 14px 12px" }}>
               <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 14 }}>
@@ -124,7 +154,6 @@ export function ItemTabs({ item }: { item: ItemData }) {
             </div>
           )}
 
-          {/* Supplier */}
           {item.contratacao && (
             <div className="card">
               <div className="card-head"><h3>Fornecedor contratado</h3></div>
@@ -153,14 +182,14 @@ export function ItemTabs({ item }: { item: ItemData }) {
             </div>
           )}
 
-          {/* Observations shortcut */}
+          {/* Observations */}
           <div className="card">
             <div className="card-head">
               <h3>Observações</h3>
               <span className="sub">{item.observacoes.length} notas</span>
             </div>
             <div style={{ padding: "8px 14px 14px" }}>
-              {item.observacoes.slice(-2).map((obs) => (
+              {item.observacoes.slice(-3).map((obs) => (
                 <div key={obs.id} style={{ display: "flex", gap: 8, paddingBottom: 10, marginBottom: 10, borderBottom: "1px solid var(--line-soft)" }}>
                   <div style={{
                     width: 24, height: 24, borderRadius: "50%", background: "var(--bg-soft)",
@@ -170,15 +199,30 @@ export function ItemTabs({ item }: { item: ItemData }) {
                     {obs.autor.split(" ").map((w) => w[0]).join("").slice(0, 2)}
                   </div>
                   <div>
-                    <div style={{ fontSize: 11, fontWeight: 500, marginBottom: 2 }}>{obs.autor} <span style={{ color: "var(--fg-faint)", fontWeight: 400 }}>· {obs.hora}</span></div>
+                    <div style={{ fontSize: 11, fontWeight: 500, marginBottom: 2 }}>
+                      {obs.autor} <span style={{ color: "var(--fg-faint)", fontWeight: 400 }}>· {obs.hora}</span>
+                    </div>
                     <div style={{ fontSize: 12, color: "var(--fg-mid)", lineHeight: 1.4 }}>{obs.texto}</div>
                   </div>
                 </div>
               ))}
               <div className="field">
-                <textarea placeholder="Adicionar observação..." style={{ minHeight: 60, fontSize: 12 }} />
+                <textarea
+                  placeholder="Adicionar observação..."
+                  style={{ minHeight: 60, fontSize: 12 }}
+                  value={obsText}
+                  onChange={(e) => setObsText(e.target.value)}
+                  disabled={obsPending}
+                  onKeyDown={(e) => { if (e.key === "Enter" && (e.ctrlKey || e.metaKey)) handlePublicar(); }}
+                />
                 <div style={{ display: "flex", justifyContent: "flex-end", marginTop: 6 }}>
-                  <button className="btn primary sm">Publicar</button>
+                  <button
+                    className="btn primary sm"
+                    onClick={handlePublicar}
+                    disabled={obsPending || !obsText.trim()}
+                  >
+                    {obsPending ? "Publicando…" : "Publicar"}
+                  </button>
                 </div>
               </div>
             </div>
@@ -278,9 +322,6 @@ function TabOrcamentos({ item, menorValor }: { item: ItemData; menorValor: typeo
         <h3>Orçamentos coletados</h3>
         <span className="sub">{item.orcamentos.length} fornecedores · menor valor selecionado</span>
         <div className="spacer" />
-        <button className="btn sm">
-          <Icons.Plus style={{ width: 12, height: 12 }} /> Adicionar
-        </button>
       </div>
       <table className="tbl">
         <thead>
@@ -325,55 +366,45 @@ function TabCotacao({ item }: { item: ItemData }) {
       <div className="card-head"><h3>Cotação</h3></div>
       <div className="card-body" style={{ display: "flex", flexDirection: "column", gap: 14 }}>
         {item.cotacao ? (
-          <>
-            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
-              <MetaField label="Data de início" value={item.cotacao.dataInicio ?? "—"} />
-              <MetaField label="Data de conclusão" value={item.cotacao.dataConclusao ?? "—"} />
-            </div>
+          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
+            <MetaField label="Data de início" value={item.cotacao.dataInicio ?? "—"} />
+            <MetaField label="Data de conclusão" value={item.cotacao.dataConclusao ?? "—"} />
             {item.cotacao.observacao && (
-              <div>
+              <div style={{ gridColumn: "1/-1" }}>
                 <div style={{ fontSize: 11.5, color: "var(--fg-dim)", marginBottom: 4 }}>Observação</div>
                 <p style={{ margin: 0, fontSize: 12.5, color: "var(--fg-mid)", lineHeight: 1.5 }}>{item.cotacao.observacao}</p>
               </div>
             )}
-          </>
+          </div>
         ) : (
           <p style={{ margin: 0, color: "var(--fg-faint)", fontSize: 12.5 }}>Cotação não iniciada.</p>
         )}
         <div style={{ display: "flex", gap: 8, paddingTop: 8, borderTop: "1px solid var(--line-soft)" }}>
-          <button className="btn primary sm">
-            <Icons.Spark style={{ width: 11, height: 11 }} />
-            {item.cotacao ? "Atualizar cotação" : "Iniciar cotação"}
-          </button>
+          <RegistrarCotacaoModal itemId={item.id} existing={!!item.cotacao} />
         </div>
       </div>
     </div>
   );
 }
 
-function TabContratacao({ item }: { item: ItemData }) {
+function TabContratacao({ item, fornecedores }: { item: ItemData; fornecedores: string[] }) {
   return (
     <div className="card">
       <div className="card-head"><h3>Contratação</h3></div>
       <div className="card-body" style={{ display: "flex", flexDirection: "column", gap: 14 }}>
         {item.contratacao ? (
-          <>
-            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
-              {item.contratacao.numero && <MetaField label="Nº do contrato" value={<span className="mono">{item.contratacao.numero}</span>} />}
-              <MetaField label="Fornecedor" value={item.contratacao.fornecedor} />
-              {item.contratacao.valor && <MetaField label="Valor contratado" value={<span className="mono">{fmtBRL(item.contratacao.valor)}</span>} />}
-              {item.contratacao.dataAssinatura && <MetaField label="Data de assinatura" value={item.contratacao.dataAssinatura} />}
-              {item.contratacao.vigencia && <MetaField label="Vigência" value={item.contratacao.vigencia} />}
-            </div>
-          </>
+          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
+            {item.contratacao.numero && <MetaField label="Nº do contrato" value={<span className="mono">{item.contratacao.numero}</span>} />}
+            <MetaField label="Fornecedor" value={item.contratacao.fornecedor} />
+            {item.contratacao.valor && <MetaField label="Valor contratado" value={<span className="mono">{fmtBRL(item.contratacao.valor)}</span>} />}
+            {item.contratacao.dataAssinatura && <MetaField label="Data de assinatura" value={item.contratacao.dataAssinatura} />}
+            {item.contratacao.vigencia && <MetaField label="Vigência" value={item.contratacao.vigencia} />}
+          </div>
         ) : (
           <p style={{ margin: 0, color: "var(--fg-faint)", fontSize: 12.5 }}>Contratação não registrada.</p>
         )}
         <div style={{ display: "flex", gap: 8, paddingTop: 8, borderTop: "1px solid var(--line-soft)" }}>
-          <button className="btn primary sm">
-            <Icons.Pin style={{ width: 11, height: 11 }} />
-            {item.contratacao ? "Atualizar contrato" : "Registrar contrato"}
-          </button>
+          <RegistrarContratoModal itemId={item.id} existing={!!item.contratacao} fornecedores={fornecedores} />
         </div>
       </div>
     </div>
@@ -388,7 +419,7 @@ function TabEntregas({ item }: { item: ItemData }) {
         <h3>Entregas</h3>
         <span className="sub">{totalEntregue} / {item.faseUnicaQtd} unidades recebidas</span>
         <div className="spacer" />
-        <button className="btn sm"><Icons.Plus style={{ width: 12, height: 12 }} /> Registrar entrega</button>
+        <RegistrarEntregaModal itemId={item.id} qtdTotal={item.faseUnicaQtd} />
       </div>
       {item.entregas.length === 0 ? (
         <div style={{ padding: "20px 14px", color: "var(--fg-faint)", fontSize: 12.5 }}>Nenhuma entrega registrada.</div>
@@ -413,7 +444,7 @@ function TabNotasFiscais({ item }: { item: ItemData }) {
       <div className="card-head">
         <h3>Notas Fiscais</h3>
         <div className="spacer" />
-        <button className="btn sm"><Icons.Plus style={{ width: 12, height: 12 }} /> Registrar NF</button>
+        <RegistrarNFModal itemId={item.id} />
       </div>
       {item.notasFiscais.length === 0 ? (
         <div style={{ padding: "20px 14px", color: "var(--fg-faint)", fontSize: 12.5 }}>Nenhuma nota fiscal registrada.</div>
@@ -441,7 +472,7 @@ function TabTestes({ item }: { item: ItemData }) {
       <div className="card-head">
         <h3>Testes Iniciais</h3>
         <div className="spacer" />
-        <button className="btn sm"><Icons.Plus style={{ width: 12, height: 12 }} /> Registrar teste</button>
+        <RegistrarTesteModal itemId={item.id} />
       </div>
       {item.testes.length === 0 ? (
         <div style={{ padding: "20px 14px", color: "var(--fg-faint)", fontSize: 12.5 }}>Nenhum teste registrado.</div>
@@ -465,35 +496,46 @@ function TabTestes({ item }: { item: ItemData }) {
 }
 
 function TabHistorico({ item }: { item: ItemData }) {
+  const events = [
+    ...item.logs.map((l) => ({ tipo: "log" as const, autor: l.autor, texto: l.acao.replace(/_/g, " ").toLowerCase(), data: l.data })),
+    ...item.observacoes.map((o) => ({ tipo: "obs" as const, autor: o.autor, texto: o.texto, data: o.hora })),
+  ].sort((a, b) => b.data.localeCompare(a.data));
+
   return (
     <div className="card">
       <div className="card-head"><h3>Histórico de atividades</h3></div>
-      <div>
-        {[...item.logs, ...item.observacoes.map((o) => ({ autor: o.autor, acao: o.texto, data: o.hora, isObs: true }))].length === 0 ? (
-          <div style={{ padding: "20px 14px", color: "var(--fg-faint)", fontSize: 12.5 }}>Nenhuma atividade registrada.</div>
-        ) : item.logs.map((l, i) => (
-          <div key={i} style={{
-            display: "flex", gap: 10, padding: "10px 14px",
-            borderBottom: i < item.logs.length - 1 ? "1px solid var(--line-soft)" : "none",
-            alignItems: "flex-start",
-          }}>
-            <div style={{
-              width: 26, height: 26, borderRadius: "50%", background: "var(--bg-soft)",
-              color: "var(--accent)", display: "grid", placeItems: "center", flexShrink: 0,
+      {events.length === 0 ? (
+        <div style={{ padding: "20px 14px", color: "var(--fg-faint)", fontSize: 12.5 }}>Nenhuma atividade registrada.</div>
+      ) : (
+        <div>
+          {events.map((ev, i) => (
+            <div key={i} style={{
+              display: "flex", gap: 10, padding: "10px 14px",
+              borderBottom: i < events.length - 1 ? "1px solid var(--line-soft)" : "none",
+              alignItems: "flex-start",
             }}>
-              <Icons.History style={{ width: 12, height: 12 }} />
-            </div>
-            <div style={{ flex: 1, minWidth: 0 }}>
-              <div style={{ fontSize: 12.5, lineHeight: 1.4 }}>
-                <span style={{ fontWeight: 500 }}>{l.autor}</span>
-                <span className="muted"> — </span>
-                <span>{l.acao.replace(/_/g, " ").toLowerCase()}</span>
+              <div style={{
+                width: 26, height: 26, borderRadius: "50%", background: "var(--bg-soft)",
+                color: ev.tipo === "obs" ? "oklch(0.58 0.12 250)" : "var(--accent)",
+                display: "grid", placeItems: "center", flexShrink: 0,
+              }}>
+                {ev.tipo === "obs"
+                  ? <Icons.Pin style={{ width: 11, height: 11 }} />
+                  : <Icons.History style={{ width: 12, height: 12 }} />
+                }
               </div>
-              <div style={{ fontSize: 11, color: "var(--fg-faint)", marginTop: 2 }}>{l.data}</div>
+              <div style={{ flex: 1, minWidth: 0 }}>
+                <div style={{ fontSize: 12.5, lineHeight: 1.4 }}>
+                  <span style={{ fontWeight: 500 }}>{ev.autor}</span>
+                  <span className="muted"> — </span>
+                  <span>{ev.texto}</span>
+                </div>
+                <div style={{ fontSize: 11, color: "var(--fg-faint)", marginTop: 2 }}>{ev.data}</div>
+              </div>
             </div>
-          </div>
-        ))}
-      </div>
+          ))}
+        </div>
+      )}
     </div>
   );
 }

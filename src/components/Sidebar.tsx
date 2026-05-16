@@ -1,96 +1,88 @@
 "use client";
 
+import React from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { signOut, useSession } from "next-auth/react";
 import { Icons } from "./Icons";
 
-interface NavItem {
-  key: string;
-  label: string;
-  href: string;
-  icon: React.ReactNode;
-  count?: number;
+export interface SidebarCounts {
+  itens: number;
+  fornecedores: number;
+  usuarios: number;
+  entregasPendentes: number;
+  nfsPendentes: number;
+  testesPendentes: number;
 }
 
-interface NavGroup {
-  heading?: string;
-  links: NavItem[];
+type NavLink = { key: string; label: string; href: string; icon: React.ReactNode; count?: number };
+type NavGroup = { heading?: string; links: NavLink[] };
+
+function getNav(role: string, c: SidebarCounts): NavGroup[] {
+  if (role === "ADMIN") return [
+    {
+      links: [
+        { key: "dashboard", label: "Dashboard", href: "/dashboard", icon: <Icons.Dashboard /> },
+        { key: "itens", label: "Itens", href: "/itens", icon: <Icons.Items />, count: c.itens },
+        { key: "relatorios", label: "Relatórios", href: "/relatorios", icon: <Icons.Reports /> },
+      ],
+    },
+    {
+      heading: "Cadastros",
+      links: [
+        { key: "fornecedores", label: "Fornecedores", href: "/fornecedores", icon: <Icons.Suppliers />, count: c.fornecedores },
+        { key: "usuarios", label: "Usuários", href: "/usuarios", icon: <Icons.Users />, count: c.usuarios },
+      ],
+    },
+    {
+      heading: "Sistema",
+      links: [
+        { key: "auditoria", label: "Auditoria", href: "/auditoria", icon: <Icons.History /> },
+        { key: "config", label: "Configurações", href: "/config", icon: <Icons.Settings /> },
+      ],
+    },
+  ];
+
+  if (role === "FORNECEDOR") return [
+    {
+      links: [
+        { key: "dashboard", label: "Meus pedidos", href: "/dashboard", icon: <Icons.Dashboard /> },
+        { key: "itens", label: "Itens", href: "/itens", icon: <Icons.Items />, count: c.itens },
+      ],
+    },
+    {
+      heading: "Envios",
+      links: [
+        { key: "nfs", label: "Notas fiscais", href: "/itens?status=NF_RECEBIDA", icon: <Icons.Paper />, count: c.nfsPendentes || undefined },
+        { key: "laudos", label: "Laudos técnicos", href: "/itens?status=EM_TESTE", icon: <Icons.Doc />, count: c.testesPendentes || undefined },
+      ],
+    },
+  ];
+
+  return [
+    {
+      links: [
+        { key: "dashboard", label: "Dashboard", href: "/dashboard", icon: <Icons.Dashboard /> },
+        { key: "itens", label: "Itens", href: "/itens", icon: <Icons.Items />, count: c.itens },
+        { key: "relatorios", label: "Relatórios", href: "/relatorios", icon: <Icons.Reports /> },
+      ],
+    },
+    {
+      heading: "Operação",
+      links: [
+        { key: "entregas", label: "Entregas pendentes", href: "/itens?status=ENTREGA_PARCIAL", icon: <Icons.Doc />, count: c.entregasPendentes || undefined },
+        { key: "nfs", label: "Notas fiscais", href: "/itens?status=NF_RECEBIDA", icon: <Icons.Paper />, count: c.nfsPendentes || undefined },
+        { key: "testes", label: "Testes iniciais", href: "/itens?status=EM_TESTE", icon: <Icons.Check />, count: c.testesPendentes || undefined },
+      ],
+    },
+  ];
 }
 
-const ADMIN_NAV: NavGroup[] = [
-  {
-    links: [
-      { key: "dashboard", label: "Dashboard", href: "/dashboard", icon: <Icons.Dashboard /> },
-      { key: "itens", label: "Itens", href: "/itens", icon: <Icons.Items />, count: 237 },
-      { key: "relatorios", label: "Relatórios", href: "/relatorios", icon: <Icons.Reports /> },
-    ],
-  },
-  {
-    heading: "Cadastros",
-    links: [
-      { key: "fornecedores", label: "Fornecedores", href: "/fornecedores", icon: <Icons.Suppliers />, count: 6 },
-      { key: "usuarios", label: "Usuários", href: "/usuarios", icon: <Icons.Users />, count: 8 },
-    ],
-  },
-  {
-    heading: "Sistema",
-    links: [
-      { key: "auditoria", label: "Auditoria", href: "/auditoria", icon: <Icons.History /> },
-      { key: "config", label: "Configurações", href: "/config", icon: <Icons.Settings /> },
-    ],
-  },
-];
-
-const HOSPITAL_NAV: NavGroup[] = [
-  {
-    links: [
-      { key: "dashboard", label: "Dashboard", href: "/dashboard", icon: <Icons.Dashboard /> },
-      { key: "itens", label: "Itens", href: "/itens", icon: <Icons.Items />, count: 237 },
-      { key: "relatorios", label: "Relatórios", href: "/relatorios", icon: <Icons.Reports /> },
-    ],
-  },
-  {
-    heading: "Operação",
-    links: [
-      { key: "entregas", label: "Entregas pendentes", href: "/itens?status=ENTREGA_PARCIAL", icon: <Icons.Doc />, count: 18 },
-      { key: "nfs", label: "Notas fiscais", href: "/itens?status=NF_RECEBIDA", icon: <Icons.Paper />, count: 47 },
-      { key: "testes", label: "Testes iniciais", href: "/itens?status=EM_TESTE", icon: <Icons.Check />, count: 11 },
-    ],
-  },
-];
-
-const FORNECEDOR_NAV: NavGroup[] = [
-  {
-    links: [
-      { key: "dashboard", label: "Meus pedidos", href: "/dashboard", icon: <Icons.Dashboard /> },
-      { key: "itens", label: "Itens", href: "/itens", icon: <Icons.Items />, count: 6 },
-    ],
-  },
-  {
-    heading: "Envios",
-    links: [
-      { key: "nfs", label: "Notas fiscais", href: "/itens?status=NF_RECEBIDA", icon: <Icons.Paper />, count: 4 },
-      { key: "laudos", label: "Laudos técnicos", href: "/itens?tab=testes", icon: <Icons.Doc />, count: 2 },
-    ],
-  },
-];
-
-function getNav(role: string): NavGroup[] {
-  if (role === "ADMIN") return ADMIN_NAV;
-  if (role === "FORNECEDOR") return FORNECEDOR_NAV;
-  return HOSPITAL_NAV;
-}
-
-function getInitials(name: string): string {
-  return name.split(" ").map((w) => w[0]).join("").slice(0, 2).toUpperCase();
-}
-
-export function Sidebar() {
+export function Sidebar({ counts }: { counts: SidebarCounts }) {
   const pathname = usePathname();
   const { data: session } = useSession();
   const role = session?.user?.role ?? "HOSPITAL";
-  const nav = getNav(role);
+  const nav = getNav(role, counts);
   const name = session?.user?.name ?? "Usuário";
   const email = session?.user?.email ?? "";
   const roleLabel = role === "ADMIN" ? "Consultoria" : role === "FORNECEDOR" ? (session?.user?.fornecedorNome ?? "Fornecedor") : "Hospital";
@@ -103,7 +95,6 @@ export function Sidebar() {
 
   return (
     <aside className="sidebar">
-      {/* Brand */}
       <div className="sidebar-brand">
         <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
           <div style={{
@@ -122,7 +113,6 @@ export function Sidebar() {
         </div>
       </div>
 
-      {/* Org */}
       <div className="sidebar-org">
         <div className="avatar" style={{ background: "var(--bg-soft)", color: "var(--fg-mid)", border: "1px solid var(--line)" }}>3C</div>
         <div className="label">
@@ -132,7 +122,6 @@ export function Sidebar() {
         <Icons.ChevDown style={{ width: 14, height: 14, color: "var(--fg-faint)" }} />
       </div>
 
-      {/* Nav */}
       <div style={{ flex: 1, overflow: "auto" }}>
         {nav.map((group, gi) => (
           <div key={gi} className="nav-section" style={{ marginBottom: 4 }}>
@@ -150,10 +139,9 @@ export function Sidebar() {
         ))}
       </div>
 
-      {/* Footer */}
       <div className="sidebar-foot">
         <div className="user-chip">
-          <div className="avatar">{getInitials(name)}</div>
+          <div className="avatar">{name.split(" ").map((w: string) => w[0]).join("").slice(0, 2).toUpperCase()}</div>
           <div className="info">
             <b>{name}</b>
             <small>{email}</small>
