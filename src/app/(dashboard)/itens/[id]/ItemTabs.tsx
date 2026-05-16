@@ -11,11 +11,13 @@ import {
   RegistrarNFModal,
   RegistrarTesteModal,
 } from "@/components/modals/ItemModals";
+import { AnexoUpload } from "@/components/AnexoUpload";
 
 interface ItemData {
   id: string;
   equipamento: string;
   especificacao: string | null;
+  especificacaoUrl?: string | null;
   valorReferenciaFns: number | null;
   faseUnicaQtd: number;
   presencaEmAta: boolean;
@@ -250,6 +252,11 @@ function TabGeral({ item, menorValor }: { item: ItemData; menorValor: typeof ite
         <div className="card-head">
           <h3>Especificação técnica</h3>
           <div className="spacer" />
+          {item.especificacaoUrl && (
+            <a href={item.especificacaoUrl} target="_blank" rel="noopener noreferrer" className="btn ghost sm">
+              <Icons.Doc style={{ width: 11, height: 11 }} /> Ver no Drive
+            </a>
+          )}
           <span className="sub">Fonte: RENEM</span>
         </div>
         <div className="card-body">
@@ -434,6 +441,12 @@ function TabEntregas({ item }: { item: ItemData }) {
           {e.obs && <div style={{ fontSize: 11.5, color: "var(--fg-mid)", marginTop: 4 }}>{e.obs}</div>}
         </div>
       ))}
+      <div style={{ padding: "14px 14px 16px", borderTop: "1px solid var(--line-soft)" }}>
+        <div style={{ fontSize: 11, fontWeight: 600, color: "var(--fg-mid)", textTransform: "uppercase", letterSpacing: "0.04em", marginBottom: 8 }}>
+          Evidências de recebimento
+        </div>
+        <AnexoUpload itemId={item.id} category="entrega" label="Anexar checklist, foto ou laudo de recebimento" />
+      </div>
     </div>
   );
 }
@@ -462,6 +475,12 @@ function TabNotasFiscais({ item }: { item: ItemData }) {
           {nf.chave && <div className="mono" style={{ fontSize: 10, color: "var(--fg-faint)", marginTop: 6, wordBreak: "break-all" }}>{nf.chave}</div>}
         </div>
       ))}
+      <div style={{ padding: "14px 14px 16px", borderTop: "1px solid var(--line-soft)" }}>
+        <div style={{ fontSize: 11, fontWeight: 600, color: "var(--fg-mid)", textTransform: "uppercase", letterSpacing: "0.04em", marginBottom: 8 }}>
+          Arquivos da NF
+        </div>
+        <AnexoUpload itemId={item.id} category="nf" label="Anexar PDF da nota fiscal" />
+      </div>
     </div>
   );
 }
@@ -491,6 +510,12 @@ function TabTestes({ item }: { item: ItemData }) {
           {t.obs && <div style={{ fontSize: 11.5, color: "var(--fg-mid)", marginTop: 4, lineHeight: 1.4 }}>{t.obs}</div>}
         </div>
       ))}
+      <div style={{ padding: "14px 14px 16px", borderTop: "1px solid var(--line-soft)" }}>
+        <div style={{ fontSize: 11, fontWeight: 600, color: "var(--fg-mid)", textTransform: "uppercase", letterSpacing: "0.04em", marginBottom: 8 }}>
+          Laudos e evidências
+        </div>
+        <AnexoUpload itemId={item.id} category="teste" label="Anexar laudo técnico, checklist ou relatório de teste" />
+      </div>
     </div>
   );
 }

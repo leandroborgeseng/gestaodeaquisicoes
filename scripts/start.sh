@@ -25,10 +25,17 @@ else
 fi
 
 echo ""
-echo "--- [1/2] prisma db push ---"
+echo "--- [1/3] upload dir ---"
+UPLOAD_DIR="${UPLOAD_DIR:-/data}"
+mkdir -p "${UPLOAD_DIR}/uploads"
+echo "    UPLOAD_DIR = ${UPLOAD_DIR}"
+export UPLOAD_DIR
+
+echo ""
+echo "--- [2/3] prisma db push ---"
 npx prisma db push --skip-generate
 echo "    OK"
 
 echo ""
-echo "--- [2/2] next start on port ${PORT:-3000} ---"
+echo "--- [3/3] next start on port ${PORT:-3000} ---"
 exec npx next start -p "${PORT:-3000}"

@@ -1,6 +1,7 @@
 import { PrismaClient, StatusProcesso, StatusVsReferencia } from "@prisma/client";
 import bcrypt from "bcryptjs";
 import rawData from "../seed/equipamentos.json";
+import rawLinks from "../seed/drive_links.json";
 
 const prisma = new PrismaClient();
 
@@ -24,6 +25,11 @@ const data = rawData as {
     contratacao?: { fornecedor?: string; valor?: number | null } | null;
   }[];
 };
+
+const driveLinksMap = new Map<string, string>(
+  (rawLinks as { drive_links: { equipamento: string; url: string }[] })
+    .drive_links.map((d) => [d.equipamento, d.url])
+);
 
 function toVsRef(val: string | null | undefined): StatusVsReferencia | null {
   if (!val) return null;
@@ -84,6 +90,8 @@ async function main() {
       : null;
     const siafisico = siafisicoRaw ? parseInt(siafisicoRaw, 10) || null : null;
 
+    const especificacaoUrl = driveLinksMap.get(item.equipamento) ?? null;
+
     const created = await prisma.item.upsert({
       where: { numero },
       create: {
@@ -91,6 +99,7 @@ async function main() {
         equipamento: item.equipamento,
         descritivoRenem: item.descritivo_renem ?? null,
         especificacao: item.especificacao ?? null,
+        especificacaoUrl,
         numeroSiafisico: siafisico,
         valorReferenciaFns: item.valor_referencia_fns ?? null,
         presencaEmAta: item.presenca_em_ata === "SIM",
@@ -101,7 +110,7 @@ async function main() {
         faseUnicaValorTotal: item.fase_unica_valor_total ?? null,
         statusProcesso: toStatus(item.status_processo),
       },
-      update: {},
+      update: { especificacaoUrl },
     });
 
     // Orcamentos

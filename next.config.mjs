@@ -4,6 +4,8 @@ const nextConfig = {
     serverComponentsExternalPackages: ["@prisma/client", "bcryptjs"],
     serverActions: {
       allowedOrigins: ["*"],
+      // Allow uploads up to 20 MB
+      bodySizeLimit: "21mb",
     },
   },
   images: {

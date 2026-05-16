@@ -1,0 +1,684 @@
+{
+  "drive_links": [
+    {
+      "equipamento": "Aparelho de radiodiagnóstico 630 mA com DR",
+      "url": "https://drive.google.com/file/d/1wRdSltcbdhbiyLUIDWi2BhORrLBveQ3y/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Aparelho de radiodiagnóstico móvel 100 mAs",
+      "url": "https://drive.google.com/file/d/1JkY2k6C0O0TvVQmdMaSca0F828xxQDD5/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Arco Cirúrgico (C-Arm) - com aplicações vascular/neurologia/ortopedia",
+      "url": "https://drive.google.com/file/d/14IeFMnjZj_tstO7qrmBBn4PSt_BTOdsu/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Aspirador Cirúrgico",
+      "url": "https://drive.google.com/file/d/1dJzZCmwojIkYnp1YbQ8ikVonC4NERFHj/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Auto refrator e ceratômetro automático",
+      "url": "https://drive.google.com/file/d/1hExruwaa-AeJuAO1fYLogW9fW47Z3cqj/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Autoclave  (se descartar placas de cultura no laboratório)",
+      "url": "https://drive.google.com/file/d/1Y109jNvcUnCXT9M4sw5QCX0lt3nSyvUT/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Bafão - aquecedor",
+      "url": "https://drive.google.com/file/d/112D3fk0ajv46v2uxXBK_xXCgUS8JqVm5/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Balança Antropométrica Adulto",
+      "url": "https://drive.google.com/file/d/1gKuVP3HyjYWRdy97CN1swF5iksj8H6Jn/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Balança antropométrica infantil",
+      "url": "https://drive.google.com/file/d/1_1rld-F2IKJcUXDlukG8h2rLQilFN2oT/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Balança Antropométrica para Obesos",
+      "url": "https://drive.google.com/file/d/1S_ydM3kZWjLop-9ISMKH-wwRbE-JR5x-/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Balança Digital Portátil",
+      "url": "https://drive.google.com/file/d/1GLNVIeKnbjcicsrKCDxdimcvZDUBuj90/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Balde a chute com suporte de rodízios",
+      "url": "https://drive.google.com/file/d/1fbMhyGg-EpjQwoMaYjByPDXyQ-SDH3Jm/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Balde a Pedal",
+      "url": "https://drive.google.com/file/d/1DipA9XiDn4Z1OYxG3fvLRQdW3e_zPJlF/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Banho maria",
+      "url": "https://drive.google.com/file/d/119fYcLNQ4MNp_REHb5bw7Vl5fWVzpuSn/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Banqueta giratória em inox",
+      "url": "https://drive.google.com/file/d/1iSfOfOJ9gMnt09poyhNq-4Ck-nn-pRgZ/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Bebedouro/ Purificador Refrigerado",
+      "url": "https://drive.google.com/file/d/1gwB5oHHc1i9vNm5McZbxJpfEicYwYEAm/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Berço Aquecido",
+      "url": "https://drive.google.com/file/d/12EUZNN0lAAsDUBYz5oUrJseokiHofXMh/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Berço/Cama Infantil",
+      "url": "https://drive.google.com/file/d/1QzvElhRyzHewJMnP8NhET-fYiO_1qqBl/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Biombo 3 faces",
+      "url": "https://drive.google.com/file/d/1T3lCsxc1aC8zWH_lGc1ajb5uux2nCbqF/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Biômetro de coerência óptica",
+      "url": "https://drive.google.com/file/d/1YzNcWJdXsAe4iWExyq_pYtRkc3ltLqlN/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Bisturi Elétrico",
+      "url": "https://drive.google.com/file/d/10TYcYF0FHDUS67eRLYkgn46idlpocDC1/view?usp=drive_link"
+    },
+    {
+      "equipamento": "BPAP",
+      "url": "https://drive.google.com/file/d/1kj_RaPqdEOsyHzLgdnyMguWZhprdNevy/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Braçadeira para Injeção",
+      "url": "https://drive.google.com/file/d/1MSBAnsFOBnN6Olh_i8wq4UKQUEDdA6YP/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Cadeira de Banho/Higiênica",
+      "url": "https://drive.google.com/file/d/1cpx0907LCzUsudCkhYp03R66RXh9cnIE/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Cadeira de Rodas Adulto",
+      "url": "https://drive.google.com/file/d/1Go-ZOaKaNfP4oYJyYAMrRcyjryFnNoQ5/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Cadeira de Rodas Adulto para Obeso",
+      "url": "https://drive.google.com/file/d/12KOwQy5_VIsCSW9avNTPezuTR_Igb8l1/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Cadeira de Rodas Pediatrica",
+      "url": "https://drive.google.com/file/d/1zLRrj2Vh5Zd5CPwLzKk_mjnjIG_Az2Qp/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Cadeira estofada fixa",
+      "url": "https://drive.google.com/file/d/1_YOy0RAil86srAAv0EtBePbeE_bmbuOw/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Cadeira estofada giratória com 2 braços",
+      "url": "https://drive.google.com/file/d/1_YOy0RAil86srAAv0EtBePbeE_bmbuOw/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Cadeira fixa sem estofamento",
+      "url": "https://drive.google.com/file/d/1_YOy0RAil86srAAv0EtBePbeE_bmbuOw/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Cadeira Oftalmológica",
+      "url": "https://drive.google.com/file/d/1wHdTv9hMJ6E4ASwxoLbSbu4BsRyMmXej/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Cadeira Otorrinolaringológica",
+      "url": "https://drive.google.com/file/d/1-3sv6gEhCrR8gMaiLJdHtURpZ418VF15/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Cadeira para Coleta de Sangue",
+      "url": "https://drive.google.com/file/d/18rSzSlc9b8h5Y5WduXRvOUVtluJSkgSg/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Cama Hospitalar Elétrica Tipo Fawler",
+      "url": "https://drive.google.com/file/d/1lQpCncWCy375REIdf_bMA9JeOZcKWhHP/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Câmera CFTV",
+      "url": "https://drive.google.com/file/d/1U9FaqaRsvnQhIUwX1tgD1gVGfQFwt87G/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Campímetro computadorizado",
+      "url": "https://drive.google.com/file/d/1ZC2dckTsUQlppFdMOY6DnKzydhR1UQ7f/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Capela de fluxo laminar",
+      "url": "https://drive.google.com/file/d/1X5CazA5Pl2KEofakscmYTBwPWMLBeJj5/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Carrinho de Anestesia adulto ou pediátrico",
+      "url": "https://drive.google.com/file/d/1ksDyprARTLK5AzJjPMgEP2YMsQ_WmtFI/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Carrinho de Emergência (Crash Cart)",
+      "url": "https://drive.google.com/file/d/1oVdLXHIbJKZazi0aZCzrYBiM-xklCUgx/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Carrinho de Limpeza",
+      "url": "https://drive.google.com/file/d/1AjFTEabYNEO_45X5PihShQpzd4uc09G6/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Carrinho de Transporte",
+      "url": "https://drive.google.com/file/d/1xXwbLkIXaHNFz8gT3lE3UlvNC18KzpJf/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Carro de Curativos",
+      "url": "https://drive.google.com/file/d/1dKQ2zBKPpNAWBS07GnLt3q7Dk24szPOm/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Carro de Distribuição de Medicamentos",
+      "url": "https://drive.google.com/file/d/1xXwbLkIXaHNFz8gT3lE3UlvNC18KzpJf/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Carro maca com amortecedor",
+      "url": "https://drive.google.com/file/d/1w3Yi4eys2_Looped_2RoY4iFn38KZClS/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Carro maca com elevação",
+      "url": "https://drive.google.com/file/d/14QdnkNX0ErSZHV-mFavl7N9MHsPx9Lwe/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Carro para transporte de materiais",
+      "url": "https://drive.google.com/file/d/1xXwbLkIXaHNFz8gT3lE3UlvNC18KzpJf/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Central de monitoração para UTI / Recuperações",
+      "url": "https://drive.google.com/file/d/1g0XuAF2rol1-fsz_JhxikBb73vPMNbSM/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Centrífuga de mesa para citologia",
+      "url": "https://drive.google.com/file/d/1T5BbdZ2ufnN70KCloB2sFklv4g9lyGJF/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Centrífuga de mesa uso geral 24 tubos",
+      "url": "https://drive.google.com/file/d/1lNNfnJ5SJMzXAsMzUny_ENRT3fnA8tYR/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Colposcópio",
+      "url": "https://drive.google.com/file/d/1VB8pXXSHZSws-Rh9uGH-GXbcL2P8dqCW/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Coluna oftalmológica",
+      "url": "https://drive.google.com/file/d/1J-pMqhCTP3YzbcPz1IRVT2sX-kFigjUP/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Computador de Mão (PDA)",
+      "url": "https://drive.google.com/file/d/1LjMVXTGWOSUFscUsxd2Ct9mnqdURRPLj/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Contador de células",
+      "url": "https://drive.google.com/file/d/1fRGrXOQM0m1EfaNg7eXrldZk2wl6p22R/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Container para Resíduos Comuns",
+      "url": "https://drive.google.com/file/d/1U5dazmtugw2azXEUJHQFopR4ctFz80jt/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Container para Resíduos Infectantes",
+      "url": "https://drive.google.com/file/d/1U5dazmtugw2azXEUJHQFopR4ctFz80jt/view?usp=drive_link"
+    },
+    {
+      "equipamento": "CPAP",
+      "url": "https://drive.google.com/file/d/1YKDpD5CX_CMg03RNGJv8uSxkRtVEPbUX/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Dermatoscópio",
+      "url": "https://drive.google.com/file/d/18jkTSLCW0Kqfk2V6MkAvINaci7gfYMDl/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Desfibrilador Externo Automático",
+      "url": "https://drive.google.com/file/d/1BYCZ4xu-CeWa7kAkqmZlgGhmmVBEUyWp/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Desfibrilador/monitor bifásico com marca-passo",
+      "url": "https://drive.google.com/file/d/1abVQVAe9pbroS5dUX3r-CfrmcJOdbNGW/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Detector fetal",
+      "url": "https://drive.google.com/file/d/1dJ9jCI6uCRVivUtnA21VtJpG_AhqclTo/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Eletrocardiógrafo 12 derivações",
+      "url": "https://drive.google.com/file/d/1todCZGop73aNc2HUN_6Cc-bV3pQPcfaz/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Escada com 2 degraus",
+      "url": "https://drive.google.com/file/d/1sSA-youSCqcoABgvWLPGh0y_HCu16ABB/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Estação de trabalho",
+      "url": "https://drive.google.com/file/d/1YH-4yud5TD56CtE-tCyqoMo0exuRa8Fx/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Estadiômetro",
+      "url": "https://drive.google.com/file/d/12NsVhtztv-YSN5dO3FGeRLdJYT9wmt3n/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Estante de Aço",
+      "url": "https://drive.google.com/file/d/1t9eLh89Lmt3Qe62Zixbgjab-nNcs6omM/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Estetoscópio",
+      "url": "https://drive.google.com/file/d/1uvCcrVwW_BdfOyrqjFpKP9S5QKh58y65/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Estufa bacteriológica",
+      "url": "https://drive.google.com/file/d/1YO2-PYXQnQyqmS96GzDzLxmmgXWlgMEk/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Facoemulsificador com sistema ultrassônico",
+      "url": "https://drive.google.com/file/d/1GSRItUlsMOtibDUfwGdpq_mlRxZnWEKr/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Foco cirúrgico móvel LED 50.000 lux com bateria",
+      "url": "https://drive.google.com/file/d/1DyGuDSv7ura2MLh9ZO9ILE96hHu5eYpy/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Foco refletor ambulatorial",
+      "url": "https://drive.google.com/file/d/1bhpsfRs4NZZ3HXwUHBu8ySn25euiPs4k/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Freezer Laboratorial",
+      "url": "https://drive.google.com/file/d/1P34hESxyoET6aXC0fj0pKBazDHnHzYGj/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Gravador de Holter",
+      "url": "https://drive.google.com/file/d/1HILwQZRj8YiqCp1sA2G_YQYybM8WYZUv/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Homogeneizador de tubos",
+      "url": "https://drive.google.com/file/d/13oYhu8PeUN-Aw9nPZ3p979QMfVOyMSIN/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Impedanciômetro automático",
+      "url": "https://drive.google.com/file/d/1rMpehgsB2JST8Q-8bfAcEPTCmK17uWq2/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Impressora de Código de Barras",
+      "url": "https://drive.google.com/file/d/16ZtJrublivnkn8jyp_RNnmaIWQOnVsdB/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Lâmpada de fenda",
+      "url": "https://drive.google.com/file/d/1uuBaFXeZumu-9PqsotX3FEJi_v8E4yAk/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Laser oftalmológico endolaser",
+      "url": "https://drive.google.com/file/d/10P5agJ6YtbRAD_lyFgBajNu9VqzdJ55w/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Lavadora ultrassônica 15 L",
+      "url": "https://drive.google.com/file/d/1izk7sUiNWhP_m0hKmozFbZM7Z8CReRUT/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Leitor de Código de Barras (Pistola)",
+      "url": "https://drive.google.com/file/d/1N-Qv60oHQxdG6WzZEzdbbKISMgCw7YwW/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Longarina de 2 lugares",
+      "url": "https://drive.google.com/file/d/1guzoKsOfbECRXckDGm9YWQxcPKaIUHzr/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Longarina de 3 lugares",
+      "url": "https://drive.google.com/file/d/1guzoKsOfbECRXckDGm9YWQxcPKaIUHzr/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Maca de Exame",
+      "url": "https://drive.google.com/file/d/1aY4tIG5fg0LUjNCHtp15T7I8ADB8pA9_/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Máquina de hemodiálise",
+      "url": "https://drive.google.com/file/d/1aY4tIG5fg0LUjNCHtp15T7I8ADB8pA9_/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Marcapasso cardíaco externo",
+      "url": "https://drive.google.com/file/d/1T1EDzQfgkXuHdslfEi7p_ImPO4eaAliT/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Medidor de cuff",
+      "url": "https://drive.google.com/file/d/1IXDQ97RCElk7ETqUmrWUDjMO8l8xcMv1/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Mesa Auxiliar (cirurgia)",
+      "url": "https://drive.google.com/file/d/1dqloC3Df7ZwhKdknZZ6rjMA8UP84SEQv/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Mesa auxiliar com rodízios e prateleira 45x110x80 cm",
+      "url": "https://drive.google.com/file/d/1dqloC3Df7ZwhKdknZZ6rjMA8UP84SEQv/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Mesa Cirúrgica Elétrica - ALTA COMPLEXIDADE",
+      "url": "https://drive.google.com/file/d/1lxxHYy_b5yPDKs4vTTJVxCr78-bCZKVW/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Mesa de cabeceira",
+      "url": "https://drive.google.com/file/d/1huiMXD_7n4dKSKmh3hfxAi2A42UNNJVk/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Mesa de Mayo",
+      "url": "https://drive.google.com/file/d/1kHGsD_rPpizKX8vXyWA22N3BdXtqFiHK/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Mesa de reunião",
+      "url": "https://drive.google.com/file/d/1BW1Y53LJMeXiA9rOtgXUjQ2HB77UIwEc/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Mesa para Consultório",
+      "url": "https://drive.google.com/file/d/1DNzv-QsMMsrYinhHcI60kxfdMujwMSex/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Mesa para exame ginecológico com gabinete",
+      "url": "https://drive.google.com/file/d/1jk-vhEboay_8t66fAo4AhQpUpRmck6oX/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Mesa para Impressora",
+      "url": "https://drive.google.com/file/d/1_EwqmUGttvrmYgr5DzjqIkdBnHJ2TkXX/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Mesa para Refeição no Leito",
+      "url": "https://drive.google.com/file/d/1lRE_AAjIx5SkYmVF5KyZ3jLj43tZETNF/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Mesa para refeitório",
+      "url": "https://drive.google.com/file/d/19kjsIMqcRWI6Z0b9o2aBDUaCbu-sRD-s/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Micro-ondas",
+      "url": "https://drive.google.com/file/d/1onJ3pEcl3MAvh_KJzrDpiqnxYGtYAwki/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Microcomputador Estação de Laudo",
+      "url": "https://drive.google.com/file/d/1_vLHPynJJ6VKgU2e6DioPyuaey_EncVX/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Microcomputador Estação de Trabalho",
+      "url": "https://drive.google.com/file/d/15otJm-5C9K7NsFYZ0p6IE6Z1WPnyDKkj/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Microscópio binocular 4 objetivas contraste de fase",
+      "url": "https://drive.google.com/file/d/1UdHGcDh6Xm78c4cqeQ9nuLB4PH_3z9tR/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Microscópio binocular 5 objetivas planacromáticas",
+      "url": "https://drive.google.com/file/d/1UdHGcDh6Xm78c4cqeQ9nuLB4PH_3z9tR/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Microscópio cirúrgico para oftalmologia - ficara no bloco cirurgico ambulatorial",
+      "url": "https://drive.google.com/file/d/1arMpXHE67A3TpOmIvmBQPdTfFsQp8GH0/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Microscópio especular de córnea",
+      "url": "https://drive.google.com/file/d/1ewmcUiUl5dr1BsqM-u7vtaVm3qI5cmH3/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Mini PCs TVs Painéis de chamada",
+      "url": "https://drive.google.com/file/d/15otJm-5C9K7NsFYZ0p6IE6Z1WPnyDKkj/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Monitor de pressão arterial, gravador",
+      "url": "https://drive.google.com/file/d/1nWEseaKHJlXpOZH23T6uaFkqBuNnw8-1/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Monitor Desfibrilador",
+      "url": "https://drive.google.com/file/d/1tJNFJ1KVcg_yn_g-7QHu7ATL4O_2vEhO/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Monitor multiparamétrico com ETCO2 e PI",
+      "url": "https://drive.google.com/file/d/1AabukaFjBfnKObqxVK7ftKTKCP6sCz3T/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Monitor multiparamétrico com ETCO2, PI e DC",
+      "url": "https://drive.google.com/file/d/1AabukaFjBfnKObqxVK7ftKTKCP6sCz3T/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Monitor para imagens radiológicas",
+      "url": "https://drive.google.com/file/d/1nT8q_TxeMjL8lHCXcvmsdyoxonnet2Ii/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Monitores Segunda Tela/Backup",
+      "url": "https://drive.google.com/file/d/1WiJqf8_MHLzFmyvCT2K9nG_cR8Yu3pEA/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Negatoscópio",
+      "url": "https://drive.google.com/file/d/1iJ0x3fwHSERLqZidzwa0JeM-KE-d2iOG/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Nobreak (UPS) 6 kVA",
+      "url": "https://drive.google.com/file/d/1o4RK7aLLA8zGf07_DU6dz-a50_5qI35d/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Notebook - i7",
+      "url": "https://drive.google.com/file/d/1SjJS1mn2QVeUAQ8kTJKTA1C2KrnsSNpz/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Oftalmoscópio binocular indireto",
+      "url": "https://drive.google.com/file/d/1zVFyNBY2lA5L3K2O31Ne2eCRuy8yocC7/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Oftalmoscópio direto",
+      "url": "https://drive.google.com/file/d/1zVFyNBY2lA5L3K2O31Ne2eCRuy8yocC7/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Otoscópio de sistema aberto",
+      "url": "https://drive.google.com/file/d/1FEREV2xCdQTK4ybeMbB48Ij-ckl0HTnD/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Oxímetro de Pulso Portátil",
+      "url": "https://drive.google.com/file/d/1zcNspk2dTVeu0WZqC1J7rJZMeQRzuH3Y/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Poltrona de Recepção",
+      "url": "https://drive.google.com/file/d/1lAVijZn9veTSxw9u1E_FNVm0TqskoyNC/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Poltrona Hospitalar",
+      "url": "https://drive.google.com/file/d/1TB0D7QnSUaUTqjs7F9t_7BsVuh49_beB/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Projetor de Alta Luminosidade",
+      "url": "https://drive.google.com/file/d/11Gtezy2RHxoNanfevdcdtGgjG0b_RMI0/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Projetor de optótipos",
+      "url": "https://drive.google.com/file/d/1iO3rXG2jsrezCevwJDPpD_oBCNy_OwQJ/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Purificador de água",
+      "url": "https://drive.google.com/file/d/1btEnXVxSKi0DZ3A_zesM3Du-MzzihgAE/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Rack para Equipamentos",
+      "url": "https://drive.google.com/file/d/1WmUB6_sGgAJLiItZ2Bt7bwZx-1MTCsml/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Refrigerador 380 litros para copa",
+      "url": "https://drive.google.com/file/d/12352farxgvfS3v_RiQL5lgmoPXIZukK4/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Refrigerador com porta de vidro 500 L",
+      "url": "https://drive.google.com/file/d/1s5lGKTV0u6CgtHPGMpPHf8_pfWfFa6zZ/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Refrigerador para medicamentos 2-8°C com monitoramento",
+      "url": "https://drive.google.com/file/d/1skVgsDVSQhxFxSGQHCWKK_aey9QFgam8/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Refrigerador vertical para banco de sangue 340 bolsas",
+      "url": "https://drive.google.com/file/d/14V9THgxdOe7fKnnTnkm9m2CIawzcVjSV/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Relógios de ponto facial",
+      "url": "https://drive.google.com/file/d/1phdxonFCBXgCOHWtKbdK0SMuCMXVKNI2/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Reprocessadora de endoscópio",
+      "url": "https://drive.google.com/file/d/1pSHgNw6n4I_9GNZgyxGNJoexUCs3grAQ/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Retinoscópio",
+      "url": "https://drive.google.com/file/d/1K_DI2fGCVpFZ1bDOLSYqmeb9kiBL0Xub/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Secadora de traqueias",
+      "url": "https://drive.google.com/file/d/1tiMiPYooAmaTrrWfL7HRHnQ47aSFnX1J/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Seladora para CME",
+      "url": "https://drive.google.com/file/d/1F6ZccuAHmIuMu-V2Ds7e00m9xbnnhna-/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Servidor DICOM Router (PACS)",
+      "url": "https://drive.google.com/file/d/1EJ1-8MgUC7OMQO7GRT9cjUqocdGzFeB8/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Servidores de Aplicações/Oracle",
+      "url": "https://drive.google.com/file/d/1EJ1-8MgUC7OMQO7GRT9cjUqocdGzFeB8/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Servidores de Sistemas Locais",
+      "url": "https://drive.google.com/file/d/1EJ1-8MgUC7OMQO7GRT9cjUqocdGzFeB8/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Sistema de análise para Holter",
+      "url": "https://drive.google.com/file/d/14Lefg_nn93BYhXgK8KXD8RodDrZTXUOu/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Sistema de higienização de pacientes",
+      "url": "https://drive.google.com/file/d/1wk2EUzcDEODkQ3dete6OQ32bY_zWGIa6/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Sistema de monitorização ambulatorial de pressão arterial",
+      "url": "https://drive.google.com/file/d/1sg3oWKT7vWfsMlKkLswM5FBHH6MWYY7u/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Sistema de osmose reversa",
+      "url": "https://drive.google.com/file/d/1eZb4IppoUxYv7eSTSm8DADq9AUFdaf0L/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Sistema para teste ergométrico cardíaco com esteira",
+      "url": "https://drive.google.com/file/d/1nBrZ0EDN2JEkNA8fM4-DKwY8uBSL3IVU/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Smart TV 43”",
+      "url": "https://drive.google.com/file/d/1NrhM9-xl5ilnQFdAe0pgk-QTgTLj9dQc/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Smart TV 55”",
+      "url": "https://drive.google.com/file/d/1NrhM9-xl5ilnQFdAe0pgk-QTgTLj9dQc/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Sofá em Vinil Hospitalar",
+      "url": "https://drive.google.com/file/d/1xNkgGE3k8Vv6arcZb5Wcrz0amUelorQN/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Suporte de hamper",
+      "url": "https://drive.google.com/file/d/10od4GT358Mmp2tusQtcdghuomtK5p6nq/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Suporte de Soro",
+      "url": "https://drive.google.com/file/d/1FjggYZtPoYa1eC4JHjxyVKkjLumvrxYW/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Switch borda",
+      "url": "https://drive.google.com/file/d/1Xtb-MpR9KbhR1RZesPQslIhNM_NKZcmU/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Switch borda com PoE",
+      "url": "https://drive.google.com/file/d/1Xtb-MpR9KbhR1RZesPQslIhNM_NKZcmU/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Switch Core",
+      "url": "https://drive.google.com/file/d/14RMJDaoTPFXp5i6kXVglTMgdG7IulTwU/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Switch de Acesso",
+      "url": "https://drive.google.com/file/d/1vFIj2N6LkS_dtkvfFzzSfwXASgTU2Ku7/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Tablet",
+      "url": "https://drive.google.com/file/d/1U8Y25msQvSGCYM5cSt4E5_N3QOVw_6Sp/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Tela Elétrica de Projeção",
+      "url": "https://drive.google.com/file/d/1kGcaimG8tHHiUCOdsjppsYT-4pKBjOOP/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Tomografia de Coerencia Óptica",
+      "url": "https://drive.google.com/file/d/1rPw1hKbvlXM0l-NpmWRMBWqQ5Yhjg1Ld/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Tomografo computadorizado helicoidal 64 cortes",
+      "url": "https://drive.google.com/file/d/1WqY4UItUDljkRHtkemvh9TUNH_fK9Jex/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Tonômetro de aplanação portátil",
+      "url": "https://drive.google.com/file/d/1zzLA4uN3c42hBIy9w-9FL8gfExk8yTBF/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Topógrafo de córnea",
+      "url": "https://drive.google.com/file/d/1E_0ZsE7rtapvuFEDGyU1GCEH59QxhWkt/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Torre de Endoscopia",
+      "url": "https://drive.google.com/file/d/1oMhvr3wWVitkKiTLj8XvRtpBA7Ue-Vui/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Transiluminador cutâneo",
+      "url": "https://drive.google.com/file/d/1iI2JBtglRgc5dZMdNGH0DK7MBQDKjUEL/view?usp=drive_link"
+    },
+    {
+      "equipamento": "TVs para Painéis de Chamada/Kamban",
+      "url": "https://drive.google.com/file/d/1NrhM9-xl5ilnQFdAe0pgk-QTgTLj9dQc/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Ultrassom com Doppler colorido (uso geral)",
+      "url": "https://drive.google.com/file/d/1ZlnXTQogJl9rCdY3Rlwr4WFWa4U73blI/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Ultrassom diagnóstico transesofágico",
+      "url": "https://drive.google.com/file/d/1b9qavXs6eswXOCqRqHN4I49zLCQhI-ZI/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Ultrassom Multiespecialidades",
+      "url": "https://drive.google.com/file/d/1ZlnXTQogJl9rCdY3Rlwr4WFWa4U73blI/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Ultrassom oftalmológico modo A e B",
+      "url": "https://drive.google.com/file/d/13a6YnsnONp7_D-1TdHh96UUpjwYJ7A-I/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Ventilador Manual (Ambu)",
+      "url": "https://drive.google.com/file/d/1Yf3MU-CxL625viDLBAA11YqJDjyNdpwq/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Ventilador pulmonar neonatal a obesidade mórbida",
+      "url": "https://drive.google.com/file/d/1fPuP4B80rJGCbd_pbUouJdJtlxFJfcmS/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Videobroncoscópio",
+      "url": "https://drive.google.com/file/d/13aleVD6ZzDwNukw_d-FlQWVnT3xJd-kd/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Videocolonoscópio",
+      "url": "https://drive.google.com/file/d/13aleVD6ZzDwNukw_d-FlQWVnT3xJd-kd/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Videogastroscópio",
+      "url": "https://drive.google.com/file/d/13aleVD6ZzDwNukw_d-FlQWVnT3xJd-kd/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Vitreófago posterior",
+      "url": "https://drive.google.com/file/d/1kdPJGb-4DtPqbvisfagV-AR16Due_hM6/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Vortex",
+      "url": "https://drive.google.com/file/d/1JSBPSuxhWo9RPWrFhARrCby14qcXUCz5/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Workstation de Alta Performance",
+      "url": "https://drive.google.com/file/d/1_vLHPynJJ6VKgU2e6DioPyuaey_EncVX/view?usp=drive_link"
+    }
+  ]
+}

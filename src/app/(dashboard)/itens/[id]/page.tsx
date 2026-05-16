@@ -99,9 +99,16 @@ export default async function ItemDetailPage({ params }: { params: { id: string 
               )}
             </div>
             <div style={{ display: "flex", gap: 6, alignItems: "center" }}>
-              <button className="btn">
-                <Icons.Clip style={{ width: 12, height: 12 }} /> Anexar
-              </button>
+              {item.especificacaoUrl && (
+                <a
+                  href={item.especificacaoUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="btn ghost sm"
+                >
+                  <Icons.Doc style={{ width: 12, height: 12 }} /> Especificação técnica
+                </a>
+              )}
               <button className="btn primary">
                 <Icons.Check style={{ width: 12, height: 12 }} /> Marcar concluído
               </button>
@@ -118,6 +125,7 @@ export default async function ItemDetailPage({ params }: { params: { id: string 
             id: item.id,
             equipamento: item.equipamento,
             especificacao: item.especificacao,
+            especificacaoUrl: item.especificacaoUrl,
             valorReferenciaFns: valorRef,
             faseUnicaQtd: qtd,
             presencaEmAta: item.presencaEmAta,
