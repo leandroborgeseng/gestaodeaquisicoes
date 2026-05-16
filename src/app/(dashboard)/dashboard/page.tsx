@@ -1,0 +1,341 @@
+import { prisma } from "@/lib/prisma";
+import { auth } from "@/lib/auth";
+import { Topbar } from "@/components/Topbar";
+import { StatusPill } from "@/components/StatusPill";
+import { fmtBRL, fmtNum } from "@/lib/utils";
+import { Icons } from "@/components/Icons";
+import { DashboardCharts } from "./DashboardCharts";
+
+export const dynamic = "force-dynamic";
+
+async function getDashboardData() {
+  const [totalItems, byStatus, recentLogs] = await Promise.all([
+    prisma.item.count(),
+    prisma.item.groupBy({ by: ["statusProcesso"], _count: { id: true } }),
+    prisma.log.findMany({
+      take: 8,
+      orderBy: { createdAt: "desc" },
+      include: { item: { select: { numero: true, equipamento: true } }, autor: { select: { name: true } } },
+    }),
+  ]);
+
+  const totalValue = await prisma.item.aggregate({ _sum: { faseUnicaValorTotal: true } });
+  const contratados = byStatus.find((s) => s.statusProcesso === "CONTRATADO")?._count?.id ?? 0;
+  const contratadosTotal = byStatus
+    .filter((s) => ["CONTRATADO", "ENTREGA_PARCIAL", "ENTREGUE", "NF_RECEBIDA", "EM_TESTE", "CONCLUIDO"].includes(s.statusProcesso))
+    .reduce((a, b) => a + b._count.id, 0);
+
+  const acimaValor = await prisma.item.count({ where: { statusVsReferenciaFns: "ACIMA_DO_VALOR" } });
+  const atrasados = await prisma.entrega.count({
+    where: { dataPrevisao: { lt: new Date() }, dataEntrega: null },
+  });
+
+  return {
+    totalItems,
+    byStatus,
+    totalValue: Number(totalValue._sum.faseUnicaValorTotal ?? 0),
+    contratadosTotal,
+    acimaValor,
+    atrasados,
+    recentLogs,
+  };
+}
+
+const ACTIVITY_COLORS: Record<string, string> = {
+  STATUS_ALTERADO: "var(--accent)",
+  NF_REGISTRADA: "oklch(0.58 0.11 130)",
+  ENTREGA_REGISTRADA: "oklch(0.58 0.12 95)",
+  TESTE_REGISTRADO: "var(--ok)",
+  CONTRATO_REGISTRADO: "oklch(0.50 0.10 240)",
+  COTACAO_REGISTRADA: "oklch(0.62 0.08 250)",
+};
+
+const STATUS_ORDER = [
+  "PENDENTE", "COTACAO_EM_ANDAMENTO", "COTACAO_CONCLUIDA", "CONTRATADO",
+  "ENTREGA_PARCIAL", "ENTREGUE", "NF_RECEBIDA", "EM_TESTE", "CONCLUIDO", "CANCELADO",
+];
+
+const STATUS_LABELS_SHORT: Record<string, string> = {
+  PENDENTE: "Pendente",
+  COTACAO_EM_ANDAMENTO: "Cotação inic.",
+  COTACAO_CONCLUIDA: "Cotação concl.",
+  CONTRATADO: "Contratado",
+  ENTREGA_PARCIAL: "Entrega parcial",
+  ENTREGUE: "Entregue",
+  NF_RECEBIDA: "NF recebida",
+  EM_TESTE: "Em teste",
+  CONCLUIDO: "Concluído",
+  CANCELADO: "Cancelado",
+};
+
+export default async function DashboardPage() {
+  const session = await auth();
+  const data = await getDashboardData();
+
+  const dist = STATUS_ORDER.map((s) => ({
+    status: s,
+    label: STATUS_LABELS_SHORT[s] ?? s,
+    qtd: data.byStatus.find((b) => b.statusProcesso === s)?._count?.id ?? 0,
+  })).filter((d) => d.qtd > 0);
+
+  const alertas = [
+    ...(data.atrasados > 0 ? [{ titulo: "Entregas atrasadas", motivo: `${data.atrasados} entregas com prazo vencido`, severidade: "alta" as const }] : []),
+    ...(data.acimaValor > 0 ? [{ titulo: "Itens acima do valor FNS", motivo: `${data.acimaValor} itens sem justificativa`, severidade: "alta" as const }] : []),
+  ];
+
+  return (
+    <>
+      <Topbar crumbs={["3Colinas", "Dashboard"]}>
+        <button className="btn ghost sm">
+          <Icons.Download style={{ width: 12, height: 12 }} /> Exportar
+        </button>
+        <button className="btn sm">
+          <span style={{ display: "inline-block", width: 6, height: 6, borderRadius: "50%", background: "var(--ok)" }} />
+          Abr–Mai 2026
+          <Icons.ChevDown style={{ width: 12, height: 12 }} />
+        </button>
+      </Topbar>
+
+      <div className="content">
+        <div className="content-inner">
+          <div className="page-head">
+            <div>
+              <h1>Visão geral da Fase Única</h1>
+              <p>
+                {fmtNum(data.totalItems)} itens em gestão · valor de referência FNS {fmtBRL(data.totalValue)} · entrega prevista até{" "}
+                <span className="mono">25/jul/2026</span>
+              </p>
+            </div>
+            <div className="actions">
+              <button className="btn primary">
+                <Icons.Spark style={{ width: 12, height: 12 }} /> Nova rodada de cotação
+              </button>
+            </div>
+          </div>
+
+          {/* KPI Row */}
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 12, marginBottom: 18 }}>
+            <div className="kpi">
+              <div className="label">
+                Itens contratados{" "}
+                <span className="pill-soft">{Math.round((data.contratadosTotal / data.totalItems) * 100)}%</span>
+              </div>
+              <div className="value">
+                {fmtNum(data.contratadosTotal)} <small>/ {fmtNum(data.totalItems)}</small>
+              </div>
+              <div className="meta">
+                <span>Fases iniciadas ou concluídas</span>
+              </div>
+            </div>
+            <div className="kpi">
+              <div className="label">Valor contratado</div>
+              <div className="value">R$ 18,42<small>M</small></div>
+              <div className="meta">
+                <span className="delta-pos">−5,1%</span>
+                <span className="muted">vs referência FNS</span>
+              </div>
+            </div>
+            <div className="kpi">
+              <div className="label">Economia acumulada</div>
+              <div className="value">R$ 1,28<small>M</small></div>
+              <div className="meta">
+                <span className="muted">122 itens abaixo da referência</span>
+              </div>
+            </div>
+            <div className="kpi" style={{ borderColor: (data.atrasados + data.acimaValor) > 0 ? "oklch(0.86 0.08 25)" : undefined }}>
+              <div className="label">
+                <span style={{
+                  display: "inline-flex", width: 14, height: 14, borderRadius: 3,
+                  background: "var(--danger-soft)", color: "var(--danger)",
+                  placeItems: "center",
+                }}>
+                  <Icons.Alert style={{ width: 9, height: 9 }} />
+                </span>
+                Atenção necessária
+              </div>
+              <div className="value">{data.atrasados + data.acimaValor}</div>
+              <div className="meta">
+                <span className="danger-text">{data.atrasados} entregas atrasadas</span>
+                <span className="muted">· {data.acimaValor} acima do valor</span>
+              </div>
+            </div>
+          </div>
+
+          {/* Row 2: distribution + schedule */}
+          <div style={{ display: "grid", gridTemplateColumns: "minmax(0,360px) 1fr", gap: 12, marginBottom: 18 }}>
+            <div className="card">
+              <div className="card-head">
+                <h3>Distribuição por status</h3>
+                <div className="spacer" />
+                <span className="pill-soft">{data.totalItems} itens</span>
+              </div>
+              <div className="card-body">
+                <DashboardCharts dist={dist} />
+              </div>
+            </div>
+
+            <div className="card">
+              <div className="card-head">
+                <h3>Cronograma de entregas</h3>
+                <span className="sub">próximas 8 semanas</span>
+                <div className="spacer" />
+                <div style={{ display: "flex", gap: 14, fontSize: 11, color: "var(--fg-dim)" }}>
+                  <span style={{ display: "flex", alignItems: "center", gap: 5 }}>
+                    <span style={{ width: 9, height: 9, borderRadius: 2, background: "var(--accent)" }} />Previstas
+                  </span>
+                  <span style={{ display: "flex", alignItems: "center", gap: 5 }}>
+                    <span style={{ width: 9, height: 9, borderRadius: 2, background: "var(--accent-soft)", border: "1px dashed var(--accent-line)" }} />Concluídas
+                  </span>
+                </div>
+              </div>
+              <div className="card-body" style={{ paddingTop: 18 }}>
+                <CronogramaStatic />
+              </div>
+            </div>
+          </div>
+
+          {/* Row 3: activity + alerts */}
+          <div style={{ display: "grid", gridTemplateColumns: "minmax(0,1fr) minmax(0,360px)", gap: 12 }}>
+            <div className="card">
+              <div className="card-head">
+                <h3>Atividade recente</h3>
+                <div className="spacer" />
+                <button className="btn ghost sm">
+                  Ver tudo <Icons.Chevron style={{ width: 12, height: 12 }} />
+                </button>
+              </div>
+              <div>
+                {data.recentLogs.length === 0 ? (
+                  <div style={{ padding: "20px 14px", color: "var(--fg-faint)", fontSize: 12.5 }}>Nenhuma atividade ainda.</div>
+                ) : data.recentLogs.map((log, i) => (
+                  <div key={log.id} style={{
+                    display: "flex", gap: 10, padding: "10px 14px",
+                    borderBottom: i < data.recentLogs.length - 1 ? "1px solid var(--line-soft)" : "0",
+                    alignItems: "flex-start",
+                  }}>
+                    <div style={{
+                      width: 26, height: 26, borderRadius: "50%",
+                      background: "var(--bg-soft)", color: ACTIVITY_COLORS[log.acao] ?? "var(--fg-dim)",
+                      display: "grid", placeItems: "center", flexShrink: 0,
+                    }}>
+                      <Icons.Spark style={{ width: 12, height: 12 }} />
+                    </div>
+                    <div style={{ flex: 1, minWidth: 0 }}>
+                      <div style={{ fontSize: 12.5, lineHeight: 1.4 }}>
+                        <span style={{ fontWeight: 500 }}>{log.autor.name}</span>
+                        <span className="muted"> em </span>
+                        <span className="mono" style={{ fontSize: 11.5 }}>{log.item.numero}</span>
+                        <span className="muted"> — </span>
+                        <span>{log.acao.replace(/_/g, " ").toLowerCase()}</span>
+                      </div>
+                      <div style={{ fontSize: 11, color: "var(--fg-faint)", marginTop: 2 }}>
+                        {new Date(log.createdAt).toLocaleString("pt-BR", { day: "2-digit", month: "2-digit", hour: "2-digit", minute: "2-digit" })}
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            <div className="card">
+              <div className="card-head">
+                <h3>Alertas</h3>
+                <div className="spacer" />
+                <span className="pill-soft warn">{alertas.length} ativos</span>
+              </div>
+              <div style={{ padding: "4px 0" }}>
+                {alertas.length === 0 ? (
+                  <div style={{ padding: "20px 14px", color: "var(--fg-faint)", fontSize: 12.5 }}>Nenhum alerta ativo.</div>
+                ) : alertas.map((a, i) => (
+                  <div key={i} style={{
+                    display: "flex", gap: 10, padding: "10px 14px",
+                    borderBottom: i < alertas.length - 1 ? "1px solid var(--line-soft)" : "0",
+                  }}>
+                    <div style={{
+                      width: 26, height: 26, borderRadius: 5, flexShrink: 0,
+                      background: "var(--danger-soft)", color: "var(--danger)",
+                      display: "grid", placeItems: "center",
+                    }}>
+                      <Icons.Alert style={{ width: 13, height: 13 }} />
+                    </div>
+                    <div style={{ flex: 1, minWidth: 0 }}>
+                      <div style={{ fontSize: 12.5, fontWeight: 500, marginBottom: 2 }}>{a.titulo}</div>
+                      <div style={{ fontSize: 11.5, color: "var(--fg-dim)", lineHeight: 1.4 }}>{a.motivo}</div>
+                    </div>
+                  </div>
+                ))}
+                {/* Static mock alerts */}
+                {[
+                  { item: "EQ-007", titulo: "Foco Cirúrgico LED", motivo: "Acima do valor FNS sem justificativa", severidade: "alta" },
+                  { item: "EQ-002", titulo: "Monitor Multiparamétrico", motivo: "NF registrada há 8 dias sem teste iniciado", severidade: "media" },
+                ].map((a, i) => (
+                  <div key={`mock-${i}`} style={{
+                    display: "flex", gap: 10, padding: "10px 14px",
+                    borderBottom: i < 1 ? "1px solid var(--line-soft)" : "0",
+                  }}>
+                    <div style={{
+                      width: 26, height: 26, borderRadius: 5, flexShrink: 0,
+                      background: a.severidade === "alta" ? "var(--danger-soft)" : "var(--warn-soft)",
+                      color: a.severidade === "alta" ? "var(--danger)" : "var(--warn)",
+                      display: "grid", placeItems: "center",
+                    }}>
+                      <Icons.Alert style={{ width: 13, height: 13 }} />
+                    </div>
+                    <div style={{ flex: 1, minWidth: 0 }}>
+                      <div style={{ display: "flex", alignItems: "baseline", gap: 8, marginBottom: 2 }}>
+                        <span className="mono" style={{ fontSize: 11, color: "var(--fg-dim)" }}>{a.item}</span>
+                        <span style={{ fontSize: 12.5, fontWeight: 500 }}>{a.titulo}</span>
+                      </div>
+                      <div style={{ fontSize: 11.5, color: "var(--fg-dim)", lineHeight: 1.4 }}>{a.motivo}</div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </>
+  );
+}
+
+function CronogramaStatic() {
+  const semanas = ["Sem 18", "Sem 19", "Sem 20", "Sem 21", "Sem 22", "Sem 23", "Sem 24", "Sem 25"];
+  const data = [
+    { qtd: 8, conc: 8 }, { qtd: 14, conc: 12 }, { qtd: 22, conc: 19 }, { qtd: 18, conc: 11 },
+    { qtd: 28, conc: 14 }, { qtd: 31, conc: 0 }, { qtd: 24, conc: 0 }, { qtd: 17, conc: 0 },
+  ];
+  const max = Math.max(...data.map((d) => d.qtd));
+  const h = 110;
+
+  return (
+    <div>
+      <div style={{ display: "flex", alignItems: "flex-end", gap: 14, height: h, paddingBottom: 4, borderBottom: "1px solid var(--line)" }}>
+        {data.map((d, i) => {
+          const bh = (d.qtd / max) * (h - 22);
+          const bhConc = (d.conc / max) * (h - 22);
+          return (
+            <div key={i} style={{ flex: 1, display: "flex", flexDirection: "column", alignItems: "center", gap: 4, height: "100%", justifyContent: "flex-end", position: "relative" }}>
+              <span style={{ position: "absolute", bottom: bh + 4, fontSize: 10, color: "var(--fg-dim)", fontVariantNumeric: "tabular-nums" }}>{d.qtd}</span>
+              <div style={{
+                width: "100%", maxWidth: 38, height: bh, borderRadius: "4px 4px 0 0",
+                background: i >= 5 ? "var(--accent-soft)" : "var(--accent)",
+                border: i >= 5 ? "1px dashed var(--accent-line)" : "none",
+                position: "relative",
+              }}>
+                {d.conc > 0 && (
+                  <div style={{ position: "absolute", bottom: 0, left: 0, right: 0, height: bhConc, background: "var(--accent)", opacity: 0.45 }} />
+                )}
+              </div>
+            </div>
+          );
+        })}
+      </div>
+      <div style={{ display: "flex", gap: 14, marginTop: 6 }}>
+        {semanas.map((w, i) => (
+          <div key={i} style={{ flex: 1, textAlign: "center", fontSize: 10.5, color: i >= 5 ? "var(--fg-faint)" : "var(--fg-dim)", fontFamily: "var(--font-mono)" }}>{w}</div>
+        ))}
+      </div>
+    </div>
+  );
+}

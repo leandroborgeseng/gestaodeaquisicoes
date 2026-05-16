@@ -1,0 +1,220 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  ADMIN
+  HOSPITAL
+  FORNECEDOR
+}
+
+enum StatusProcesso {
+  PENDENTE
+  COTACAO_EM_ANDAMENTO
+  COTACAO_CONCLUIDA
+  CONTRATADO
+  ENTREGA_PARCIAL
+  ENTREGUE
+  NF_RECEBIDA
+  EM_TESTE
+  CONCLUIDO
+  CANCELADO
+}
+
+enum StatusVsReferencia {
+  ABAIXO_DO_VALOR
+  ACIMA_DO_VALOR
+  NAO_SE_APLICA
+}
+
+model User {
+  id           String      @id @default(cuid())
+  name         String
+  email        String      @unique
+  password     String?
+  role         Role        @default(HOSPITAL)
+  fornecedor   Fornecedor? @relation(fields: [fornecedorId], references: [id])
+  fornecedorId String?
+  createdAt    DateTime    @default(now())
+  updatedAt    DateTime    @updatedAt
+  observacoes  Observacao[]
+  anexos       Anexo[]
+  logs         Log[]
+}
+
+model Fornecedor {
+  id           String        @id @default(cuid())
+  nome         String        @unique
+  cnpj         String?       @unique
+  email        String?
+  telefone     String?
+  users        User[]
+  orcamentos   Orcamento[]
+  contratacoes Contratacao[]
+  createdAt    DateTime      @default(now())
+}
+
+model Item {
+  id                    String              @id @default(cuid())
+  numero                String              @unique
+  equipamento           String
+  descritivoRenem       String?
+  especificacao         String?
+  numeroSiafisico       Int?
+  valorReferenciaFns    Decimal?            @db.Decimal(15, 2)
+  presencaEmAta         Boolean             @default(false)
+  origemMenorValor      String?
+  menorValorUnitario    Decimal?            @db.Decimal(15, 2)
+  statusVsReferenciaFns StatusVsReferencia?
+  faseUnicaQtd          Int?
+  faseUnicaValorTotal   Decimal?            @db.Decimal(15, 2)
+  statusProcesso        StatusProcesso      @default(PENDENTE)
+  orcamentos            Orcamento[]
+  cotacao               Cotacao?
+  contratacao           Contratacao?
+  entregas              Entrega[]
+  notasFiscais          NotaFiscal[]
+  testes                TesteInicial[]
+  observacoes           Observacao[]
+  anexos                Anexo[]
+  logs                  Log[]
+  createdAt             DateTime            @default(now())
+  updatedAt             DateTime            @updatedAt
+}
+
+model Orcamento {
+  id           String     @id @default(cuid())
+  item         Item       @relation(fields: [itemId], references: [id])
+  itemId       String
+  fornecedor   Fornecedor @relation(fields: [fornecedorId], references: [id])
+  fornecedorId String
+  valor        Decimal    @db.Decimal(15, 2)
+  numero       Int
+  dataOrcamento DateTime?
+  createdAt    DateTime   @default(now())
+}
+
+model Cotacao {
+  id            String    @id @default(cuid())
+  item          Item      @relation(fields: [itemId], references: [id])
+  itemId        String    @unique
+  dataInicio    DateTime?
+  dataConclusao DateTime?
+  observacao    String?
+  anexos        Anexo[]
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+}
+
+model Contratacao {
+  id              String     @id @default(cuid())
+  item            Item       @relation(fields: [itemId], references: [id])
+  itemId          String     @unique
+  fornecedor      Fornecedor @relation(fields: [fornecedorId], references: [id])
+  fornecedorId    String
+  numeroContrato  String?
+  valorContratado Decimal?   @db.Decimal(15, 2)
+  dataAssinatura  DateTime?
+  dataVigencia    DateTime?
+  observacao      String?
+  anexos          Anexo[]
+  createdAt       DateTime   @default(now())
+  updatedAt       DateTime   @updatedAt
+}
+
+model Entrega {
+  id           String    @id @default(cuid())
+  item         Item      @relation(fields: [itemId], references: [id])
+  itemId       String
+  dataPrevisao DateTime?
+  dataEntrega  DateTime?
+  qtdEntregue  Int?
+  responsavel  String?
+  local        String?
+  observacao   String?
+  anexos       Anexo[]
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+}
+
+model NotaFiscal {
+  id          String    @id @default(cuid())
+  item        Item      @relation(fields: [itemId], references: [id])
+  itemId      String
+  numero      String
+  serie       String?
+  emissora    String?
+  dataEmissao DateTime?
+  dataEntrada DateTime?
+  valor       Decimal?  @db.Decimal(15, 2)
+  chaveNfe    String?
+  arquivo     Anexo?    @relation(fields: [anexoId], references: [id])
+  anexoId     String?   @unique
+  observacao  String?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+}
+
+model TesteInicial {
+  id            String    @id @default(cuid())
+  item          Item      @relation(fields: [itemId], references: [id])
+  itemId        String
+  dataPrevisao  DateTime?
+  dataRealizado DateTime?
+  responsavel   String?
+  resultado     String?
+  observacao    String?
+  anexos        Anexo[]
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+}
+
+model Observacao {
+  id        String   @id @default(cuid())
+  item      Item     @relation(fields: [itemId], references: [id])
+  itemId    String
+  autor     User     @relation(fields: [autorId], references: [id])
+  autorId   String
+  texto     String
+  createdAt DateTime @default(now())
+}
+
+model Anexo {
+  id             String        @id @default(cuid())
+  nome           String
+  nomeOriginal   String
+  mimeType       String
+  tamanho        Int
+  url            String
+  bucket         String
+  autor          User          @relation(fields: [autorId], references: [id])
+  autorId        String
+  item           Item?         @relation(fields: [itemId], references: [id])
+  itemId         String?
+  cotacao        Cotacao?      @relation(fields: [cotacaoId], references: [id])
+  cotacaoId      String?
+  contratacao    Contratacao?  @relation(fields: [contratacaoId], references: [id])
+  contratacaoId  String?
+  entrega        Entrega?      @relation(fields: [entregaId], references: [id])
+  entregaId      String?
+  testeInicial   TesteInicial? @relation(fields: [testeInicialId], references: [id])
+  testeInicialId String?
+  notaFiscal     NotaFiscal?
+  createdAt      DateTime      @default(now())
+}
+
+model Log {
+  id        String   @id @default(cuid())
+  item      Item     @relation(fields: [itemId], references: [id])
+  itemId    String
+  autor     User     @relation(fields: [autorId], references: [id])
+  autorId   String
+  acao      String
+  detalhes  Json?
+  createdAt DateTime @default(now())
+}
