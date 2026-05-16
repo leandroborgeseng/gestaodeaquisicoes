@@ -1,9 +1,11 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  output: "standalone",
+  // NOTE: standalone removed — Railway nixpacks uses `next start` directly.
+  // Standalone mode requires manually copying static files which nixpacks doesn't do.
+  serverExternalPackages: ["@prisma/client", "bcryptjs"],
   experimental: {
     serverActions: {
-      allowedOrigins: ["localhost:3000"],
+      allowedOrigins: ["*"],
     },
   },
   images: {
