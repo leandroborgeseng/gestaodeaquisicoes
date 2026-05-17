@@ -233,6 +233,33 @@ async function main() {
   }
 
   console.log("✓ Demo users created");
+
+  // 6. Setores hospitalares
+  const SETORES = [
+    { nome: "UTI Adulto",              sigla: "UTI-A",  cor: "#ef4444" },
+    { nome: "UTI Neonatal",            sigla: "UTI-N",  cor: "#f97316" },
+    { nome: "Centro Cirúrgico",        sigla: "CC",     cor: "#8b5cf6" },
+    { nome: "CME",                     sigla: "CME",    cor: "#6366f1" },
+    { nome: "Emergência",              sigla: "EMG",    cor: "#dc2626" },
+    { nome: "Maternidade",             sigla: "MAT",    cor: "#ec4899" },
+    { nome: "Neonatologia",            sigla: "NEO",    cor: "#f59e0b" },
+    { nome: "Diagnóstico por Imagem",  sigla: "DPI",    cor: "#0ea5e9" },
+    { nome: "Laboratório",             sigla: "LAB",    cor: "#10b981" },
+    { nome: "Farmácia",                sigla: "FAR",    cor: "#14b8a6" },
+    { nome: "Endoscopia",              sigla: "END",    cor: "#84cc16" },
+    { nome: "Fisioterapia",            sigla: "FIS",    cor: "#22c55e" },
+    { nome: "Recepção / Administração",sigla: "ADM",    cor: "#64748b" },
+    { nome: "Infraestrutura",          sigla: "INF",    cor: "#78716c" },
+  ];
+  for (const s of SETORES) {
+    await prisma.setor.upsert({
+      where: { nome: s.nome },
+      create: s,
+      update: { sigla: s.sigla, cor: s.cor },
+    });
+  }
+  console.log(`✓ ${SETORES.length} setores`);
+
   console.log("✅ Seed complete");
 }
 

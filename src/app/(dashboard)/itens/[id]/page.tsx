@@ -13,6 +13,7 @@ async function getItem(id: string) {
   return prisma.item.findUnique({
     where: { id },
     include: {
+      setor: true,
       orcamentos: {
         include: {
           fornecedor: { select: { nome: true } },
@@ -21,7 +22,7 @@ async function getItem(id: string) {
         orderBy: { numero: "asc" },
       },
       cotacao: true,
-      contratacao: { include: { fornecedor: true } },
+      contratacao: { include: { fornecedor: true, orcamentoVencedor: true } },
       entregas: { orderBy: { createdAt: "desc" } },
       notasFiscais: { orderBy: { createdAt: "desc" } },
       testes: { orderBy: { createdAt: "desc" } },
@@ -135,6 +136,10 @@ export default async function ItemDetailPage({ params }: { params: { id: string 
             descritivoRenem: item.descritivoRenem,
             descritivoFns: item.descritivoFns,
             descritivoTecnico: item.descritivoTecnico,
+            setor: item.setor ? { id: item.setor.id, nome: item.setor.nome, cor: item.setor.cor } : null,
+            numeroSerie: item.numeroSerie,
+            localizacaoFisica: item.localizacaoFisica,
+            patrimonioHospital: item.patrimonioHospital,
             valorReferenciaFns: valorRef,
             faseUnicaQtd: qtd,
             presencaEmAta: item.presencaEmAta,
@@ -147,6 +152,8 @@ export default async function ItemDetailPage({ params }: { params: { id: string 
               fornecedor: o.fornecedor.nome,
               valor: Number(o.valor),
               cotacaoUrl: o.cotacaoUrl,
+              vencedor: o.vencedor,
+              validadeAte: o.validadeAte ? fmtDate(o.validadeAte) : null,
               anexos: o.anexos.map((a) => ({ id: a.id, nomeOriginal: a.nomeOriginal, url: a.url, tamanho: a.tamanho })),
               data: o.dataOrcamento ? fmtDate(o.dataOrcamento) : null,
             })),
@@ -162,6 +169,8 @@ export default async function ItemDetailPage({ params }: { params: { id: string 
               valor: valorContratado,
               dataAssinatura: item.contratacao.dataAssinatura ? fmtDate(item.contratacao.dataAssinatura) : null,
               vigencia: item.contratacao.dataVigencia ? fmtDate(item.contratacao.dataVigencia) : null,
+              orcamentoVencedorId: item.contratacao.orcamentoVencedorId,
+              negociacaoDireta: item.contratacao.negociacaoDireta,
             } : null,
             entregas: item.entregas.map((e) => ({
               data: e.dataEntrega ? fmtDate(e.dataEntrega) : null,

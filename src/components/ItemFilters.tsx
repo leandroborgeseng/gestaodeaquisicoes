@@ -25,25 +25,28 @@ const SELECT_STYLE: React.CSSProperties = {
 };
 
 interface Props {
-  current: { status?: string; q?: string; vsRef?: string };
+  current: { status?: string; q?: string; vsRef?: string; setor?: string };
+  setores: { id: string; nome: string; sigla: string | null }[];
 }
 
-export function ItemFilters({ current }: Props) {
-  const router = useRouter();
+export function ItemFilters({ current, setores }: Props) {
+  const router   = useRouter();
   const pathname = usePathname();
-  const [q, setQ] = useState(current.q ?? "");
+  const [q, setQ]           = useState(current.q ?? "");
   const [status, setStatus] = useState(current.status ?? "all");
-  const [vsRef, setVsRef] = useState(current.vsRef ?? "all");
+  const [vsRef, setVsRef]   = useState(current.vsRef ?? "all");
+  const [setor, setSetor]   = useState(current.setor ?? "all");
 
   const navigate = useCallback((overrides: Record<string, string>) => {
-    const merged = { q, status, vsRef, ...overrides };
+    const merged = { q, status, vsRef, setor, ...overrides };
     const params = new URLSearchParams();
     if (merged.q) params.set("q", merged.q);
     if (merged.status && merged.status !== "all") params.set("status", merged.status);
     if (merged.vsRef && merged.vsRef !== "all") params.set("vsRef", merged.vsRef);
+    if (merged.setor && merged.setor !== "all") params.set("setor", merged.setor);
     const qs = params.toString();
     router.replace(`${pathname}${qs ? "?" + qs : ""}`);
-  }, [router, pathname, q, status, vsRef]);
+  }, [router, pathname, q, status, vsRef, setor]);
 
   return (
     <div style={{ display: "flex", gap: 8, alignItems: "center", flexWrap: "wrap" }}>
@@ -60,23 +63,26 @@ export function ItemFilters({ current }: Props) {
           }}
         />
       </div>
-      <select
-        value={status}
-        style={SELECT_STYLE}
-        onChange={(e) => { setStatus(e.target.value); navigate({ status: e.target.value }); }}
-      >
+      <select value={status} style={SELECT_STYLE}
+        onChange={(e) => { setStatus(e.target.value); navigate({ status: e.target.value }); }}>
         {STATUSES.map((s) => <option key={s.v} value={s.v}>{s.l}</option>)}
       </select>
-      <select
-        value={vsRef}
-        style={SELECT_STYLE}
-        onChange={(e) => { setVsRef(e.target.value); navigate({ vsRef: e.target.value }); }}
-      >
+      <select value={vsRef} style={SELECT_STYLE}
+        onChange={(e) => { setVsRef(e.target.value); navigate({ vsRef: e.target.value }); }}>
         <option value="all">Todos vs FNS</option>
         <option value="ABAIXO_DO_VALOR">Abaixo do valor</option>
         <option value="ACIMA_DO_VALOR">Acima do valor</option>
         <option value="NAO_SE_APLICA">Não se aplica</option>
       </select>
+      {setores.length > 0 && (
+        <select value={setor} style={SELECT_STYLE}
+          onChange={(e) => { setSetor(e.target.value); navigate({ setor: e.target.value }); }}>
+          <option value="all">Todos os setores</option>
+          {setores.map((s) => (
+            <option key={s.id} value={s.id}>{s.sigla ? `${s.sigla} – ` : ""}{s.nome}</option>
+          ))}
+        </select>
+      )}
     </div>
   );
 }

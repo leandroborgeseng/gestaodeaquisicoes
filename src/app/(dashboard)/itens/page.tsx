@@ -9,7 +9,7 @@ import { ItemFilters } from "@/components/ItemFilters";
 
 export const dynamic = "force-dynamic";
 
-interface SearchParams { status?: string; q?: string; page?: string; vsRef?: string }
+interface SearchParams { status?: string; q?: string; page?: string; vsRef?: string; setor?: string }
 
 async function getItems(params: SearchParams) {
   const page = Math.max(1, parseInt(params.page ?? "1"));
@@ -17,12 +17,9 @@ async function getItems(params: SearchParams) {
   const skip = (page - 1) * take;
 
   const where: Record<string, unknown> = {};
-  if (params.status && params.status !== "all") {
-    where.statusProcesso = params.status;
-  }
-  if (params.vsRef && params.vsRef !== "all") {
-    where.statusVsReferenciaFns = params.vsRef;
-  }
+  if (params.status && params.status !== "all") where.statusProcesso = params.status;
+  if (params.vsRef && params.vsRef !== "all") where.statusVsReferenciaFns = params.vsRef;
+  if (params.setor && params.setor !== "all") where.setorId = params.setor;
   if (params.q) {
     where.OR = [
       { equipamento: { contains: params.q, mode: "insensitive" } },
@@ -30,20 +27,20 @@ async function getItems(params: SearchParams) {
     ];
   }
 
-  const [items, total] = await Promise.all([
+  const [items, total, setores] = await Promise.all([
     prisma.item.findMany({
-      where,
-      skip,
-      take,
+      where, skip, take,
       orderBy: { numero: "asc" },
       include: {
+        setor: true,
         contratacao: { include: { fornecedor: { select: { nome: true } } } },
       },
     }),
     prisma.item.count({ where }),
+    prisma.setor.findMany({ orderBy: { nome: "asc" }, select: { id: true, nome: true, sigla: true, cor: true } }),
   ]);
 
-  return { items, total, page, pages: Math.ceil(total / take) };
+  return { items, total, page, pages: Math.ceil(total / take), setores };
 }
 
 export default async function ItensPage({ searchParams }: { searchParams: SearchParams }) {
@@ -75,7 +72,7 @@ export default async function ItensPage({ searchParams }: { searchParams: Search
           </div>
 
           {/* Filter bar */}
-          <ItemFilters current={searchParams} />
+          <ItemFilters current={searchParams} setores={data.setores} />
 
           {/* Table */}
           <div className="card" style={{ marginTop: 14 }}>
@@ -106,13 +103,21 @@ export default async function ItensPage({ searchParams }: { searchParams: Search
                     <tr key={item.id}>
                       <td className="num">{item.numero}</td>
                       <td>
-                        <div style={{ display: "flex", flexDirection: "column", gap: 1 }}>
-                          <span className="strong" style={{ overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", maxWidth: 320 }}>
+                        <div style={{ display: "flex", flexDirection: "column", gap: 2 }}>
+                          <span className="strong" style={{ overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", maxWidth: 300 }}>
                             {item.equipamento}
                           </span>
-                          {item.presencaEmAta && (
-                            <span className="pill-soft ok" style={{ width: "fit-content", fontSize: 9.5 }}>ATA</span>
-                          )}
+                          <div style={{ display: "flex", gap: 4, flexWrap: "wrap" }}>
+                            {item.presencaEmAta && (
+                              <span className="pill-soft ok" style={{ fontSize: 9.5 }}>ATA</span>
+                            )}
+                            {(item as any).setor && (
+                              <span className="pill-soft" style={{ fontSize: 9.5, display: "inline-flex", alignItems: "center", gap: 3 }}>
+                                {(item as any).setor.cor && <span style={{ width: 6, height: 6, borderRadius: "50%", background: (item as any).setor.cor }} />}
+                                {(item as any).setor.sigla ?? (item as any).setor.nome}
+                              </span>
+                            )}
+                          </div>
                         </div>
                       </td>
                       <td><StatusPill status={item.statusProcesso} /></td>

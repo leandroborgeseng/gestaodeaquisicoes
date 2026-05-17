@@ -9,7 +9,7 @@ import { DashboardCharts } from "./DashboardCharts";
 export const dynamic = "force-dynamic";
 
 async function getDashboardData() {
-  const [totalItems, byStatus, recentLogs] = await Promise.all([
+  const [totalItems, byStatus, recentLogs, totalValueAgg, contratacoes, acimaValor, atrasados] = await Promise.all([
     prisma.item.count(),
     prisma.item.groupBy({ by: ["statusProcesso"], _count: { id: true } }),
     prisma.log.findMany({
@@ -17,24 +17,43 @@ async function getDashboardData() {
       orderBy: { createdAt: "desc" },
       include: { item: { select: { numero: true, equipamento: true } }, autor: { select: { name: true } } },
     }),
+    prisma.item.aggregate({ _sum: { faseUnicaValorTotal: true } }),
+    // Real contracted values with FNS reference for saving calculation
+    prisma.contratacao.findMany({
+      select: {
+        valorContratado: true,
+        item: { select: { valorReferenciaFns: true, faseUnicaQtd: true } },
+      },
+      where: { valorContratado: { not: null } },
+    }),
+    prisma.item.count({ where: { statusVsReferenciaFns: "ACIMA_DO_VALOR" } }),
+    prisma.entrega.count({ where: { dataPrevisao: { lt: new Date() }, dataEntrega: null } }),
   ]);
 
-  const totalValue = await prisma.item.aggregate({ _sum: { faseUnicaValorTotal: true } });
-  const contratados = byStatus.find((s) => s.statusProcesso === "CONTRATADO")?._count?.id ?? 0;
   const contratadosTotal = byStatus
     .filter((s) => ["CONTRATADO", "ENTREGA_PARCIAL", "ENTREGUE", "NF_RECEBIDA", "EM_TESTE", "CONCLUIDO"].includes(s.statusProcesso))
     .reduce((a, b) => a + b._count.id, 0);
 
-  const acimaValor = await prisma.item.count({ where: { statusVsReferenciaFns: "ACIMA_DO_VALOR" } });
-  const atrasados = await prisma.entrega.count({
-    where: { dataPrevisao: { lt: new Date() }, dataEntrega: null },
-  });
+  // Saving = soma(valorRefFns × qtd) - soma(valorContratado) para itens com contrato
+  let somaRefContratados = 0;
+  let somaContratado = 0;
+  for (const c of contratacoes) {
+    const ref = c.item.valorReferenciaFns ? Number(c.item.valorReferenciaFns) * (c.item.faseUnicaQtd ?? 1) : 0;
+    const ctr = Number(c.valorContratado ?? 0);
+    if (ref > 0) somaRefContratados += ref;
+    somaContratado += ctr;
+  }
+  const savingTotal = somaRefContratados > 0 ? somaRefContratados - somaContratado : null;
+  const savingPct   = somaRefContratados > 0 ? (savingTotal! / somaRefContratados) * 100 : null;
 
   return {
     totalItems,
     byStatus,
-    totalValue: Number(totalValue._sum.faseUnicaValorTotal ?? 0),
+    totalValue: Number(totalValueAgg._sum.faseUnicaValorTotal ?? 0),
     contratadosTotal,
+    somaContratado,
+    savingTotal,
+    savingPct,
     acimaValor,
     atrasados,
     recentLogs,
@@ -129,17 +148,30 @@ export default async function DashboardPage() {
             </div>
             <div className="kpi">
               <div className="label">Valor contratado</div>
-              <div className="value">R$ 18,42<small>M</small></div>
+              <div className="value">
+                {data.somaContratado > 0
+                  ? fmtBRL(data.somaContratado)
+                  : <span style={{ fontSize: 16, color: "var(--fg-faint)" }}>Sem contratos</span>}
+              </div>
               <div className="meta">
-                <span className="delta-pos">−5,1%</span>
-                <span className="muted">vs referência FNS</span>
+                {data.savingPct != null
+                  ? <><span className="delta-pos">{data.savingPct >= 0 ? "−" : "+"}{Math.abs(data.savingPct).toFixed(1)}%</span><span className="muted"> vs referência FNS</span></>
+                  : <span className="muted">Aguardando contratos</span>}
               </div>
             </div>
             <div className="kpi">
-              <div className="label">Economia acumulada</div>
-              <div className="value">R$ 1,28<small>M</small></div>
+              <div className="label">Saving acumulado</div>
+              <div className="value" style={{ color: data.savingTotal != null && data.savingTotal >= 0 ? "var(--ok)" : "var(--danger)" }}>
+                {data.savingTotal != null
+                  ? fmtBRL(Math.abs(data.savingTotal))
+                  : <span style={{ fontSize: 16, color: "var(--fg-faint)" }}>—</span>}
+              </div>
               <div className="meta">
-                <span className="muted">122 itens abaixo da referência</span>
+                <span className="muted">
+                  {data.savingTotal != null
+                    ? (data.savingTotal >= 0 ? "Economia vs referência FNS" : "Acima da referência FNS")
+                    : "Preencha contratos para calcular"}
+                </span>
               </div>
             </div>
             <div className="kpi" style={{ borderColor: (data.atrasados + data.acimaValor) > 0 ? "oklch(0.86 0.08 25)" : undefined }}>

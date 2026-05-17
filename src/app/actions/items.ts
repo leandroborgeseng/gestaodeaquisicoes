@@ -246,6 +246,56 @@ export async function criarUsuario(formData: FormData) {
   return { success: true };
 }
 
+export async function marcarOrcamentoVencedor(itemId: string, orcamentoId: string | null) {
+  const user = await requireAuth();
+  if (user.role === "FORNECEDOR") return { error: "Sem permissão" };
+
+  // Unmark all orcamentos for this item, then mark the winner
+  await prisma.orcamento.updateMany({ where: { itemId }, data: { vencedor: false } });
+  if (orcamentoId) {
+    await prisma.orcamento.update({ where: { id: orcamentoId }, data: { vencedor: true } });
+    // Also link to contratacao if exists
+    await prisma.contratacao.updateMany({
+      where: { itemId },
+      data: { orcamentoVencedorId: orcamentoId },
+    });
+  }
+  await prisma.log.create({ data: { itemId, autorId: user.id, acao: "ORCAMENTO_VENCEDOR_MARCADO" } });
+  revalidatePath(`/itens/${itemId}`);
+  return { success: true };
+}
+
+export async function salvarPatrimonio(
+  itemId: string,
+  data: { numeroSerie?: string; localizacaoFisica?: string; patrimonioHospital?: string }
+) {
+  const user = await requireAuth();
+  if (user.role === "FORNECEDOR") return { error: "Sem permissão" };
+
+  await prisma.item.update({
+    where: { id: itemId },
+    data: {
+      numeroSerie:        data.numeroSerie        ?? undefined,
+      localizacaoFisica:  data.localizacaoFisica  ?? undefined,
+      patrimonioHospital: data.patrimonioHospital ?? undefined,
+    },
+  });
+  await prisma.log.create({ data: { itemId, autorId: user.id, acao: "PATRIMONIO_ATUALIZADO" } });
+  revalidatePath(`/itens/${itemId}`);
+  return { success: true };
+}
+
+export async function atribuirSetor(itemId: string, setorId: string | null) {
+  const user = await requireAuth();
+  if (user.role === "FORNECEDOR") return { error: "Sem permissão" };
+
+  await prisma.item.update({ where: { id: itemId }, data: { setorId } });
+  await prisma.log.create({ data: { itemId, autorId: user.id, acao: "SETOR_ATRIBUIDO" } });
+  revalidatePath(`/itens/${itemId}`);
+  revalidatePath("/itens");
+  return { success: true };
+}
+
 export async function atualizarDescritivoTecnico(itemId: string, texto: string) {
   const user = await requireAuth();
   if (user.role === "FORNECEDOR") return { error: "Sem permissão" };

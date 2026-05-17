@@ -3,7 +3,13 @@
 import { useState, useTransition } from "react";
 import { Icons } from "@/components/Icons";
 import { fmtBRL } from "@/lib/utils";
-import { publicarObservacao, atualizarDescritivoTecnico } from "@/app/actions/items";
+import {
+  publicarObservacao,
+  atualizarDescritivoTecnico,
+  marcarOrcamentoVencedor,
+  salvarPatrimonio,
+  atribuirSetor,
+} from "@/app/actions/items";
 import {
   RegistrarCotacaoModal,
   RegistrarContratoModal,
@@ -21,6 +27,10 @@ interface ItemData {
   descritivoRenem?: string | null;
   descritivoFns?: string | null;
   descritivoTecnico?: string | null;
+  setor?: { id: string; nome: string; cor: string | null } | null;
+  numeroSerie?: string | null;
+  localizacaoFisica?: string | null;
+  patrimonioHospital?: string | null;
   valorReferenciaFns: number | null;
   faseUnicaQtd: number;
   presencaEmAta: boolean;
@@ -34,10 +44,21 @@ interface ItemData {
     valor: number;
     data: string | null;
     cotacaoUrl: string | null;
+    vencedor: boolean;
+    validadeAte: string | null;
     anexos: { id: string; nomeOriginal: string; url: string; tamanho: number }[];
   }[];
   cotacao: { dataInicio: string | null; dataConclusao: string | null; observacao: string | null } | null;
-  contratacao: { numero: string | null; fornecedor: string; cnpj: string | null; valor: number | null; dataAssinatura: string | null; vigencia: string | null } | null;
+  contratacao: {
+    numero: string | null;
+    fornecedor: string;
+    cnpj: string | null;
+    valor: number | null;
+    dataAssinatura: string | null;
+    vigencia: string | null;
+    orcamentoVencedorId: string | null;
+    negociacaoDireta: boolean;
+  } | null;
   entregas: { data: string | null; previsao: string | null; qtd: number | null; responsavel: string | null; local: string | null; obs: string | null }[];
   notasFiscais: { numero: string; serie: string | null; emissora: string | null; emissao: string | null; entrada: string | null; valor: number | null; chave: string | null }[];
   testes: { dataRealizado: string | null; responsavel: string | null; resultado: string | null; obs: string | null }[];
@@ -255,6 +276,91 @@ function MetaField({ label, value }: { label: string; value: React.ReactNode }) 
   );
 }
 
+function PatrimonioCard({ item }: { item: ItemData }) {
+  const [editing, setEditing] = useState(false);
+  const [serie, setSerie]     = useState(item.numeroSerie ?? "");
+  const [local, setLocal]     = useState(item.localizacaoFisica ?? "");
+  const [patrim, setPatrim]   = useState(item.patrimonioHospital ?? "");
+  const [saving, startSave]   = useTransition();
+  const [saved, setSaved]     = useState(false);
+
+  function handleSave() {
+    startSave(async () => {
+      await salvarPatrimonio(item.id, {
+        numeroSerie:        serie.trim() || undefined,
+        localizacaoFisica:  local.trim() || undefined,
+        patrimonioHospital: patrim.trim() || undefined,
+      });
+      setEditing(false);
+      setSaved(true);
+      setTimeout(() => setSaved(false), 2500);
+    });
+  }
+
+  const hasData = item.numeroSerie || item.localizacaoFisica || item.patrimonioHospital || item.setor;
+
+  return (
+    <div className="card">
+      <div className="card-head">
+        <h3>Patrimônio e localização</h3>
+        <div className="spacer" />
+        {saved && <span style={{ fontSize: 11, color: "var(--ok)" }}>Salvo ✓</span>}
+        {!editing && (
+          <button className="btn ghost sm" onClick={() => { setEditing(true); setSaved(false); }}>
+            {hasData ? "Editar" : "Preencher"}
+          </button>
+        )}
+      </div>
+      <div className="card-body">
+        {editing ? (
+          <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
+              <div className="field">
+                <label>Número de série</label>
+                <input value={serie} onChange={e => setSerie(e.target.value)} placeholder="SN-XXXXX" disabled={saving} />
+              </div>
+              <div className="field">
+                <label>Nº patrimônio hospital</label>
+                <input value={patrim} onChange={e => setPatrim(e.target.value)} placeholder="00000" disabled={saving} />
+              </div>
+            </div>
+            <div className="field">
+              <label>Localização física</label>
+              <input value={local} onChange={e => setLocal(e.target.value)} placeholder="Bloco B – Sala 203 – UTI Adulto" disabled={saving} />
+            </div>
+            <div style={{ display: "flex", gap: 8, justifyContent: "flex-end" }}>
+              <button className="btn ghost sm" onClick={() => setEditing(false)} disabled={saving}>Cancelar</button>
+              <button className="btn primary sm" onClick={handleSave} disabled={saving}>{saving ? "Salvando…" : "Salvar"}</button>
+            </div>
+          </div>
+        ) : hasData ? (
+          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
+            {item.setor && (
+              <MetaField label="Setor" value={
+                <span style={{ display: "inline-flex", alignItems: "center", gap: 6 }}>
+                  {item.setor.cor && <span style={{ width: 10, height: 10, borderRadius: "50%", background: item.setor.cor, flexShrink: 0 }} />}
+                  {item.setor.nome}
+                </span>
+              } />
+            )}
+            {item.numeroSerie && <MetaField label="Nº de série" value={<span className="mono">{item.numeroSerie}</span>} />}
+            {item.patrimonioHospital && <MetaField label="Patrimônio" value={<span className="mono">{item.patrimonioHospital}</span>} />}
+            {item.localizacaoFisica && (
+              <div style={{ gridColumn: "1/-1" }}>
+                <MetaField label="Localização" value={item.localizacaoFisica} />
+              </div>
+            )}
+          </div>
+        ) : (
+          <p style={{ margin: 0, fontSize: 12.5, color: "var(--fg-faint)" }}>
+            Número de série, patrimônio e localização física serão preenchidos após a entrega e instalação.
+          </p>
+        )}
+      </div>
+    </div>
+  );
+}
+
 function DescritivoCard({ item }: { item: ItemData }) {
   const [editing, setEditing] = useState(false);
   const [text, setText] = useState(item.descritivoTecnico ?? "");
@@ -390,7 +496,9 @@ function TabGeral({ item, menorValor }: { item: ItemData; menorValor: typeof ite
         </div>
         <div className="card-body">
           <p style={{ margin: 0, fontSize: 13, lineHeight: 1.55, color: "var(--fg-mid)" }}>
-            {item.especificacao ?? "Sem especificação cadastrada."}
+            {(item.especificacao && !item.especificacao.toLowerCase().startsWith("clique"))
+              ? item.especificacao
+              : "Sem especificação cadastrada."}
           </p>
           <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12, marginTop: 16 }}>
             <MetaField label="Quantidade" value={`${item.faseUnicaQtd} unidades`} />
@@ -402,6 +510,7 @@ function TabGeral({ item, menorValor }: { item: ItemData; menorValor: typeof ite
       </div>
 
       <DescritivoCard item={item} />
+      <PatrimonioCard item={item} />
 
       {item.orcamentos.length > 0 && (
         <div className="card">
@@ -454,66 +563,137 @@ function TabGeral({ item, menorValor }: { item: ItemData; menorValor: typeof ite
 }
 
 function TabOrcamentos({ item, menorValor }: { item: ItemData; menorValor: typeof item.orcamentos[0] | undefined }) {
+  const [marking, startMark] = useTransition();
+
+  const melhorValor = menorValor?.valor ?? null;
+  const valorContratado = item.contratacao?.valor ?? null;
+  const valorRef = item.valorReferenciaFns ? item.valorReferenciaFns * item.faseUnicaQtd : null;
+  const melhorTotal = melhorValor ? melhorValor * item.faseUnicaQtd : null;
+
+  const savingMercado     = valorRef && melhorTotal   ? valorRef    - melhorTotal    : null;
+  const savingNegociacao  = melhorTotal && valorContratado ? melhorTotal - valorContratado : null;
+  const savingTotal       = valorRef && valorContratado   ? valorRef    - valorContratado  : null;
+
+  function handleMarcarVencedor(orcId: string, isAlreadyWinner: boolean) {
+    startMark(async () => {
+      await marcarOrcamentoVencedor(item.id, isAlreadyWinner ? null : orcId);
+    });
+  }
+
   return (
-    <div className="card">
-      <div className="card-head">
-        <h3>Orçamentos coletados</h3>
-        <span className="sub">{item.orcamentos.length} fornecedores · menor valor selecionado</span>
-        <div className="spacer" />
-      </div>
-      <table className="tbl">
-        <thead>
-          <tr>
-            <th style={{ width: 40 }}>#</th>
-            <th>Fornecedor</th>
-            <th>Data</th>
-            <th style={{ textAlign: "right" }}>Valor unitário</th>
-            <th style={{ textAlign: "right" }}>Total ({item.faseUnicaQtd} un)</th>
-            <th style={{ width: 80 }}>Documento</th>
-          </tr>
-        </thead>
-        <tbody>
-          {item.orcamentos.map((o) => {
-            const isMenor = o === menorValor;
-            // Prefer already-downloaded local file, fallback to Drive URL
-            const docUrl = o.anexos[0]?.url ?? o.cotacaoUrl;
-            return (
-              <tr key={o.numero}>
-                <td className="num">0{o.numero}</td>
-                <td>
-                  <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-                    <span className="strong">{o.fornecedor}</span>
-                    {isMenor && <span className="pill-soft ok">menor</span>}
-                  </div>
-                </td>
-                <td className="num">{o.data ?? "—"}</td>
-                <td className="num strong" style={{ textAlign: "right" }}>{fmtBRL(o.valor)}</td>
-                <td className="num" style={{ textAlign: "right" }}>{fmtBRL(o.valor * item.faseUnicaQtd)}</td>
-                <td>
-                  {docUrl ? (
-                    <a
-                      href={docUrl}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="btn ghost sm"
-                      style={{ height: 22, padding: "0 7px", fontSize: 10.5 }}
-                      title={o.anexos[0] ? "Arquivo local" : "Google Drive"}
+    <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
+      <div className="card">
+        <div className="card-head">
+          <h3>Orçamentos coletados</h3>
+          <span className="sub">{item.orcamentos.length} fornecedores</span>
+          <div className="spacer" />
+        </div>
+        <table className="tbl">
+          <thead>
+            <tr>
+              <th style={{ width: 36 }}>#</th>
+              <th>Fornecedor</th>
+              <th>Data</th>
+              <th style={{ textAlign: "right" }}>Unitário</th>
+              <th style={{ textAlign: "right" }}>Total ({item.faseUnicaQtd} un)</th>
+              <th style={{ width: 80 }}>Doc</th>
+              <th style={{ width: 90 }}>Vencedor</th>
+            </tr>
+          </thead>
+          <tbody>
+            {item.orcamentos.map((o) => {
+              const isMenor = o === menorValor;
+              const docUrl = o.anexos[0]?.url ?? o.cotacaoUrl;
+              const diff = item.valorReferenciaFns ? (o.valor - item.valorReferenciaFns) / item.valorReferenciaFns : 0;
+              return (
+                <tr key={o.numero} style={{ background: o.vencedor ? "var(--ok-soft)" : undefined }}>
+                  <td className="num">0{o.numero}</td>
+                  <td>
+                    <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
+                      <span className="strong">{o.fornecedor}</span>
+                      {isMenor && <span className="pill-soft ok" style={{ fontSize: 9.5 }}>menor</span>}
+                      {o.vencedor && <span className="pill-soft ok" style={{ fontSize: 9.5, fontWeight: 700 }}>✓ vencedor</span>}
+                    </div>
+                  </td>
+                  <td className="num">{o.data ?? "—"}</td>
+                  <td className="num" style={{ textAlign: "right" }}>
+                    {fmtBRL(o.valor)}
+                    {item.valorReferenciaFns && (
+                      <span style={{ fontSize: 10, marginLeft: 4, color: diff > 0 ? "var(--danger)" : "var(--ok)" }}>
+                        {diff >= 0 ? "+" : ""}{(diff * 100).toFixed(1)}%
+                      </span>
+                    )}
+                  </td>
+                  <td className="num strong" style={{ textAlign: "right" }}>{fmtBRL(o.valor * item.faseUnicaQtd)}</td>
+                  <td>
+                    {docUrl ? (
+                      <a href={docUrl} target="_blank" rel="noopener noreferrer"
+                        className="btn ghost sm" style={{ height: 22, padding: "0 7px", fontSize: 10.5 }}
+                        title={o.anexos[0] ? "Arquivo local" : "Google Drive"}>
+                        <Icons.Doc style={{ width: 10, height: 10 }} />
+                        {o.anexos[0] ? "PDF" : "Drive"}
+                      </a>
+                    ) : <span style={{ fontSize: 11, color: "var(--fg-faint)" }}>—</span>}
+                  </td>
+                  <td>
+                    <button
+                      className={`btn sm ${o.vencedor ? "primary" : "ghost"}`}
+                      style={{ fontSize: 10.5, height: 24, padding: "0 8px" }}
+                      disabled={marking}
+                      onClick={() => handleMarcarVencedor(o.id, o.vencedor)}
                     >
-                      <Icons.Doc style={{ width: 10, height: 10 }} />
-                      {o.anexos[0] ? "PDF" : "Drive"}
-                    </a>
-                  ) : (
-                    <span style={{ fontSize: 11, color: "var(--fg-faint)" }}>—</span>
-                  )}
-                </td>
-              </tr>
-            );
-          })}
-          {item.orcamentos.length === 0 && (
-            <tr><td colSpan={6} style={{ padding: "20px 12px", color: "var(--fg-faint)", fontSize: 12.5 }}>Nenhum orçamento registrado.</td></tr>
-          )}
-        </tbody>
-      </table>
+                      {o.vencedor ? "✓ Selecionado" : "Selecionar"}
+                    </button>
+                  </td>
+                </tr>
+              );
+            })}
+            {item.orcamentos.length === 0 && (
+              <tr><td colSpan={7} style={{ padding: "20px 12px", color: "var(--fg-faint)", fontSize: 12.5 }}>Nenhum orçamento registrado.</td></tr>
+            )}
+          </tbody>
+        </table>
+      </div>
+
+      {/* Saving 3 camadas */}
+      {(savingMercado !== null || savingTotal !== null) && (
+        <div className="card">
+          <div className="card-head"><h3>Saving em 3 camadas</h3></div>
+          <div className="card-body" style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+            <SavingRow label="Referência FNS" value={valorRef} highlight={false} />
+            <SavingRow label="Melhor cotação" value={melhorTotal} highlight={false} />
+            {valorContratado !== null && <SavingRow label="Valor contratado" value={valorContratado} highlight={false} />}
+            <div style={{ height: 1, background: "var(--line-soft)", margin: "4px 0" }} />
+            {savingMercado !== null && (
+              <SavingRow label="Saving mercado (FNS → cotação)" value={savingMercado} highlight saving />
+            )}
+            {savingNegociacao !== null && (
+              <SavingRow label="Saving negociação (cotação → contrato)" value={savingNegociacao} highlight saving />
+            )}
+            {savingTotal !== null && (
+              <SavingRow label="Saving total (FNS → contrato)" value={savingTotal} highlight saving bold />
+            )}
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+function SavingRow({ label, value, saving, highlight, bold }: {
+  label: string; value: number | null; saving?: boolean; highlight?: boolean; bold?: boolean;
+}) {
+  if (value === null) return null;
+  const pct = saving && value !== 0 ? null : null;
+  return (
+    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", fontSize: 12.5 }}>
+      <span style={{ color: "var(--fg-mid)", fontWeight: bold ? 600 : 400 }}>{label}</span>
+      <span className="mono" style={{
+        fontWeight: bold ? 700 : 500,
+        color: saving ? (value >= 0 ? "var(--ok)" : "var(--danger)") : "var(--fg)",
+      }}>
+        {saving && value >= 0 ? "−" : ""}{fmtBRL(Math.abs(value))}
+      </span>
     </div>
   );
 }

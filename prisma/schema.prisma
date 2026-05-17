@@ -59,6 +59,15 @@ model Fornecedor {
   createdAt    DateTime      @default(now())
 }
 
+model Setor {
+  id        String   @id @default(cuid())
+  nome      String   @unique
+  sigla     String?
+  cor       String?
+  itens     Item[]
+  createdAt DateTime @default(now())
+}
+
 model Item {
   id                    String              @id @default(cuid())
   numero                String              @unique
@@ -77,6 +86,11 @@ model Item {
   faseUnicaQtd          Int?
   faseUnicaValorTotal   Decimal?            @db.Decimal(15, 2)
   statusProcesso        StatusProcesso      @default(PENDENTE)
+  setor                 Setor?              @relation(fields: [setorId], references: [id])
+  setorId               String?
+  numeroSerie           String?
+  localizacaoFisica     String?
+  patrimonioHospital    String?
   orcamentos            Orcamento[]
   cotacao               Cotacao?
   contratacao           Contratacao?
@@ -91,17 +105,20 @@ model Item {
 }
 
 model Orcamento {
-  id            String     @id @default(cuid())
-  item          Item       @relation(fields: [itemId], references: [id])
+  id            String        @id @default(cuid())
+  item          Item          @relation(fields: [itemId], references: [id])
   itemId        String
-  fornecedor    Fornecedor @relation(fields: [fornecedorId], references: [id])
+  fornecedor    Fornecedor    @relation(fields: [fornecedorId], references: [id])
   fornecedorId  String
-  valor         Decimal    @db.Decimal(15, 2)
+  valor         Decimal       @db.Decimal(15, 2)
   numero        Int
   cotacaoUrl    String?
   dataOrcamento DateTime?
-  createdAt     DateTime   @default(now())
+  vencedor      Boolean       @default(false)
+  validadeAte   DateTime?
+  createdAt     DateTime      @default(now())
   anexos        Anexo[]
+  contratacoes  Contratacao[]
 }
 
 model Cotacao {
@@ -117,19 +134,22 @@ model Cotacao {
 }
 
 model Contratacao {
-  id              String     @id @default(cuid())
-  item            Item       @relation(fields: [itemId], references: [id])
-  itemId          String     @unique
-  fornecedor      Fornecedor @relation(fields: [fornecedorId], references: [id])
-  fornecedorId    String
-  numeroContrato  String?
-  valorContratado Decimal?   @db.Decimal(15, 2)
-  dataAssinatura  DateTime?
-  dataVigencia    DateTime?
-  observacao      String?
-  anexos          Anexo[]
-  createdAt       DateTime   @default(now())
-  updatedAt       DateTime   @updatedAt
+  id                  String     @id @default(cuid())
+  item                Item       @relation(fields: [itemId], references: [id])
+  itemId              String     @unique
+  fornecedor          Fornecedor @relation(fields: [fornecedorId], references: [id])
+  fornecedorId        String
+  numeroContrato      String?
+  valorContratado     Decimal?   @db.Decimal(15, 2)
+  dataAssinatura      DateTime?
+  dataVigencia        DateTime?
+  observacao          String?
+  orcamentoVencedor   Orcamento? @relation(fields: [orcamentoVencedorId], references: [id])
+  orcamentoVencedorId String?
+  negociacaoDireta    Boolean    @default(false)
+  anexos              Anexo[]
+  createdAt           DateTime   @default(now())
+  updatedAt           DateTime   @updatedAt
 }
 
 model Entrega {
