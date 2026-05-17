@@ -2,6 +2,7 @@
 
 import { useRef, useState, useTransition } from "react";
 import { Icons } from "./Icons";
+import { useFilePreview } from "./FilePreview";
 
 interface AnexoItem {
   id: string;
@@ -39,6 +40,7 @@ export function AnexoUpload({ itemId, category, orcamentoId, existing = [], labe
   const [files, setFiles]     = useState<AnexoItem[]>(existing);
   const [error, setError]     = useState("");
   const [pending, start]      = useTransition();
+  const { open: openPreview } = useFilePreview();
 
   async function handleFiles(selected: FileList | null) {
     if (!selected || selected.length === 0) return;
@@ -92,18 +94,16 @@ export function AnexoUpload({ itemId, category, orcamentoId, existing = [], labe
       <div style={{ display: "flex", flexWrap: "wrap", alignItems: "center", gap: 6 }}>
         {input}
         {files.map((f) => (
-          <a
+          <button
             key={f.id}
-            href={f.url}
-            target="_blank"
-            rel="noopener noreferrer"
-            download
-            title={f.nomeOriginal}
+            type="button"
+            onClick={() => openPreview({ url: f.url, filename: f.nomeOriginal, mimeType: f.mimeType })}
+            title={`Visualizar: ${f.nomeOriginal}`}
             style={{
               display: "inline-flex", alignItems: "center", gap: 4,
               padding: "3px 8px", borderRadius: 4, fontSize: 11, fontWeight: 500,
               background: "var(--bg-soft)", border: "1px solid var(--line)",
-              color: "var(--fg-mid)", textDecoration: "none",
+              color: "var(--fg-mid)", cursor: "pointer",
               maxWidth: 160, overflow: "hidden",
             }}
           >
@@ -111,7 +111,7 @@ export function AnexoUpload({ itemId, category, orcamentoId, existing = [], labe
             <span style={{ overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
               {f.nomeOriginal}
             </span>
-          </a>
+          </button>
         ))}
         <button
           type="button"
@@ -168,21 +168,29 @@ export function AnexoUpload({ itemId, category, orcamentoId, existing = [], labe
               background: "var(--bg-soft)", border: "1px solid var(--line-soft)",
             }}>
               <FileIcon mime={f.mimeType} />
-              <div style={{ flex: 1, minWidth: 0 }}>
-                <div style={{ fontSize: 12, fontWeight: 500, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+              <button
+                type="button"
+                onClick={() => openPreview({ url: f.url, filename: f.nomeOriginal, mimeType: f.mimeType })}
+                style={{
+                  flex: 1, minWidth: 0, textAlign: "left",
+                  background: "none", border: "none", cursor: "pointer", padding: 0,
+                }}
+              >
+                <div style={{ fontSize: 12, fontWeight: 500, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", color: "var(--fg)" }}>
                   {f.nomeOriginal}
                 </div>
                 <div style={{ fontSize: 10.5, color: "var(--fg-faint)" }}>{fmtBytes(f.tamanho)}</div>
-              </div>
+              </button>
               <a
                 href={f.url}
                 target="_blank"
                 rel="noopener noreferrer"
-                download
+                download={f.nomeOriginal}
                 className="btn ghost sm"
-                style={{ height: 24, padding: "0 8px", fontSize: 11 }}
+                style={{ height: 24, padding: "0 8px", fontSize: 11, flexShrink: 0 }}
+                title="Download"
               >
-                <Icons.Download style={{ width: 11, height: 11 }} /> Download
+                <Icons.Download style={{ width: 11, height: 11 }} />
               </a>
             </div>
           ))}

@@ -10,6 +10,10 @@ import {
   emailNovoContrato,
 } from "@/lib/email";
 import * as XLSX from "xlsx";
+import { writeFile, mkdir } from "fs/promises";
+import path from "path";
+
+const UPLOAD_ROOT = process.env.UPLOAD_DIR ?? path.join(process.cwd(), ".uploads");
 
 async function requireAuth() {
   const session = await auth();
@@ -832,4 +836,109 @@ export async function marcarConcluido(itemId: string) {
   revalidatePath(`/itens/${itemId}`);
   revalidatePath("/itens");
   return { success: true };
+}
+
+// ─── Importar arquivo de URL externa ─────────────────────────────────────────
+// Faz download de uma URL externa (Drive, etc.), salva no volume local e cria
+// um registro Anexo vinculado ao item (e opcionalmente ao orçamento).
+
+const ALLOWED_DOWNLOAD_TYPES: Record<string, string> = {
+  "application/pdf": "pdf",
+  "image/jpeg": "jpg",
+  "image/jpg": "jpg",
+  "image/png": "png",
+  "image/webp": "webp",
+  "image/gif": "gif",
+};
+
+export async function importarAnexoExterno(
+  itemId: string,
+  externalUrl: string,
+  category: "especificacao" | "cotacao" | "nf" | "entrega" | "teste" | "contrato" | "geral",
+  orcamentoId?: string,
+): Promise<{ success: true; id: string; url: string; nome: string } | { error: string }> {
+  const user = await requireAuth();
+  if (user.role === "FORNECEDOR") return { error: "Sem permissão" };
+
+  if (!externalUrl || !externalUrl.startsWith("http")) return { error: "URL inválida" };
+
+  const item = await prisma.item.findUnique({ where: { id: itemId }, select: { id: true, numero: true } });
+  if (!item) return { error: "Item não encontrado" };
+
+  // Check if already imported (same externalUrl linked to this item)
+  const already = await prisma.anexo.findFirst({
+    where: { itemId, nomeOriginal: { contains: "imported-from:" + externalUrl.slice(0, 60) } },
+  });
+  if (already) return { error: "Este link já foi importado anteriormente." };
+
+  // Fetch the file
+  let response: Response;
+  try {
+    response = await fetch(externalUrl, {
+      headers: { "User-Agent": "AION-Aquisicoes/1.0" },
+      redirect: "follow",
+    });
+  } catch {
+    return { error: "Não foi possível acessar a URL informada." };
+  }
+
+  if (!response.ok) return { error: `Erro ao baixar arquivo: HTTP ${response.status}` };
+
+  // Determine mime type
+  const contentType = (response.headers.get("content-type") ?? "application/octet-stream").split(";")[0].trim();
+  const ext = ALLOWED_DOWNLOAD_TYPES[contentType];
+  if (!ext) {
+    // Try to infer from URL path
+    const urlPath = new URL(externalUrl).pathname;
+    const urlExt  = urlPath.split(".").pop()?.toLowerCase();
+    const mimeFromUrl: Record<string, string> = {
+      pdf: "application/pdf", jpg: "image/jpeg", jpeg: "image/jpeg",
+      png: "image/png", webp: "image/webp",
+    };
+    if (!urlExt || !mimeFromUrl[urlExt]) {
+      return { error: "Tipo de arquivo não suportado. Use links para PDF ou imagens." };
+    }
+  }
+
+  const finalMime = ALLOWED_DOWNLOAD_TYPES[contentType] ? contentType : "application/pdf";
+  const finalExt  = ALLOWED_DOWNLOAD_TYPES[finalMime] ?? "pdf";
+
+  const buffer = Buffer.from(await response.arrayBuffer());
+  if (buffer.byteLength > 30 * 1024 * 1024) return { error: "Arquivo muito grande (máx 30 MB)" };
+
+  // Build safe filename from URL
+  const urlFilename = new URL(externalUrl).pathname.split("/").pop()?.replace(/[^a-zA-Z0-9._-]/g, "_") ?? "documento";
+  const ts       = Date.now();
+  const fileName = `${ts}-${urlFilename.slice(0, 60)}.${finalExt}`;
+  const dir      = path.join(UPLOAD_ROOT, "uploads", item.numero, category);
+  const filePath = path.join(dir, fileName);
+
+  await mkdir(dir, { recursive: true });
+  await writeFile(filePath, buffer);
+
+  const urlServePath = `/api/files/${item.numero}/${category}/${fileName}`;
+
+  const dbUser = await prisma.user.findUnique({ where: { email: user.email! }, select: { id: true } });
+  if (!dbUser) return { error: "Usuário não encontrado" };
+
+  const displayName = urlFilename.includes(".") ? urlFilename : `${urlFilename}.${finalExt}`;
+
+  const anexo = await prisma.anexo.create({
+    data: {
+      nome: fileName,
+      nomeOriginal: displayName,
+      mimeType: finalMime,
+      tamanho: buffer.byteLength,
+      url: urlServePath,
+      bucket: "local",
+      autorId: dbUser.id,
+      itemId: item.id,
+      ...(orcamentoId ? { orcamentoId } : {}),
+    },
+  });
+
+  await prisma.log.create({ data: { itemId: item.id, autorId: dbUser.id, acao: "ANEXO_IMPORTADO" } });
+  revalidatePath(`/itens/${itemId}`);
+
+  return { success: true, id: anexo.id, url: urlServePath, nome: displayName };
 }
