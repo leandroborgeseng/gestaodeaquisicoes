@@ -1,10 +1,17 @@
+import withSerwist from "@serwist/next";
+
+const withSerwistConfig = withSerwist({
+  swSrc: "src/app/sw.ts",
+  swDest: "public/sw.js",
+  disable: process.env.NODE_ENV === "development",
+});
+
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   experimental: {
     serverComponentsExternalPackages: ["@prisma/client", "bcryptjs"],
     serverActions: {
       allowedOrigins: ["*"],
-      // Allow uploads up to 20 MB
       bodySizeLimit: "21mb",
     },
   },
@@ -13,4 +20,4 @@ const nextConfig = {
   },
 };
 
-export default nextConfig;
+export default withSerwistConfig(nextConfig);
