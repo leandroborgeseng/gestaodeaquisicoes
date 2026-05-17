@@ -9,6 +9,7 @@ import {
   emailItemPausado,
   emailNovoContrato,
 } from "@/lib/email";
+import * as XLSX from "xlsx";
 
 async function requireAuth() {
   const session = await auth();
@@ -556,6 +557,172 @@ export async function editarItem(itemId: string, formData: FormData) {
   revalidatePath(`/itens/${itemId}`);
   revalidatePath("/itens");
   return { success: true };
+}
+
+// ─── Import em massa de itens via CSV / Excel ────────────────────────────────
+
+type ImportResult = { created: number; skipped: number; errors: string[] };
+
+interface RawRow {
+  [key: string]: string | number | undefined | null;
+}
+
+function normalizeHeader(h: string): string {
+  return h.trim().toLowerCase().replace(/[^a-z0-9]/g, "");
+}
+
+function pickField(row: RawRow, ...candidates: string[]): string | number | undefined | null {
+  for (const c of candidates) {
+    const normalized = normalizeHeader(c);
+    for (const key of Object.keys(row)) {
+      if (normalizeHeader(key) === normalized) return row[key];
+    }
+  }
+  return undefined;
+}
+
+function toStr(v: unknown): string {
+  if (v === null || v === undefined) return "";
+  return String(v).trim();
+}
+
+function toIntOrNull(v: unknown): number | null {
+  if (v === null || v === undefined || v === "") return null;
+  const n = parseInt(String(v));
+  return isNaN(n) ? null : n;
+}
+
+function toDecimalOrNull(v: unknown): number | null {
+  if (v === null || v === undefined || v === "") return null;
+  const n = parseFloat(String(v).replace(/[^0-9.,]/g, "").replace(",", "."));
+  return isNaN(n) ? null : n;
+}
+
+function parseCSV(text: string): RawRow[] {
+  const lines = text.split(/\r?\n/).filter((l) => l.trim());
+  if (lines.length < 2) return [];
+
+  // Detect delimiter: prefer semicolon if present in header, else comma
+  const delimiter = lines[0].includes(";") ? ";" : ",";
+
+  const headers = lines[0].split(delimiter).map((h) => h.replace(/^"|"$/g, "").trim());
+
+  return lines.slice(1).map((line) => {
+    const values = line.split(delimiter).map((v) => v.replace(/^"|"$/g, "").trim());
+    const obj: RawRow = {};
+    headers.forEach((h, i) => {
+      obj[h] = values[i] ?? "";
+    });
+    return obj;
+  });
+}
+
+export async function importarItens(formData: FormData): Promise<ImportResult> {
+  const user = await requireAuth();
+  if (user.role === "FORNECEDOR") throw new Error("Sem permissão");
+
+  const file = formData.get("file") as File | null;
+  if (!file) return { created: 0, skipped: 0, errors: ["Nenhum arquivo enviado"] };
+
+  const MAX_ROWS = 500;
+  const errors: string[] = [];
+  let rows: RawRow[] = [];
+
+  const fileName = file.name.toLowerCase();
+  const buffer = Buffer.from(await file.arrayBuffer());
+
+  if (fileName.endsWith(".xlsx") || fileName.endsWith(".xls")) {
+    const wb = XLSX.read(buffer, { type: "buffer" });
+    const ws = wb.Sheets[wb.SheetNames[0]];
+    rows = XLSX.utils.sheet_to_json<RawRow>(ws, { defval: "" });
+  } else if (fileName.endsWith(".csv")) {
+    const text = buffer.toString("utf-8");
+    rows = parseCSV(text);
+  } else {
+    return { created: 0, skipped: 0, errors: ["Formato não suportado. Use .csv, .xlsx ou .xls"] };
+  }
+
+  if (rows.length === 0) return { created: 0, skipped: 0, errors: ["Arquivo vazio ou sem dados"] };
+
+  // Validate required columns exist
+  const firstRow = rows[0];
+  const hasNumero = toStr(pickField(firstRow, "Nº", "numero", "N°", "No")) !== "" ||
+    Object.keys(firstRow).some((k) => ["nº", "numero", "n°", "no"].includes(normalizeHeader(k)));
+  const hasEquip = Object.keys(firstRow).some((k) =>
+    ["equipamento"].includes(normalizeHeader(k))
+  );
+
+  if (!hasNumero) errors.push("Coluna obrigatória não encontrada: 'Nº' ou 'numero'");
+  if (!hasEquip) errors.push("Coluna obrigatória não encontrada: 'Equipamento' ou 'equipamento'");
+  if (errors.length > 0) return { created: 0, skipped: 0, errors };
+
+  if (rows.length > MAX_ROWS) {
+    return { created: 0, skipped: 0, errors: [`Máximo de ${MAX_ROWS} linhas por upload (enviado: ${rows.length})`] };
+  }
+
+  // Build payload
+  const toCreate: {
+    numero: string;
+    equipamento: string;
+    especificacao: string | null;
+    faseUnicaQtd: number;
+    valorReferenciaFns: number | null;
+    numeroSiafisico: number | null;
+    statusProcesso: StatusProcesso;
+  }[] = [];
+
+  for (let i = 0; i < rows.length; i++) {
+    const row = rows[i];
+    const lineNum = i + 2; // 1-based + header
+
+    const numero = toStr(pickField(row, "Nº", "numero", "N°", "No"));
+    const equipamento = toStr(pickField(row, "Equipamento", "equipamento"));
+
+    if (!numero) { errors.push(`Linha ${lineNum}: campo 'Nº' vazio`); continue; }
+    if (!equipamento) { errors.push(`Linha ${lineNum}: campo 'Equipamento' vazio`); continue; }
+
+    const especificacao = toStr(pickField(row, "Especificacao", "especificacao", "Especificação")) || null;
+    const qtdRaw = pickField(row, "Qtd", "qtd", "Quantidade", "quantidade");
+    const faseUnicaQtd = toIntOrNull(qtdRaw) ?? 1;
+    const valorReferenciaFns = toDecimalOrNull(pickField(row, "ValorRef", "valor_ref", "Valor Ref", "ValorReferencia"));
+    const numeroSiafisico = toIntOrNull(pickField(row, "SIAFISICO", "siafisico", "Siafisico"));
+
+    toCreate.push({
+      numero,
+      equipamento,
+      especificacao,
+      faseUnicaQtd,
+      valorReferenciaFns,
+      numeroSiafisico,
+      statusProcesso: "PENDENTE",
+    });
+  }
+
+  if (toCreate.length === 0) {
+    return { created: 0, skipped: 0, errors: errors.length > 0 ? errors : ["Nenhuma linha válida encontrada"] };
+  }
+
+  // Get existing numbers to compute skipped count
+  const numbersToInsert = toCreate.map((r) => r.numero);
+  const existing = await prisma.item.findMany({
+    where: { numero: { in: numbersToInsert } },
+    select: { numero: true },
+  });
+  const existingSet = new Set(existing.map((e) => e.numero));
+
+  const result = await prisma.item.createMany({
+    data: toCreate,
+    skipDuplicates: true,
+  });
+
+  const created = result.count;
+  const skipped = numbersToInsert.length - errors.length - created + existingSet.size - existingSet.size;
+  // Simpler: skipped = rows that were valid but already existed
+  const validCount = toCreate.length;
+  const skippedCount = validCount - created;
+
+  revalidatePath("/itens");
+  return { created, skipped: skippedCount, errors };
 }
 
 export async function marcarConcluido(itemId: string) {

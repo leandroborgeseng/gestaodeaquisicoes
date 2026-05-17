@@ -5,8 +5,58 @@ import { StatusPill } from "@/components/StatusPill";
 import { fmtBRL, fmtNum } from "@/lib/utils";
 import { Icons } from "@/components/Icons";
 import { DashboardCharts } from "./DashboardCharts";
+import { StatusChart } from "@/components/charts/StatusChart";
+import { FinanceChart } from "@/components/charts/FinanceChart";
 
 export const dynamic = "force-dynamic";
+
+// ─── Finance chart data ───────────────────────────────────────────────────────
+
+async function getFinanceChartData(): Promise<{ mes: string; valor: number }[]> {
+  const now = new Date();
+  const from = new Date(now.getFullYear(), now.getMonth() - 11, 1);
+
+  const rows = await prisma.contratacao.findMany({
+    where: {
+      dataAssinatura: { gte: from },
+      valorContratado: { not: null },
+    },
+    select: { dataAssinatura: true, valorContratado: true },
+  });
+
+  const map = new Map<string, number>();
+  for (const r of rows) {
+    if (!r.dataAssinatura) continue;
+    const d = new Date(r.dataAssinatura);
+    const key = d.toLocaleDateString("pt-BR", { month: "short", year: "2-digit" }).replace(". de ", "/").replace(".", "/");
+    const prev = map.get(key) ?? 0;
+    map.set(key, prev + Number(r.valorContratado ?? 0));
+  }
+
+  // Build ordered 12-month series
+  const result: { mes: string; valor: number }[] = [];
+  for (let i = 11; i >= 0; i--) {
+    const d = new Date(now.getFullYear(), now.getMonth() - i, 1);
+    const mes = d.toLocaleDateString("pt-BR", { month: "short", year: "2-digit" })
+      .replace(". de ", "/").replace(".", "/")
+      // Capitalize first letter
+      .replace(/^./, (c) => c.toUpperCase());
+    result.push({ mes, valor: 0 });
+  }
+
+  // Fill values
+  for (const r of rows) {
+    if (!r.dataAssinatura) continue;
+    const d = new Date(r.dataAssinatura);
+    const mesKey = d.toLocaleDateString("pt-BR", { month: "short", year: "2-digit" })
+      .replace(". de ", "/").replace(".", "/")
+      .replace(/^./, (c) => c.toUpperCase());
+    const entry = result.find((e) => e.mes === mesKey);
+    if (entry) entry.valor += Number(r.valorContratado ?? 0);
+  }
+
+  return result;
+}
 
 async function getDashboardData() {
   const now = new Date();
@@ -92,15 +142,107 @@ const STATUS_LABELS_SHORT: Record<string, string> = {
   CANCELADO: "Cancelado",
 };
 
+async function getFornecedorData(userId: string) {
+  const user = await prisma.user.findUnique({
+    where: { id: userId },
+    include: { fornecedor: true },
+  });
+  if (!user?.fornecedor) return null;
+  const fId = user.fornecedor.id;
+  const [contratacoes, orcamentos] = await Promise.all([
+    prisma.contratacao.findMany({
+      where: { fornecedorId: fId },
+      include: { item: { select: { numero: true, equipamento: true, statusProcesso: true } } },
+      orderBy: { createdAt: "desc" },
+      take: 20,
+    }),
+    prisma.orcamento.findMany({
+      where: { fornecedorId: fId },
+      include: { item: { select: { numero: true, equipamento: true } } },
+      orderBy: { createdAt: "desc" },
+      take: 20,
+    }),
+  ]);
+  return { fornecedor: user.fornecedor, contratacoes, orcamentos };
+}
+
 export default async function DashboardPage() {
   const session = await auth();
-  const data = await getDashboardData();
+  const role = (session?.user as { role?: string })?.role;
+
+  if (role === "FORNECEDOR") {
+    const fd = await getFornecedorData(session!.user!.id!);
+    if (!fd) return <div className="content"><div className="content-inner" style={{ padding: 32 }}>Nenhum fornecedor vinculado a este usuário.</div></div>;
+    const totalContratado = fd.contratacoes.reduce((s, c) => s + Number(c.valorContratado ?? 0), 0);
+    return (
+      <>
+        <Topbar crumbs={["3Colinas", "Meu Painel"]} />
+        <div className="content">
+          <div className="content-inner">
+            <div className="page-head">
+              <div>
+                <h1>{fd.fornecedor.nome}</h1>
+                <p>Painel do fornecedor · {fd.contratacoes.length} contratos · {fd.orcamentos.length} propostas</p>
+              </div>
+            </div>
+            <div className="kpi-grid" style={{ display: "grid", gridTemplateColumns: "repeat(3,1fr)", gap: 12, marginBottom: 18 }}>
+              <div className="kpi"><div className="label">Contratos ativos</div><div className="value">{fd.contratacoes.filter(c => !["CANCELADO","CONCLUIDO"].includes(c.item.statusProcesso)).length}</div></div>
+              <div className="kpi"><div className="label">Valor total contratado</div><div className="value" style={{ fontSize: 18 }}>{fmtBRL(totalContratado)}</div></div>
+              <div className="kpi"><div className="label">Propostas enviadas</div><div className="value">{fd.orcamentos.length}</div></div>
+            </div>
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
+              <div className="card">
+                <div className="card-head"><h3>Meus contratos</h3></div>
+                {fd.contratacoes.length === 0 ? (
+                  <div style={{ padding: "16px 14px", fontSize: 13, color: "var(--fg-faint)" }}>Nenhum contrato ainda.</div>
+                ) : fd.contratacoes.map((c, i) => (
+                  <div key={c.id} style={{ display: "flex", gap: 10, padding: "10px 14px", borderBottom: i < fd.contratacoes.length - 1 ? "1px solid var(--line-soft)" : "none", alignItems: "center" }}>
+                    <div style={{ flex: 1, minWidth: 0 }}>
+                      <div style={{ fontSize: 12.5, fontWeight: 500 }}>{c.item.equipamento}</div>
+                      <div style={{ fontSize: 11, color: "var(--fg-faint)", marginTop: 1 }}>{c.item.numero}</div>
+                    </div>
+                    <div style={{ textAlign: "right" }}>
+                      <StatusPill status={c.item.statusProcesso} />
+                      {c.valorContratado && <div style={{ fontSize: 11, color: "var(--fg-dim)", marginTop: 3 }}>{fmtBRL(Number(c.valorContratado))}</div>}
+                    </div>
+                  </div>
+                ))}
+              </div>
+              <div className="card">
+                <div className="card-head"><h3>Minhas propostas</h3></div>
+                {fd.orcamentos.length === 0 ? (
+                  <div style={{ padding: "16px 14px", fontSize: 13, color: "var(--fg-faint)" }}>Nenhuma proposta ainda.</div>
+                ) : fd.orcamentos.map((o, i) => (
+                  <div key={o.id} style={{ display: "flex", gap: 10, padding: "10px 14px", borderBottom: i < fd.orcamentos.length - 1 ? "1px solid var(--line-soft)" : "none", alignItems: "center" }}>
+                    <div style={{ flex: 1, minWidth: 0 }}>
+                      <div style={{ fontSize: 12.5, fontWeight: 500 }}>{o.item.equipamento}</div>
+                      <div style={{ fontSize: 11, color: "var(--fg-faint)", marginTop: 1 }}>{o.item.numero}</div>
+                    </div>
+                    <div style={{ textAlign: "right" }}>
+                      {o.vencedor && <span className="pill-soft ok" style={{ fontSize: 10.5 }}>Vencedor</span>}
+                      {o.valor && <div style={{ fontSize: 11, color: "var(--fg-dim)", marginTop: 3 }}>{fmtBRL(Number(o.valor))}</div>}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
+      </>
+    );
+  }
+
+  const [data, financeData] = await Promise.all([getDashboardData(), getFinanceChartData()]);
 
   const dist = STATUS_ORDER.map((s) => ({
     status: s,
     label: STATUS_LABELS_SHORT[s] ?? s,
     qtd: data.byStatus.find((b) => b.statusProcesso === s)?._count?.id ?? 0,
   })).filter((d) => d.qtd > 0);
+
+  const statusChartData = STATUS_ORDER
+    .map((s) => ({ status: s, count: data.byStatus.find((b) => b.statusProcesso === s)?._count?.id ?? 0 }))
+    .filter((d) => d.count > 0);
 
   const alertas = [
     ...(data.atrasados > 0 ? [{ titulo: "Entregas atrasadas", motivo: `${data.atrasados} entregas com prazo vencido`, severidade: "alta" as const }] : []),
@@ -235,7 +377,7 @@ export default async function DashboardPage() {
           </div>
 
           {/* Row 3: activity + alerts */}
-          <div style={{ display: "grid", gridTemplateColumns: "minmax(0,1fr) minmax(0,360px)", gap: 12 }}>
+          <div style={{ display: "grid", gridTemplateColumns: "minmax(0,1fr) minmax(0,360px)", gap: 12, marginBottom: 18 }}>
             <div className="card">
               <div className="card-head">
                 <h3>Atividade recente</h3>
@@ -306,6 +448,26 @@ export default async function DashboardPage() {
                     </div>
                   </div>
                 ))}
+              </div>
+            </div>
+          </div>
+          {/* Row 4: recharts — status distribution + finance evolution */}
+          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
+            <div className="card">
+              <div className="card-head">
+                <h3>Distribuição por status</h3>
+              </div>
+              <div style={{ padding: 14 }}>
+                <StatusChart data={statusChartData} />
+              </div>
+            </div>
+
+            <div className="card">
+              <div className="card-head">
+                <h3>Evolução financeira — últimos 12 meses</h3>
+              </div>
+              <div style={{ padding: 14 }}>
+                <FinanceChart data={financeData} />
               </div>
             </div>
           </div>

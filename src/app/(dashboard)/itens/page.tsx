@@ -7,6 +7,7 @@ import Link from "next/link";
 import { Decimal } from "@prisma/client/runtime/library";
 import { ItemFilters } from "@/components/ItemFilters";
 import { NovoItemModal } from "@/components/modals/GestaoModals";
+import { ImportarItensModal } from "@/components/modals/ImportarItensModal";
 
 export const dynamic = "force-dynamic";
 
@@ -71,6 +72,7 @@ export default async function ItensPage({ searchParams }: { searchParams: Search
               <p>{data.total} equipamentos · Fase Única 2026 · R$ 24,99M referência FNS</p>
             </div>
             <div className="actions">
+              <ImportarItensModal />
               <NovoItemModal setores={data.setores} fases={data.fases} />
             </div>
           </div>

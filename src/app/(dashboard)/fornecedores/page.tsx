@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { prisma } from "@/lib/prisma";
 import { Topbar } from "@/components/Topbar";
 import { Icons } from "@/components/Icons";
@@ -54,9 +55,9 @@ export default async function FornecedoresPage() {
                       <div style={{ fontSize: 13, fontWeight: 500, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{f.nome}</div>
                       {f.cnpj && <div className="mono" style={{ fontSize: 10.5, color: "var(--fg-dim)", marginTop: 1 }}>{f.cnpj}</div>}
                     </div>
-                    <button className="btn ghost sm" style={{ height: 22, width: 22, padding: 0, justifyContent: "center" }}>
-                      <Icons.More style={{ width: 13, height: 13 }} />
-                    </button>
+                    <Link href={`/fornecedores/${f.id}`} className="btn ghost sm" style={{ height: 22, padding: "0 6px", fontSize: 11 }}>
+                      Ver detalhes
+                    </Link>
                   </div>
 
                   <div style={{ height: 1, background: "var(--line-soft)", margin: "12px 0 10px" }} />
