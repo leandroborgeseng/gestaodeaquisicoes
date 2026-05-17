@@ -89,15 +89,17 @@ model Item {
 }
 
 model Orcamento {
-  id           String     @id @default(cuid())
-  item         Item       @relation(fields: [itemId], references: [id])
-  itemId       String
-  fornecedor   Fornecedor @relation(fields: [fornecedorId], references: [id])
-  fornecedorId String
-  valor        Decimal    @db.Decimal(15, 2)
-  numero       Int
+  id            String     @id @default(cuid())
+  item          Item       @relation(fields: [itemId], references: [id])
+  itemId        String
+  fornecedor    Fornecedor @relation(fields: [fornecedorId], references: [id])
+  fornecedorId  String
+  valor         Decimal    @db.Decimal(15, 2)
+  numero        Int
+  cotacaoUrl    String?
   dataOrcamento DateTime?
-  createdAt    DateTime   @default(now())
+  createdAt     DateTime   @default(now())
+  anexos        Anexo[]
 }
 
 model Cotacao {
@@ -206,6 +208,8 @@ model Anexo {
   testeInicial   TesteInicial? @relation(fields: [testeInicialId], references: [id])
   testeInicialId String?
   notaFiscal     NotaFiscal?
+  orcamento      Orcamento?    @relation(fields: [orcamentoId], references: [id])
+  orcamentoId    String?
   createdAt      DateTime      @default(now())
 }
 

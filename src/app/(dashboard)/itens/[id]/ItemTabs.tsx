@@ -24,7 +24,15 @@ interface ItemData {
   origemMenorValor: string | null;
   statusVsReferenciaFns: string | null;
   statusProcesso: string;
-  orcamentos: { numero: number; fornecedor: string; valor: number; data: string | null }[];
+  orcamentos: {
+    id: string;
+    numero: number;
+    fornecedor: string;
+    valor: number;
+    data: string | null;
+    cotacaoUrl: string | null;
+    anexos: { id: string; nomeOriginal: string; url: string; tamanho: number }[];
+  }[];
   cotacao: { dataInicio: string | null; dataConclusao: string | null; observacao: string | null } | null;
   contratacao: { numero: string | null; fornecedor: string; cnpj: string | null; valor: number | null; dataAssinatura: string | null; vigencia: string | null } | null;
   entregas: { data: string | null; previsao: string | null; qtd: number | null; responsavel: string | null; local: string | null; obs: string | null }[];
@@ -338,11 +346,14 @@ function TabOrcamentos({ item, menorValor }: { item: ItemData; menorValor: typeo
             <th>Data</th>
             <th style={{ textAlign: "right" }}>Valor unitário</th>
             <th style={{ textAlign: "right" }}>Total ({item.faseUnicaQtd} un)</th>
+            <th style={{ width: 80 }}>Documento</th>
           </tr>
         </thead>
         <tbody>
           {item.orcamentos.map((o) => {
             const isMenor = o === menorValor;
+            // Prefer already-downloaded local file, fallback to Drive URL
+            const docUrl = o.anexos[0]?.url ?? o.cotacaoUrl;
             return (
               <tr key={o.numero}>
                 <td className="num">0{o.numero}</td>
@@ -355,11 +366,28 @@ function TabOrcamentos({ item, menorValor }: { item: ItemData; menorValor: typeo
                 <td className="num">{o.data ?? "—"}</td>
                 <td className="num strong" style={{ textAlign: "right" }}>{fmtBRL(o.valor)}</td>
                 <td className="num" style={{ textAlign: "right" }}>{fmtBRL(o.valor * item.faseUnicaQtd)}</td>
+                <td>
+                  {docUrl ? (
+                    <a
+                      href={docUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="btn ghost sm"
+                      style={{ height: 22, padding: "0 7px", fontSize: 10.5 }}
+                      title={o.anexos[0] ? "Arquivo local" : "Google Drive"}
+                    >
+                      <Icons.Doc style={{ width: 10, height: 10 }} />
+                      {o.anexos[0] ? "PDF" : "Drive"}
+                    </a>
+                  ) : (
+                    <span style={{ fontSize: 11, color: "var(--fg-faint)" }}>—</span>
+                  )}
+                </td>
               </tr>
             );
           })}
           {item.orcamentos.length === 0 && (
-            <tr><td colSpan={5} style={{ padding: "20px 12px", color: "var(--fg-faint)", fontSize: 12.5 }}>Nenhum orçamento registrado.</td></tr>
+            <tr><td colSpan={6} style={{ padding: "20px 12px", color: "var(--fg-faint)", fontSize: 12.5 }}>Nenhum orçamento registrado.</td></tr>
           )}
         </tbody>
       </table>

@@ -2,6 +2,7 @@ import { PrismaClient, StatusProcesso, StatusVsReferencia } from "@prisma/client
 import bcrypt from "bcryptjs";
 import rawData from "../seed/equipamentos.json";
 import rawLinks from "../seed/drive_links.json";
+import rawCotacaoLinks from "../seed/cotacao_links.json";
 
 const prisma = new PrismaClient();
 
@@ -29,6 +30,12 @@ const data = rawData as {
 const driveLinksMap = new Map<string, string>(
   (rawLinks as { drive_links: { equipamento: string; url: string }[] })
     .drive_links.map((d) => [d.equipamento, d.url])
+);
+
+// cotacaoLinksMap: key = "equipamento|orcamento_numero" → url
+const cotacaoLinksMap = new Map<string, string>(
+  (rawCotacaoLinks as { cotacao_links: { equipamento: string; orcamento: number; url: string }[] })
+    .cotacao_links.map((c) => [`${c.equipamento}|${c.orcamento}`, c.url])
 );
 
 function toVsRef(val: string | null | undefined): StatusVsReferencia | null {
@@ -132,7 +139,9 @@ async function main() {
         fornecedoresMap.set(empresa, fornId);
       }
 
-      const orcId = `${created.id}-orc-${i + 1}`;
+      const orcNum = i + 1;
+      const cotacaoUrl = cotacaoLinksMap.get(`${item.equipamento}|${orcNum}`) ?? null;
+      const orcId = `${created.id}-orc-${orcNum}`;
       await prisma.orcamento.upsert({
         where: { id: orcId },
         create: {
@@ -140,10 +149,11 @@ async function main() {
           itemId: created.id,
           fornecedorId: fornId,
           valor: orc.valor,
-          numero: i + 1,
+          numero: orcNum,
+          cotacaoUrl,
           dataOrcamento: null,
         },
-        update: {},
+        update: { cotacaoUrl },
       });
     }
 

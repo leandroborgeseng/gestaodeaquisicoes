@@ -22,10 +22,11 @@
   --fg-mid:      oklch(0.40 0.010 260);
   --fg-dim:      oklch(0.55 0.008 260);
   --fg-faint:    oklch(0.68 0.006 260);
-  --accent:      oklch(0.52 0.10 175);
-  --accent-fg:   oklch(0.99 0.005 175);
-  --accent-soft: oklch(0.95 0.03 175);
-  --accent-line: oklch(0.85 0.05 175);
+  --accent:      oklch(0.48 0.20 258);
+  --accent-fg:   oklch(1.00 0.000 0);
+  --accent-soft: oklch(0.94 0.04 258);
+  --accent-line: oklch(0.84 0.08 258);
+  --brand-gradient: linear-gradient(135deg, oklch(0.62 0.16 168) 0%, oklch(0.48 0.20 258) 100%);
   --warn:        oklch(0.68 0.14 70);
   --warn-soft:   oklch(0.96 0.04 80);
   --danger:      oklch(0.55 0.18 25);
@@ -49,10 +50,10 @@
   --fg-mid:      oklch(0.78 0.004 250);
   --fg-dim:      oklch(0.62 0.005 260);
   --fg-faint:    oklch(0.50 0.005 260);
-  --accent:      oklch(0.72 0.10 175);
-  --accent-fg:   oklch(0.18 0.005 175);
-  --accent-soft: oklch(0.36 0.07 175 / 0.35);
-  --accent-line: oklch(0.50 0.08 175);
+  --accent:      oklch(0.68 0.16 258);
+  --accent-fg:   oklch(0.12 0.010 258);
+  --accent-soft: oklch(0.32 0.10 258 / 0.35);
+  --accent-line: oklch(0.46 0.14 258);
   --warn:        oklch(0.80 0.12 70);
   --warn-soft:   oklch(0.38 0.08 70 / 0.4);
   --danger:      oklch(0.72 0.14 25);
@@ -106,11 +107,12 @@ body {
   overflow-y: auto;
 }
 .sidebar-brand {
-  display: flex; align-items: center; gap: 9px;
+  display: flex; align-items: flex-start; gap: 6px;
   padding: 4px 6px 2px;
   flex-direction: column;
-  align-items: flex-start;
-  gap: 6px;
+  border-bottom: 1px solid var(--line-soft);
+  padding-bottom: 14px;
+  margin-bottom: -4px;
 }
 .sidebar-org {
   display: flex; align-items: center; gap: 8px;
@@ -197,6 +199,7 @@ body {
 .btn.primary { background: var(--fg); color: var(--bg-panel); border-color: var(--fg); }
 .btn.primary:hover { opacity: 0.88; }
 .btn.accent { background: var(--accent); color: var(--accent-fg); border-color: var(--accent); }
+.btn.accent:hover { opacity: 0.90; }
 .btn.ghost { background: transparent; border-color: transparent; color: var(--fg-mid); }
 .btn.ghost:hover { background: var(--bg-soft); color: var(--fg); }
 .btn.sm { height: 24px; padding: 0 8px; font-size: 11.5px; }

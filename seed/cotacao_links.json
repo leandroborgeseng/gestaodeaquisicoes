@@ -1,0 +1,3875 @@
+{
+  "cotacao_links": [
+    {
+      "equipamento": "Aparelho de radiodiagnóstico 630 mA com DR",
+      "orcamento": 1,
+      "empresa": "IMEX",
+      "valor": 330000.0,
+      "url": "https://drive.google.com/file/d/1ubPo-JtNRhahOyvNsf2GCd8Lyg1uEf5B/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Aparelho de radiodiagnóstico 630 mA com DR",
+      "orcamento": 2,
+      "empresa": "Ribertec",
+      "valor": 399600.0,
+      "url": "https://drive.google.com/file/d/12eaF2Ld2ibHlXrTTNoj5C5Bk1TR7GDni/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Aparelho de radiodiagnóstico 630 mA com DR",
+      "orcamento": 3,
+      "empresa": "Shimadzu",
+      "valor": 950000.0,
+      "url": "https://drive.google.com/file/d/1119_X6Be88BaYSCpPb0P2W1YCCLtXJtW/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Aparelho de radiodiagnóstico móvel 100 mAs",
+      "orcamento": 1,
+      "empresa": "Shimadzu",
+      "valor": 445000.0,
+      "url": "https://drive.google.com/file/d/1Y1Uvxv57rhsm5IMlWtwfhoISyseMBO23/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Aquecedor de Fluídos/ Sangue",
+      "orcamento": 1,
+      "empresa": "ArtMedical",
+      "valor": 24900.0,
+      "url": "https://drive.google.com/file/d/1Vl7A4xmzcv6PBfwPkerEpYK8COC9wLFd/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Arco Cirúrgico (C-Arm) - com aplicações vascular/neurologia/ortopedia",
+      "orcamento": 1,
+      "empresa": "Lótus Indùstria",
+      "valor": 480306.0,
+      "url": "https://drive.google.com/file/d/1azhIOC1dIgJGNHNTD3a-UN12_ZQGfjVC/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Armário baixo",
+      "orcamento": 1,
+      "empresa": "Ufficioflex",
+      "valor": 735.0,
+      "url": "https://drive.google.com/file/d/1uixj_DsbHarPA77Y2EPVQmyChugG5C4G/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Armário baixo",
+      "orcamento": 2,
+      "empresa": "Pollo",
+      "valor": 857.5,
+      "url": "https://drive.google.com/file/d/1rtXGVfqfrugoXP_o3zEzc88sWUUyhwXr/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Armário baixo",
+      "orcamento": 3,
+      "empresa": "Jonas  - Móveis para Escritório",
+      "valor": 757.05,
+      "url": "https://drive.google.com/file/d/1_c0S3LZaMZDmnmNgsSj5eso2rN8G0IHO/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Armário de vestiário – 2 corpos",
+      "orcamento": 1,
+      "empresa": "Ufficioflex",
+      "valor": 873.0,
+      "url": "https://drive.google.com/file/d/1uixj_DsbHarPA77Y2EPVQmyChugG5C4G/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Armário de vestiário – 2 corpos",
+      "orcamento": 2,
+      "empresa": "Pollo",
+      "valor": 855.75,
+      "url": "https://drive.google.com/file/d/1rtXGVfqfrugoXP_o3zEzc88sWUUyhwXr/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Armário de vestiário – 2 corpos",
+      "orcamento": 3,
+      "empresa": "Jonas  - Móveis para Escritório",
+      "valor": 890.0,
+      "url": "https://drive.google.com/file/d/1_c0S3LZaMZDmnmNgsSj5eso2rN8G0IHO/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Armário de vestiário – 4 corpos",
+      "orcamento": 1,
+      "empresa": "Ufficioflex",
+      "valor": 1530.0,
+      "url": "https://drive.google.com/file/d/1uixj_DsbHarPA77Y2EPVQmyChugG5C4G/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Armário de vestiário – 4 corpos",
+      "orcamento": 2,
+      "empresa": "Pollo",
+      "valor": 1650.25,
+      "url": "https://drive.google.com/file/d/1rtXGVfqfrugoXP_o3zEzc88sWUUyhwXr/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Armário de vestiário – 4 corpos",
+      "orcamento": 3,
+      "empresa": "Jonas  - Móveis para Escritório",
+      "valor": 1575.9,
+      "url": "https://drive.google.com/file/d/1_c0S3LZaMZDmnmNgsSj5eso2rN8G0IHO/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Armário para endoscópios (12 posições)",
+      "orcamento": 1,
+      "empresa": "Cardinal",
+      "valor": 12410.65,
+      "url": "https://drive.google.com/file/d/1q1gx3ai2aWTCghIit5I8aNJ-WLJ57hOS/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Armário para endoscópios (12 posições)",
+      "orcamento": 2,
+      "empresa": "Endocommerce",
+      "valor": 15232.95,
+      "url": "https://drive.google.com/file/d/1PXga2EXwCyDKj4L1LB0r4NT6zX5U82Xb/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Aspirador Cirúrgico",
+      "orcamento": 1,
+      "empresa": "Fleximed",
+      "valor": 31990.0,
+      "url": "https://drive.google.com/file/d/1yMoUgTHVDjrCNWA_HB7Ahq5Y8PpjOxsD/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Aspirador Cirúrgico",
+      "orcamento": 2,
+      "empresa": "RTS",
+      "valor": "-",
+      "url": "https://drive.google.com/file/d/19UUZyCMeNddPvZ6gaQM2OW6_-b6o42vL/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Aspirador Cirúrgico",
+      "orcamento": 3,
+      "empresa": "Dormed",
+      "valor": 2697.95,
+      "url": "https://drive.google.com/file/d/1Bw9CmKCyYFhay2bqhWapTdoQYlcGi4Un/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Audiômetro",
+      "orcamento": 1,
+      "empresa": "Oto-sonic",
+      "valor": 63500.0,
+      "url": "https://drive.google.com/file/d/1cBWKv61-e0XgrWny_GezGCAmDDJ0bsnz/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Audiômetro",
+      "orcamento": 2,
+      "empresa": "Vibrasom",
+      "valor": 25000.0,
+      "url": "https://drive.google.com/file/d/160s_CccH6mN3vJxtONDPtXIKgusjIvfb/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Audiômetro",
+      "orcamento": 3,
+      "empresa": "Dormed",
+      "valor": 20559.5,
+      "url": "https://drive.google.com/file/d/1Bw9CmKCyYFhay2bqhWapTdoQYlcGi4Un/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Auto refrator e ceratômetro automático",
+      "orcamento": 1,
+      "empresa": "Alcon",
+      "valor": 80000.0,
+      "url": "https://drive.google.com/file/d/1t3umUgjBxzvTAFtntZZo-A9Rci38rYW1/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Auto refrator e ceratômetro automático",
+      "orcamento": 2,
+      "empresa": "Eyetec",
+      "valor": 39900.0,
+      "url": "https://drive.google.com/file/d/1K8xf8WIlkoQakDfEm0Ijw0E-Xy1EJOM0/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Auto refrator e ceratômetro automático",
+      "orcamento": 3,
+      "empresa": "Mogami",
+      "valor": 136373.0,
+      "url": "https://drive.google.com/file/d/1g6HYNtShbWi_48HRTm46xwBE_gfoGg3C/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Autoclave  (se descartar placas de cultura no laboratório)",
+      "orcamento": 1,
+      "empresa": "Biocold",
+      "valor": 18922.0,
+      "url": "https://drive.google.com/file/d/14x4MF1yqNSYdWsABB0WpZXPVR_ztyHfF/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Autoclave  (se descartar placas de cultura no laboratório)",
+      "orcamento": 2,
+      "empresa": "Generalmed",
+      "valor": 30933.3,
+      "url": "https://drive.google.com/file/d/1x3CJeUdAeU-0hBwR9iGoSZUj91_mkUjH/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Autoclave  (se descartar placas de cultura no laboratório)",
+      "orcamento": 3,
+      "empresa": "Nova Analítica",
+      "valor": 94990.82,
+      "url": "https://drive.google.com/file/d/1Oiu0gclG7qscZkwWrOtsK1qyNCNsIH3X/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Balança Antropométrica Adulto",
+      "orcamento": 1,
+      "empresa": "Cirurgica Mazei",
+      "valor": 2689.0,
+      "url": "https://drive.google.com/file/d/1feRcLdsBc3qEY0ROUlckcXwef7yCKHmJ/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Balança Antropométrica Adulto",
+      "orcamento": 2,
+      "empresa": "Casa do Médico",
+      "valor": 2208.63,
+      "url": "https://drive.google.com/file/d/1z_rFiQ5rj0w0MazjLgaVl0wNSgdIje07/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Balança Antropométrica Adulto",
+      "orcamento": 3,
+      "empresa": "Medicinalli",
+      "valor": 2000.0,
+      "url": "https://drive.google.com/file/d/1XP8v8qK479NRQP5ETiaOyMKuy-PAf5-k/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Balança antropométrica infantil",
+      "orcamento": 1,
+      "empresa": "Saúde Shop",
+      "valor": 1754.0,
+      "url": "https://drive.google.com/file/d/11eqSqoS6Mfj4LPd7bCWgvV3Qvme35dOD/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Balança antropométrica infantil",
+      "orcamento": 2,
+      "empresa": "Casa do Médico",
+      "valor": 1095.0,
+      "url": "https://drive.google.com/file/d/1z_rFiQ5rj0w0MazjLgaVl0wNSgdIje07/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Balança antropométrica infantil",
+      "orcamento": 3,
+      "empresa": "Medicinalli",
+      "valor": 955.0,
+      "url": "https://drive.google.com/file/d/1XP8v8qK479NRQP5ETiaOyMKuy-PAf5-k/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Balança Antropométrica para Obesos",
+      "orcamento": 1,
+      "empresa": "Medicinalli",
+      "valor": 2550.0,
+      "url": "https://drive.google.com/file/d/1XP8v8qK479NRQP5ETiaOyMKuy-PAf5-k/view?usp=drive_link"
+    },
+    {
+      "equipamento": "balanca de precisáo",
+      "orcamento": 1,
+      "empresa": "Quimis",
+      "valor": 8201.43,
+      "url": "https://drive.google.com/file/d/119QbjeUzHZgnbJ5hP3sS_g-Eco-6G9mS/view?usp=drive_link"
+    },
+    {
+      "equipamento": "balanca de precisáo",
+      "orcamento": 2,
+      "empresa": "PRLabor",
+      "valor": 6444.0,
+      "url": "https://drive.google.com/file/d/1hD4xGY97OpsuytAGfrRcdbkramjep_8I/view?usp=drive_link"
+    },
+    {
+      "equipamento": "balanca de precisáo",
+      "orcamento": 3,
+      "empresa": "Casalab",
+      "valor": 7365.0,
+      "url": "https://drive.google.com/file/d/10fAiyfILECZHfNzF0I6_lvgHFtsisFl7/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Balança Digital Portátil",
+      "orcamento": 1,
+      "empresa": "Bleymed",
+      "valor": 2610.0,
+      "url": "https://drive.google.com/file/d/1mE9hpcVX-bKsD5bkY87n-pzpEZQOxroE/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Balança Digital Portátil",
+      "orcamento": 2,
+      "empresa": "Saúde Shop",
+      "valor": 1850.0,
+      "url": "https://drive.google.com/file/d/11eqSqoS6Mfj4LPd7bCWgvV3Qvme35dOD/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Balança Digital Portátil",
+      "orcamento": 3,
+      "empresa": "Casa do Médico",
+      "valor": 220.0,
+      "url": "https://drive.google.com/file/d/1z_rFiQ5rj0w0MazjLgaVl0wNSgdIje07/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Balança Plataforma 300kg",
+      "orcamento": 1,
+      "empresa": "Medicinalli",
+      "valor": 6490.0,
+      "url": "https://drive.google.com/file/d/1XP8v8qK479NRQP5ETiaOyMKuy-PAf5-k/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Balança Plataforma 300kg",
+      "orcamento": 2,
+      "empresa": "Casa do Açogueiro",
+      "valor": 2117.0,
+      "url": "https://drive.google.com/file/d/1PxcjcjA7Wgos3OcQfGZeCJlr9m6aXsSP/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Balança Plataforma 300kg",
+      "orcamento": 3,
+      "empresa": "Dormed",
+      "valor": 7337.95,
+      "url": "https://drive.google.com/file/d/1Y-QdMoKkCGuYigKg9gc2ImQB_CB1mYHj/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Balde a chute com suporte de rodízios",
+      "orcamento": 1,
+      "empresa": "Salutem",
+      "valor": 604.38,
+      "url": "https://drive.google.com/file/d/1V88rxXoMi3vO2nzCxde3AH1J4DOyJvG8/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Balde a chute com suporte de rodízios",
+      "orcamento": 2,
+      "empresa": "Maria letícia",
+      "valor": 799.0,
+      "url": "https://drive.google.com/file/d/1kqM1ZF4f7WUztZh5LpVPoW6y48avPhh9/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Balde a chute com suporte de rodízios",
+      "orcamento": 3,
+      "empresa": "CW2",
+      "valor": 895.0,
+      "url": "https://drive.google.com/file/d/1gEKmI2aU87jLw_4aeGnU4-zcijQbODZA/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Balde a Pedal",
+      "orcamento": 1,
+      "empresa": "Medicinalli",
+      "valor": 600.0,
+      "url": "https://drive.google.com/file/d/1XP8v8qK479NRQP5ETiaOyMKuy-PAf5-k/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Balde a Pedal",
+      "orcamento": 2,
+      "empresa": "Maria letícia",
+      "valor": 369.9,
+      "url": "https://drive.google.com/file/d/1kqM1ZF4f7WUztZh5LpVPoW6y48avPhh9/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Balde a Pedal",
+      "orcamento": 3,
+      "empresa": "CW2",
+      "valor": 352.98,
+      "url": "https://drive.google.com/file/d/1gEKmI2aU87jLw_4aeGnU4-zcijQbODZA/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Banco para vestiário",
+      "orcamento": 1,
+      "empresa": "Ufficioflex",
+      "valor": 544.0,
+      "url": "https://drive.google.com/file/d/1uixj_DsbHarPA77Y2EPVQmyChugG5C4G/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Banco para vestiário",
+      "orcamento": 2,
+      "empresa": "Pollo",
+      "valor": 504.0,
+      "url": "https://drive.google.com/file/d/1rtXGVfqfrugoXP_o3zEzc88sWUUyhwXr/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Banho maria",
+      "orcamento": 1,
+      "empresa": "Allcrom",
+      "valor": 4854.49,
+      "url": "https://drive.google.com/file/d/1c6EOuBZqt68WkJqGKBX_K6BkurMjVr6G/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Banho maria",
+      "orcamento": 2,
+      "empresa": "Biocold",
+      "valor": 3150.0,
+      "url": "https://drive.google.com/file/d/14x4MF1yqNSYdWsABB0WpZXPVR_ztyHfF/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Banho maria",
+      "orcamento": 3,
+      "empresa": "Sigma",
+      "valor": 4768.0,
+      "url": "https://drive.google.com/file/d/1XBashyrfJRHelhQSnyWIro5E9bQ1NOHw/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Banqueta giratória em inox",
+      "orcamento": 1,
+      "empresa": "L&M",
+      "valor": 460.0,
+      "url": "https://drive.google.com/file/d/10feQdvcJ8VKl0XrdQYiocQdo_ZHnAsWe/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Banqueta giratória em inox",
+      "orcamento": 2,
+      "empresa": "Medicinalli",
+      "valor": 396.0,
+      "url": "https://drive.google.com/file/d/1XP8v8qK479NRQP5ETiaOyMKuy-PAf5-k/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Banqueta giratória em inox",
+      "orcamento": 3,
+      "empresa": "MGA",
+      "valor": 840.0,
+      "url": "https://drive.google.com/file/d/1hiXZAy6XxEX8BWZFyHkz1jB9dMzWF9rm/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Bebedouro/ Purificador Refrigerado",
+      "orcamento": 1,
+      "empresa": "Rof e Mag",
+      "valor": "=2354+75",
+      "url": "https://drive.google.com/file/d/1WphREU-Bu7yeLDTCLxIzT7uBwDaPF4zR/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Bebedouro/ Purificador Refrigerado",
+      "orcamento": 2,
+      "empresa": "Zanotti",
+      "valor": 1962.0,
+      "url": "https://drive.google.com/file/d/1nNMQWZtf4caSC2I90kVgznUnWbYSS2tn/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Berço Aquecido",
+      "orcamento": 1,
+      "empresa": "Fanem",
+      "valor": 28800.0,
+      "url": "https://drive.google.com/file/d/1os96SU3zEh5ObJZSEQBcRyBbYMRTOA80/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Berço/Cama Infantil",
+      "orcamento": 1,
+      "empresa": "Fanem",
+      "valor": 1900.0,
+      "url": "https://drive.google.com/file/d/1os96SU3zEh5ObJZSEQBcRyBbYMRTOA80/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Biombo 3 faces",
+      "orcamento": 1,
+      "empresa": "Hospimetal",
+      "valor": 910.0,
+      "url": "https://drive.google.com/file/d/17BHWpNlKNk1wN09VTL9SAnaEA55GKziM/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Biombo 3 faces",
+      "orcamento": 2,
+      "empresa": "L&M",
+      "valor": 570.0,
+      "url": "https://drive.google.com/file/d/10feQdvcJ8VKl0XrdQYiocQdo_ZHnAsWe/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Biombo 3 faces",
+      "orcamento": 3,
+      "empresa": "Medicinalli",
+      "valor": 820.0,
+      "url": "https://drive.google.com/file/d/1XP8v8qK479NRQP5ETiaOyMKuy-PAf5-k/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Biômetro de coerência óptica",
+      "orcamento": 1,
+      "empresa": "mogami",
+      "valor": 391210.0,
+      "url": "https://drive.google.com/file/d/1g6HYNtShbWi_48HRTm46xwBE_gfoGg3C/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Biômetro de coerência óptica",
+      "orcamento": 2,
+      "empresa": "Apramed",
+      "valor": 185000.0,
+      "url": "https://drive.google.com/file/d/18RGcjOhuMnux36pawBfVp0ch1GxtkNtO/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Biômetro de coerência óptica",
+      "orcamento": 3,
+      "empresa": "Adapt",
+      "valor": 690000.0,
+      "url": "https://drive.google.com/file/d/1cbPqvpzQqWskzA7QRGQzDvA7SnIAWc_c/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Bisturi Elétrico",
+      "orcamento": 1,
+      "empresa": "Deltronix",
+      "valor": 38500.11,
+      "url": "https://drive.google.com/file/d/14yV5tM8tmXPur2k1qh0QOqyHrhRIQlrS/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Bisturi Elétrico",
+      "orcamento": 2,
+      "empresa": "Medcir",
+      "valor": 51000.0,
+      "url": "https://drive.google.com/file/d/1HJ_fbZY3geJDxGQCe2YZl-jNtYT-wVTs/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Bisturi Elétrico",
+      "orcamento": 3,
+      "empresa": "BBraun",
+      "valor": 324754.97,
+      "url": "https://drive.google.com/file/d/1sW67lNB_iHfmn6dnW13mHr1TuLson2b9/view?usp=drive_link"
+    },
+    {
+      "equipamento": "BPAP",
+      "orcamento": 1,
+      "empresa": "EDR",
+      "valor": 32000.0,
+      "url": "https://drive.google.com/file/d/1f9qedPC1zES1zWhAAFz6ay4CSRocVlET/view?usp=drive_link"
+    },
+    {
+      "equipamento": "BPAP",
+      "orcamento": 2,
+      "empresa": "Novamed Hospitalar",
+      "valor": 45980.0,
+      "url": "https://drive.google.com/file/d/15FDpTDU36VRzOj-Y1-G4TN4yNfClpmSW/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Braçadeira para Injeção",
+      "orcamento": 1,
+      "empresa": "Hospimetal",
+      "valor": 630.0,
+      "url": "https://drive.google.com/file/d/17BHWpNlKNk1wN09VTL9SAnaEA55GKziM/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Braçadeira para Injeção",
+      "orcamento": 2,
+      "empresa": "L&M",
+      "valor": 190.0,
+      "url": "https://drive.google.com/file/d/10feQdvcJ8VKl0XrdQYiocQdo_ZHnAsWe/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Braçadeira para Injeção",
+      "orcamento": 3,
+      "empresa": "Medicinalli",
+      "valor": 244.0,
+      "url": "https://drive.google.com/file/d/1XP8v8qK479NRQP5ETiaOyMKuy-PAf5-k/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Cadeira de Banho/Higiênica",
+      "orcamento": 1,
+      "empresa": "Ufficioflex",
+      "valor": 599.0,
+      "url": "https://drive.google.com/file/d/1uixj_DsbHarPA77Y2EPVQmyChugG5C4G/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Cadeira de Banho/Higiênica",
+      "orcamento": 2,
+      "empresa": "Casa do Médico",
+      "valor": 620.66,
+      "url": "https://drive.google.com/file/d/1z_rFiQ5rj0w0MazjLgaVl0wNSgdIje07/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Cadeira de Banho/Higiênica",
+      "orcamento": 3,
+      "empresa": "Hospimetal",
+      "valor": 1400.0,
+      "url": "https://drive.google.com/file/d/17BHWpNlKNk1wN09VTL9SAnaEA55GKziM/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Cadeira de Rodas Adulto",
+      "orcamento": 1,
+      "empresa": "Saúde Shop",
+      "valor": 3896.0,
+      "url": "https://drive.google.com/file/d/11eqSqoS6Mfj4LPd7bCWgvV3Qvme35dOD/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Cadeira de Rodas Adulto",
+      "orcamento": 2,
+      "empresa": "Casa Ortopédica",
+      "valor": 1999.9,
+      "url": "https://drive.google.com/file/d/1G2LpniIf6DPG6BjpdEPTGSKoTS2tKQoz/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Cadeira de Rodas Adulto",
+      "orcamento": 3,
+      "empresa": "Cirurgica Mazzei",
+      "valor": 2180.0,
+      "url": "https://drive.google.com/file/d/1feRcLdsBc3qEY0ROUlckcXwef7yCKHmJ/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Cadeira de Rodas Adulto para Obeso",
+      "orcamento": 1,
+      "empresa": "Casa Ortopédica",
+      "valor": 2299.0,
+      "url": "https://drive.google.com/file/d/1G2LpniIf6DPG6BjpdEPTGSKoTS2tKQoz/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Cadeira de Rodas Adulto para Obeso",
+      "orcamento": 2,
+      "empresa": "Fisio Fernandes",
+      "valor": 2039.0,
+      "url": "https://drive.google.com/file/d/1T6771OUhCrAI98rfGa9sOpfsa_gs4Ax-/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Cadeira de Rodas Adulto para Obeso",
+      "orcamento": 3,
+      "empresa": "Dormed",
+      "valor": 1257.95,
+      "url": "https://drive.google.com/file/d/1Y-QdMoKkCGuYigKg9gc2ImQB_CB1mYHj/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Cadeira de Rodas Pediatrica",
+      "orcamento": 1,
+      "empresa": "Fisio Fernandes",
+      "valor": 1369.9,
+      "url": "https://drive.google.com/file/d/1T6771OUhCrAI98rfGa9sOpfsa_gs4Ax-/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Cadeira de Rodas Pediatrica",
+      "orcamento": 2,
+      "empresa": "Dormed",
+      "valor": 737.95,
+      "url": "https://drive.google.com/file/d/1Y-QdMoKkCGuYigKg9gc2ImQB_CB1mYHj/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Cadeira de Rodas Pediatrica",
+      "orcamento": 3,
+      "empresa": "Riber Médica",
+      "valor": 719.9,
+      "url": "https://drive.google.com/file/d/1QZpG5XbWIbwN6NTuvxUGe9jKTazvtcuH/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Cadeira estofada fixa",
+      "orcamento": 1,
+      "empresa": "Set Comércio",
+      "valor": 820.0,
+      "url": "https://drive.google.com/file/d/11hQ5gv9qU5XuAMPwkX6SSNEkALWiTHJ0/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Cadeira estofada fixa",
+      "orcamento": 2,
+      "empresa": "Ufficioflex",
+      "valor": 800.0,
+      "url": "https://drive.google.com/file/d/1pvVJZwfP0nOsizdCGJBfD6IUbRQ3IwKe/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Cadeira estofada fixa",
+      "orcamento": 3,
+      "empresa": "Pollo",
+      "valor": 945.0,
+      "url": "https://drive.google.com/file/d/1rtXGVfqfrugoXP_o3zEzc88sWUUyhwXr/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Cadeira estofada giratória com 2 braços",
+      "orcamento": 1,
+      "empresa": "Alberflex",
+      "valor": 1284.08,
+      "url": "https://drive.google.com/file/d/1EouHtM4k8mJs2f6SvWHcE3Wv3n1gHhd5/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Cadeira estofada giratória com 2 braços",
+      "orcamento": 2,
+      "empresa": "Set Comércio",
+      "valor": 1450.0,
+      "url": "https://drive.google.com/file/d/11hQ5gv9qU5XuAMPwkX6SSNEkALWiTHJ0/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Cadeira estofada giratória com 2 braços",
+      "orcamento": 3,
+      "empresa": "Ufficioflex",
+      "valor": 698.0,
+      "url": "https://drive.google.com/file/d/1pvVJZwfP0nOsizdCGJBfD6IUbRQ3IwKe/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Cadeira fixa sem estofamento",
+      "orcamento": 1,
+      "empresa": "Pollo",
+      "valor": 225.75,
+      "url": "https://drive.google.com/file/d/1rtXGVfqfrugoXP_o3zEzc88sWUUyhwXr/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Cadeira fixa sem estofamento",
+      "orcamento": 2,
+      "empresa": "Ufficioflex",
+      "valor": 230.0,
+      "url": "https://drive.google.com/file/d/1uixj_DsbHarPA77Y2EPVQmyChugG5C4G/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Cadeira Oftalmológica",
+      "orcamento": 1,
+      "empresa": "Saúde Shop",
+      "valor": 14575.0,
+      "url": "https://drive.google.com/file/d/11eqSqoS6Mfj4LPd7bCWgvV3Qvme35dOD/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Cadeira Oftalmológica",
+      "orcamento": 2,
+      "empresa": "Gigante",
+      "valor": 13600.0,
+      "url": "https://drive.google.com/file/d/1L5cDClj2OLdeEVpdjpR6ySXLSEeBrsyR/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Cadeira Oftalmológica",
+      "orcamento": 3,
+      "empresa": "Suplimed",
+      "valor": 12500.0,
+      "url": "https://drive.google.com/file/d/1tMEuvlZtogMlddozBiBLczP4e6-Cj15K/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Cadeira Otorrinolaringológica",
+      "orcamento": 1,
+      "empresa": "Gigante",
+      "valor": 13600.0,
+      "url": "https://drive.google.com/file/d/1L5cDClj2OLdeEVpdjpR6ySXLSEeBrsyR/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Cadeira Otorrinolaringológica",
+      "orcamento": 2,
+      "empresa": "Saúde Shop",
+      "valor": 14575.0,
+      "url": "https://drive.google.com/file/d/11eqSqoS6Mfj4LPd7bCWgvV3Qvme35dOD/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Cadeira Otorrinolaringológica",
+      "orcamento": 3,
+      "empresa": "Suplimed",
+      "valor": 12500.0,
+      "url": "https://drive.google.com/file/d/1tMEuvlZtogMlddozBiBLczP4e6-Cj15K/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Cadeira para Coleta de Sangue",
+      "orcamento": 1,
+      "empresa": "AJF",
+      "valor": 4290.0,
+      "url": "https://drive.google.com/file/d/1YU8G6RrLw6aA88pGKMoAilFEgKSKSbVI/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Cadeira para Coleta de Sangue",
+      "orcamento": 2,
+      "empresa": "Vallitech",
+      "valor": 3260.0,
+      "url": "https://drive.google.com/file/d/1fjqkxOW_zT4uHrw6jGS3NXOFb4FDPkZl/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Cadeira para Coleta de Sangue",
+      "orcamento": 3,
+      "empresa": "Primed",
+      "valor": 1500.0,
+      "url": "https://drive.google.com/file/d/18h7fzPfytk5jzHnWvVCWyerkGrb_tIri/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Cama Hospitalar Elétrica para obesos",
+      "orcamento": 1,
+      "empresa": "Mogami",
+      "valor": "=23439.66+1098.54",
+      "url": "https://drive.google.com/file/d/1jINLfyYYzVmMZdR_r-AEXLM8AJXt1Pbq/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Cama Hospitalar Elétrica para obesos",
+      "orcamento": 2,
+      "empresa": "Hospimetal",
+      "valor": 36190.0,
+      "url": "https://drive.google.com/file/d/17BHWpNlKNk1wN09VTL9SAnaEA55GKziM/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Cama Hospitalar Elétrica para obesos",
+      "orcamento": 3,
+      "empresa": "Lanco",
+      "valor": 24693.95,
+      "url": "https://drive.google.com/file/d/1bIOr1TnGL1bDmrnYy4lohQtoMv76lOdM/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Cama Hospitalar Elétrica Tipo Fawler",
+      "orcamento": 1,
+      "empresa": "Mogami",
+      "valor": "=16988.77+1098.54",
+      "url": "https://drive.google.com/file/d/1jINLfyYYzVmMZdR_r-AEXLM8AJXt1Pbq/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Cama Hospitalar Elétrica Tipo Fawler",
+      "orcamento": 2,
+      "empresa": "Hospimetal",
+      "valor": 21350.0,
+      "url": "https://drive.google.com/file/d/17BHWpNlKNk1wN09VTL9SAnaEA55GKziM/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Cama Hospitalar Elétrica Tipo Fawler",
+      "orcamento": 3,
+      "empresa": "Adem",
+      "valor": 28000.0,
+      "url": "https://drive.google.com/file/d/1el9fsdK5Ze4oJqqobI1MoljoNuWGlLsq/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Câmera CFTV",
+      "orcamento": 1,
+      "empresa": "3D INFORMÁTICA",
+      "valor": 260.0,
+      "url": "https://drive.google.com/file/d/1q71WtK9ebL1B0TIn4fMQC3npmBNIkec3/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Câmera CFTV",
+      "orcamento": 2,
+      "empresa": "B2TI",
+      "valor": 344.0,
+      "url": "https://drive.google.com/file/d/1PZcFjakX0e_I-FKysp_R5MCuyXuWy8yO/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Câmera CFTV",
+      "orcamento": 3,
+      "empresa": "JR Soluções",
+      "valor": 249.0,
+      "url": "https://drive.google.com/file/d/1gwEsMebgcjQrZCI0gmUB9svAZpvUIdo0/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Campímetro computadorizado",
+      "orcamento": 1,
+      "empresa": "Eyetec",
+      "valor": 99650.0,
+      "url": "https://drive.google.com/file/d/1K8xf8WIlkoQakDfEm0Ijw0E-Xy1EJOM0/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Campímetro computadorizado",
+      "orcamento": 2,
+      "empresa": "Oftalmo Serv",
+      "valor": 250000.0,
+      "url": "https://drive.google.com/file/d/1g2oJIv491Bv9hdaQmP9TmX_Hx6Qfthdu/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Campímetro computadorizado",
+      "orcamento": 3,
+      "empresa": "Suplimed",
+      "valor": 189000.0,
+      "url": "https://drive.google.com/file/d/1tMEuvlZtogMlddozBiBLczP4e6-Cj15K/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Capela de fluxo laminar",
+      "orcamento": 1,
+      "empresa": "Allcrom",
+      "valor": 67435.76,
+      "url": "https://drive.google.com/file/d/1_hMw8GGW6T0RBQgQ0e7Qa3qSDPhW5IdN/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Capela de fluxo laminar",
+      "orcamento": 2,
+      "empresa": "Biocold",
+      "valor": 18270.0,
+      "url": "https://drive.google.com/file/d/14x4MF1yqNSYdWsABB0WpZXPVR_ztyHfF/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Capela de fluxo laminar",
+      "orcamento": 3,
+      "empresa": "Generalmed",
+      "valor": 15453.51,
+      "url": "https://drive.google.com/file/d/1x3CJeUdAeU-0hBwR9iGoSZUj91_mkUjH/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Carrinho de Anestesia adulto ou pediátrico",
+      "orcamento": 1,
+      "empresa": "Brazil 3 Business",
+      "valor": 85000.0,
+      "url": "https://drive.google.com/file/d/11-Enz--oWvWNGc0T8PqF_72lIAxWYmVQ/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Carrinho de Coleta Seletiva",
+      "orcamento": 1,
+      "empresa": "FHB",
+      "valor": 9300.0,
+      "url": "https://drive.google.com/file/d/1eRZ2daMX2KMIog0BQPsEGrI67imtiTE5/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Carrinho de Emergência (Crash Cart)",
+      "orcamento": 1,
+      "empresa": "Lanco",
+      "valor": 4351.94,
+      "url": "https://drive.google.com/file/d/1bIOr1TnGL1bDmrnYy4lohQtoMv76lOdM/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Carrinho de Emergência (Crash Cart)",
+      "orcamento": 2,
+      "empresa": "Primed",
+      "valor": 2500.0,
+      "url": "https://drive.google.com/file/d/18h7fzPfytk5jzHnWvVCWyerkGrb_tIri/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Carrinho de Emergência (Crash Cart)",
+      "orcamento": 3,
+      "empresa": "Medicinali",
+      "valor": 2610.0,
+      "url": "https://drive.google.com/file/d/1XP8v8qK479NRQP5ETiaOyMKuy-PAf5-k/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Carrinho de Limpeza",
+      "orcamento": 1,
+      "empresa": "FHB",
+      "valor": 5800.0,
+      "url": "https://drive.google.com/file/d/1eRZ2daMX2KMIog0BQPsEGrI67imtiTE5/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Carrinho de Limpeza",
+      "orcamento": 2,
+      "empresa": "Fortepel",
+      "valor": "=1171.42+341.92+45.65",
+      "url": "https://drive.google.com/file/d/1Kp_b8gOXya80RvtmWRBwTJtmAo-_fMWT/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Carrinho de Limpeza",
+      "orcamento": 3,
+      "empresa": "CW2",
+      "valor": 3907.7,
+      "url": "https://drive.google.com/file/d/1gEKmI2aU87jLw_4aeGnU4-zcijQbODZA/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Carrinho de Transporte",
+      "orcamento": 1,
+      "empresa": "Medicinalli",
+      "valor": 3390.0,
+      "url": "https://drive.google.com/file/d/1XP8v8qK479NRQP5ETiaOyMKuy-PAf5-k/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Carrinho de Transporte",
+      "orcamento": 2,
+      "empresa": "Albinos",
+      "valor": 597.95,
+      "url": "https://drive.google.com/file/d/1SREiX5zjtYgUG162bWUch8DCZxZknesa/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Carrinho de Transporte",
+      "orcamento": 3,
+      "empresa": "Zanotti",
+      "valor": 1270.0,
+      "url": "https://drive.google.com/file/d/1srvHCKjKdbumxvYQV_W7BTgWJKQM4Vr6/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Carro de Curativos",
+      "orcamento": 1,
+      "empresa": "Medicinalli",
+      "valor": 2525.0,
+      "url": "https://drive.google.com/file/d/1XP8v8qK479NRQP5ETiaOyMKuy-PAf5-k/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Carro de Curativos",
+      "orcamento": 2,
+      "empresa": "MGA",
+      "valor": 1820.0,
+      "url": "https://drive.google.com/file/d/1hiXZAy6XxEX8BWZFyHkz1jB9dMzWF9rm/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Carro de Curativos",
+      "orcamento": 3,
+      "empresa": "Albinus",
+      "valor": 1220.0,
+      "url": "https://drive.google.com/file/d/1SREiX5zjtYgUG162bWUch8DCZxZknesa/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Carro de Distribuição de Medicamentos",
+      "orcamento": 1,
+      "empresa": "Lanco",
+      "valor": 3073.52,
+      "url": "https://drive.google.com/file/d/1bIOr1TnGL1bDmrnYy4lohQtoMv76lOdM/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Carro de Distribuição de Medicamentos",
+      "orcamento": 2,
+      "empresa": "MGA",
+      "valor": 4070.0,
+      "url": "https://drive.google.com/file/d/1hiXZAy6XxEX8BWZFyHkz1jB9dMzWF9rm/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Carro de Distribuição de Medicamentos",
+      "orcamento": 3,
+      "empresa": "FHB",
+      "valor": 5800.0,
+      "url": "https://drive.google.com/file/d/1eRZ2daMX2KMIog0BQPsEGrI67imtiTE5/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Carro maca com amortecedor",
+      "orcamento": 1,
+      "empresa": "Casa do Médico",
+      "valor": 1865.93,
+      "url": "https://drive.google.com/file/d/1z_rFiQ5rj0w0MazjLgaVl0wNSgdIje07/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Carro maca com amortecedor",
+      "orcamento": 2,
+      "empresa": "Hospimetal",
+      "valor": 3808.0,
+      "url": "https://drive.google.com/file/d/17BHWpNlKNk1wN09VTL9SAnaEA55GKziM/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Carro maca com amortecedor",
+      "orcamento": 3,
+      "empresa": "L&M",
+      "valor": 1750.0,
+      "url": "https://drive.google.com/file/d/10feQdvcJ8VKl0XrdQYiocQdo_ZHnAsWe/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Carro maca com elevação",
+      "orcamento": 1,
+      "empresa": "Ufficioflex",
+      "valor": 18900.0,
+      "url": "https://drive.google.com/file/d/1uixj_DsbHarPA77Y2EPVQmyChugG5C4G/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Carro maca com elevação",
+      "orcamento": 2,
+      "empresa": "Vallitech",
+      "valor": 24922.0,
+      "url": "https://drive.google.com/file/d/1fjqkxOW_zT4uHrw6jGS3NXOFb4FDPkZl/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Carro maca com elevação",
+      "orcamento": 3,
+      "empresa": "Linet",
+      "valor": 33500.0,
+      "url": "https://drive.google.com/file/d/1kZroKuaAt9eAeiorW7P0vOkR6McIziSP/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Carro para transporte de materiais",
+      "orcamento": 1,
+      "empresa": "Mobimed",
+      "valor": 2237.0,
+      "url": "https://drive.google.com/file/d/13QrtRpEz9qRehUQ-uYxf4Ph8rrtoHNlx/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Carro para transporte de materiais",
+      "orcamento": 2,
+      "empresa": "Lanco",
+      "valor": 9575.75,
+      "url": "https://drive.google.com/file/d/1cx84lrl2z7SpmKQBdCoOpPCSJLed2qTb/view?usp=sharing"
+    },
+    {
+      "equipamento": "Carro para transporte de materiais",
+      "orcamento": 3,
+      "empresa": "CW2",
+      "valor": 5639.98,
+      "url": "https://drive.google.com/file/d/1gEKmI2aU87jLw_4aeGnU4-zcijQbODZA/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Catraca de Acesso",
+      "orcamento": 1,
+      "empresa": "Madis",
+      "valor": 10960.0,
+      "url": "https://drive.google.com/file/d/1nIPPzGQuRd9WbsNgUIB1BDp6qzleZGG6/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Catraca de Acesso",
+      "orcamento": 2,
+      "empresa": "MKT",
+      "valor": 7200.0,
+      "url": "https://drive.google.com/file/d/1884zDrIoiP_tbcnk6koWL5plpM8kfWMq/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Catraca de Acesso",
+      "orcamento": 3,
+      "empresa": "JR Soluções",
+      "valor": 9000.0,
+      "url": "https://drive.google.com/file/d/1VumCDmg-ZbxaCzOCSJrg1FTQIydFoqDO/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Catracas de acesso de pedestres",
+      "orcamento": 1,
+      "empresa": "Madis",
+      "valor": 16200.0,
+      "url": "https://drive.google.com/file/d/1nIPPzGQuRd9WbsNgUIB1BDp6qzleZGG6/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Central de monitoração para UTI / Recuperações",
+      "orcamento": 1,
+      "empresa": "KVO",
+      "valor": 18500.0,
+      "url": "https://drive.google.com/file/d/1y7QJjU-duePMHTKte22_y3LT8uOUukE_/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Central de monitoração para UTI / Recuperações",
+      "orcamento": 2,
+      "empresa": "Prolife",
+      "valor": 32500.0,
+      "url": "https://drive.google.com/file/d/1YYu6bwUHc1hVfd88ga5-KAnj5yJFuran/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Central de monitoração para UTI / Recuperações",
+      "orcamento": 3,
+      "empresa": "UNNO",
+      "valor": 55000.0,
+      "url": "https://drive.google.com/file/d/1B3LEDcSvpN1cAe2rBYLDMFIQ-kKNyid6/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Centrífuga de mesa para citologia",
+      "orcamento": 1,
+      "empresa": "Allcrom",
+      "valor": 15852.72,
+      "url": "https://drive.google.com/file/d/1c6EOuBZqt68WkJqGKBX_K6BkurMjVr6G/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Centrífuga de mesa para citologia",
+      "orcamento": 2,
+      "empresa": "Nova Analítica",
+      "valor": 56408.63,
+      "url": "https://drive.google.com/file/d/1DyaWgqRqrk148xF_Vdm7rAZSiKUbK45l/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Centrífuga de mesa para citologia",
+      "orcamento": 3,
+      "empresa": "Elo Scientifc",
+      "valor": 14792.21,
+      "url": "https://drive.google.com/file/d/1KYldjiK5BBzXum7CdAq6jnycaa6RScRs/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Centrífuga de mesa uso geral 24 tubos",
+      "orcamento": 1,
+      "empresa": "Allcrom",
+      "valor": 15852.72,
+      "url": "https://drive.google.com/file/d/1c6EOuBZqt68WkJqGKBX_K6BkurMjVr6G/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Centrífuga de mesa uso geral 24 tubos",
+      "orcamento": 2,
+      "empresa": "Nova Analítica",
+      "valor": 59138.76,
+      "url": "https://drive.google.com/file/d/1O3W5ogAbVRGEAgENuk0G54eH7UKwfyl4/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Cicloerômetro de membros superiores",
+      "orcamento": 1,
+      "empresa": "AeroSport Brasil",
+      "valor": 54000.0,
+      "url": "https://drive.google.com/file/d/1T9EcvZrk-LY7Z2oATm_COxfh5rBZKLL5/view?usp=drive_link"
+    },
+    {
+      "equipamento": "cistoscopio flexivel",
+      "orcamento": 1,
+      "empresa": "Strattner",
+      "valor": 72601.5,
+      "url": "https://drive.google.com/file/d/1k6puve6FMaUOEpJJEt4tftUGPr0vP3Pp/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Colchão para cama",
+      "orcamento": 1,
+      "empresa": "Meta Hospitalar",
+      "valor": 525.57,
+      "url": "https://drive.google.com/file/d/1Z0yNToGpSKvwwYI9MBGvgHanCXq10fMG/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Colposcópio",
+      "orcamento": 1,
+      "empresa": "Medpej",
+      "valor": 35460.0,
+      "url": "https://drive.google.com/file/d/1degBvmodPkaMnqKKX71SgGuh_dXxm5VW/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Coluna oftalmológica",
+      "orcamento": 1,
+      "empresa": "Gigante",
+      "valor": 13995.0,
+      "url": "https://drive.google.com/file/d/1L5cDClj2OLdeEVpdjpR6ySXLSEeBrsyR/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Coluna oftalmológica",
+      "orcamento": 2,
+      "empresa": "Suplimed",
+      "valor": 12500.0,
+      "url": "https://drive.google.com/file/d/1tMEuvlZtogMlddozBiBLczP4e6-Cj15K/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Coluna oftalmológica",
+      "orcamento": 3,
+      "empresa": "Apramed",
+      "valor": 10650.0,
+      "url": "https://drive.google.com/file/d/1VInkTd_IMi4Isqk4ADHAjrBe-lHlcLSh/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Computador de Mão (PDA)",
+      "orcamento": 1,
+      "empresa": "3D INFORMÁTICA",
+      "valor": 2500.0,
+      "url": "https://drive.google.com/file/d/17iTTXC3cRBenHGyYwbIzTr8CzTJQBKTb/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Computador de Mão (PDA)",
+      "orcamento": 2,
+      "empresa": "b2ti",
+      "valor": 2330.0,
+      "url": "https://drive.google.com/file/d/1PdxfExylxhC-uTH7EIlHYybYHpHEo1dX/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Computador de Mão (PDA)",
+      "orcamento": 3,
+      "empresa": "Lamara",
+      "valor": 2187.46,
+      "url": "https://drive.google.com/file/d/1ReSJsd1jnVcPNYIaZmOqZIfr2fvC2YhP/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Contador de células",
+      "orcamento": 1,
+      "empresa": "CheeseLab",
+      "valor": 1769.39,
+      "url": "https://drive.google.com/file/d/1QqwMDf3Us6JVt9t187pB-QA4F8DZ85yc/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Contador de células",
+      "orcamento": 2,
+      "empresa": "Décio",
+      "valor": 1030.905,
+      "url": "https://drive.google.com/file/d/1g7i2pZ7PjzCZ29tyI53HkbAm0df7lPl5/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Contador de células",
+      "orcamento": 3,
+      "empresa": "Generalmed",
+      "valor": 5382.24,
+      "url": "https://drive.google.com/file/d/1x3CJeUdAeU-0hBwR9iGoSZUj91_mkUjH/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Container para Resíduos Comuns",
+      "orcamento": 1,
+      "empresa": "Fortepel",
+      "valor": 2190.7,
+      "url": "https://drive.google.com/file/d/1Kp_b8gOXya80RvtmWRBwTJtmAo-_fMWT/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Controladores de acesso facial para portas internas",
+      "orcamento": 1,
+      "empresa": "MKT",
+      "valor": 867.68,
+      "url": "https://drive.google.com/file/d/1884zDrIoiP_tbcnk6koWL5plpM8kfWMq/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Controladores de acesso facial para portas internas",
+      "orcamento": 2,
+      "empresa": "b2ti",
+      "valor": 1562.0,
+      "url": "https://drive.google.com/file/d/1PdxfExylxhC-uTH7EIlHYybYHpHEo1dX/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Controladores de acesso facial para portas internas",
+      "orcamento": 3,
+      "empresa": "Sinal Digital",
+      "valor": 1295.5,
+      "url": "https://drive.google.com/file/d/1meuxs6M_OPKbKNFSPWlz_PQ04e0N8oAR/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Cortador de blister para unitarização",
+      "orcamento": 1,
+      "empresa": "Mea Modul",
+      "valor": 113415.2,
+      "url": "https://drive.google.com/file/d/1uPzy1RaXDc-HomxWCs_gpdh43111XJ25/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Dermatoscópio",
+      "orcamento": 1,
+      "empresa": "Bleymed",
+      "valor": 17105.0,
+      "url": "https://drive.google.com/file/d/1mE9hpcVX-bKsD5bkY87n-pzpEZQOxroE/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Dermatoscópio",
+      "orcamento": 2,
+      "empresa": "Rhoss",
+      "valor": 1359.0,
+      "url": "https://drive.google.com/file/d/17phHP1zvtu1iRBBv0dY0k5wlJvPhku5x/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Dermatoscópio",
+      "orcamento": 3,
+      "empresa": "Medjet",
+      "valor": 4077.63,
+      "url": "https://drive.google.com/file/d/14iuDVs8TpHeG1wZNCn9oK9QNr-vqHTqk/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Desfibrilador Externo Automático",
+      "orcamento": 1,
+      "empresa": "Nicomed",
+      "valor": 16160.0,
+      "url": "https://drive.google.com/file/d/1TPF4N6247f59L3FGFPqYSQjLN-PI3o3x/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Desfibrilador Externo Automático",
+      "orcamento": 2,
+      "empresa": "KVO",
+      "valor": 10600.0,
+      "url": "https://drive.google.com/file/d/1y7QJjU-duePMHTKte22_y3LT8uOUukE_/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Desfibrilador Externo Automático",
+      "orcamento": 3,
+      "empresa": "Med Rio",
+      "valor": 15150.96,
+      "url": "https://drive.google.com/file/d/1hZ6hPcbA2_BoH22Jl-HhNc0YoSgXrziU/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Desfibrilador/monitor bifásico com marca-passo",
+      "orcamento": 1,
+      "empresa": "Nihon Kohden",
+      "valor": 16700.0,
+      "url": "https://drive.google.com/file/d/1CFIgGaOHmjZo4xEB0EJuYvvWeqnlVlMM/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Detector fetal",
+      "orcamento": 1,
+      "empresa": "Medpej",
+      "valor": 1070.0,
+      "url": "https://drive.google.com/file/d/1degBvmodPkaMnqKKX71SgGuh_dXxm5VW/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Detector fetal",
+      "orcamento": 2,
+      "empresa": "Medicinali",
+      "valor": 980.0,
+      "url": "https://drive.google.com/file/d/1IfPjwI4peOAbfOj6x_WFaGuOues7_EFQ/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Eletrocardiógrafo 12 derivações",
+      "orcamento": 1,
+      "empresa": "Alfa MED",
+      "valor": 4670.0,
+      "url": "https://drive.google.com/file/d/1N_kUSeSGRndVcx_2PEPXY0kdI4qVTTyn/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Eletroencefalógrafo",
+      "orcamento": 1,
+      "empresa": "Celera",
+      "valor": 33000.0,
+      "url": "https://drive.google.com/file/d/1WcoTIN9BF2D6hhsNQ1XnoV5vHG8FsMJh/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Escada com 2 degraus",
+      "orcamento": 1,
+      "empresa": "L&M",
+      "valor": 230.0,
+      "url": "https://drive.google.com/file/d/10feQdvcJ8VKl0XrdQYiocQdo_ZHnAsWe/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Escada com 2 degraus",
+      "orcamento": 2,
+      "empresa": "Medicinalli",
+      "valor": 235.0,
+      "url": "https://drive.google.com/file/d/1XP8v8qK479NRQP5ETiaOyMKuy-PAf5-k/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Escada com 2 degraus",
+      "orcamento": 3,
+      "empresa": "Primed",
+      "valor": 310.0,
+      "url": "https://drive.google.com/file/d/18h7fzPfytk5jzHnWvVCWyerkGrb_tIri/view?usp=drive_link"
+    },
+    {
+      "equipamento": "esfigmomanômetro de pedestal",
+      "orcamento": 1,
+      "empresa": "Dormed",
+      "valor": 397.95,
+      "url": "https://drive.google.com/file/d/1Bw9CmKCyYFhay2bqhWapTdoQYlcGi4Un/view?usp=drive_link"
+    },
+    {
+      "equipamento": "esfigmomanômetro de pedestal",
+      "orcamento": 2,
+      "empresa": "MEDSYSTEM",
+      "valor": 571.9,
+      "url": "https://drive.google.com/file/d/1dFa8nwG64yP_d5ebgRLe2FiwGg68_jgX/view?usp=drive_link"
+    },
+    {
+      "equipamento": "esfigmomanômetro de pedestal",
+      "orcamento": 3,
+      "empresa": "Nicomed",
+      "valor": 490.0,
+      "url": "https://drive.google.com/file/d/1zAhgX-HXxld71ThEFLiaXrK9Zz2dD4QR/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Esfigmomanometro digital",
+      "orcamento": 1,
+      "empresa": "Cirurgica Mazzei",
+      "valor": 1593.2,
+      "url": "https://drive.google.com/file/d/16W_zSN3Ny-XOO_hN1wifaqdnXp4YPq-E/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Esfigmomanometro digital",
+      "orcamento": 2,
+      "empresa": "Cirurgica Ribeirão",
+      "valor": 196.51,
+      "url": "https://drive.google.com/file/d/1j-l9wqVj41wtJcyuQoxil9ZCgW3OKwK_/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Esfigmomanometro digital",
+      "orcamento": 3,
+      "empresa": "MEDSYSTEM",
+      "valor": 170.93,
+      "url": "https://drive.google.com/file/d/1dFa8nwG64yP_d5ebgRLe2FiwGg68_jgX/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Estação de trabalho",
+      "orcamento": 1,
+      "empresa": "Set Comércio",
+      "valor": 2100.0,
+      "url": "https://drive.google.com/file/d/11hQ5gv9qU5XuAMPwkX6SSNEkALWiTHJ0/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Estação de trabalho",
+      "orcamento": 2,
+      "empresa": "Ufficioflex",
+      "valor": 1373.25,
+      "url": "https://drive.google.com/file/d/1rVGnr2iOXJKy_YGRsGh3vvX98t40Plwo/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Estação de trabalho",
+      "orcamento": 3,
+      "empresa": "Alberflex",
+      "valor": 3075.08,
+      "url": "https://drive.google.com/file/d/1X0js-DdGb1TybQmCKnSNZ3hzS9do1xfq/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Estadiômetro",
+      "orcamento": 1,
+      "empresa": "Cescorf",
+      "valor": 305.6,
+      "url": "https://drive.google.com/file/d/1TrwvzPBSKZ5vxprCLCyPKys64Go0q0xM/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Estadiômetro",
+      "orcamento": 2,
+      "empresa": "Sunny",
+      "valor": 601.0,
+      "url": "https://drive.google.com/file/d/1Fz_OkDzoPuF8vShM3i5AY4tHhEFA4HuK/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Estadiômetro",
+      "orcamento": 3,
+      "empresa": "MEDSYSTEM",
+      "valor": 490.14,
+      "url": "https://drive.google.com/file/d/1dFa8nwG64yP_d5ebgRLe2FiwGg68_jgX/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Estante de Aço",
+      "orcamento": 1,
+      "empresa": "Pollo",
+      "valor": 742.0,
+      "url": "https://drive.google.com/file/d/1rtXGVfqfrugoXP_o3zEzc88sWUUyhwXr/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Estante de Aço",
+      "orcamento": 2,
+      "empresa": "Jonas  - Móveis para Escritório",
+      "valor": 540.0,
+      "url": "https://drive.google.com/file/d/1_c0S3LZaMZDmnmNgsSj5eso2rN8G0IHO/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Estetoscópio",
+      "orcamento": 1,
+      "empresa": "RDBM",
+      "valor": 54.95,
+      "url": "https://drive.google.com/file/d/1w005wJg2eT4OFwFq6DWhGhaasLyhV-WA/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Estetoscópio",
+      "orcamento": 2,
+      "empresa": "Medicinalli",
+      "valor": 275.0,
+      "url": "https://drive.google.com/file/d/1IfPjwI4peOAbfOj6x_WFaGuOues7_EFQ/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Estetoscópio",
+      "orcamento": 3,
+      "empresa": "MEDSYSTEM",
+      "valor": 24.6,
+      "url": "https://drive.google.com/file/d/1dFa8nwG64yP_d5ebgRLe2FiwGg68_jgX/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Estufa bacteriológica",
+      "orcamento": 1,
+      "empresa": "Biocold",
+      "valor": 3675.0,
+      "url": "https://drive.google.com/file/d/14x4MF1yqNSYdWsABB0WpZXPVR_ztyHfF/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Estufa bacteriológica",
+      "orcamento": 2,
+      "empresa": "Décio",
+      "valor": 4804.226,
+      "url": "https://drive.google.com/file/d/1g7i2pZ7PjzCZ29tyI53HkbAm0df7lPl5/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Estufa bacteriológica",
+      "orcamento": 3,
+      "empresa": "Generalmed",
+      "valor": 6991.53,
+      "url": "https://drive.google.com/file/d/1x3CJeUdAeU-0hBwR9iGoSZUj91_mkUjH/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Facoemulsificador com sistema ultrassônico",
+      "orcamento": 1,
+      "empresa": "Alcon",
+      "valor": 700000.0,
+      "url": "https://drive.google.com/file/d/1t3umUgjBxzvTAFtntZZo-A9Rci38rYW1/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Facoemulsificador com sistema ultrassônico",
+      "orcamento": 2,
+      "empresa": "Bausch Lomb",
+      "valor": 400000.0,
+      "url": "https://drive.google.com/file/d/1sHETjQlu96yJt5YqcwyhbOI4A97K50fc/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Facoemulsificador com sistema ultrassônico",
+      "orcamento": 3,
+      "empresa": "Mogami",
+      "valor": 512021.0,
+      "url": "https://drive.google.com/file/d/1g6HYNtShbWi_48HRTm46xwBE_gfoGg3C/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Foco cirúrgico móvel LED 50.000 lux com bateria",
+      "orcamento": 1,
+      "empresa": "KVO",
+      "valor": 44580.0,
+      "url": "https://drive.google.com/file/d/1y7QJjU-duePMHTKte22_y3LT8uOUukE_/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Foco cirúrgico móvel LED 50.000 lux com bateria",
+      "orcamento": 2,
+      "empresa": "Ribertec",
+      "valor": 23790.0,
+      "url": "https://drive.google.com/file/d/12eaF2Ld2ibHlXrTTNoj5C5Bk1TR7GDni/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Foco cirúrgico móvel LED 50.000 lux com bateria",
+      "orcamento": 3,
+      "empresa": "Medicinalli",
+      "valor": 25000.0,
+      "url": "https://drive.google.com/file/d/1IfPjwI4peOAbfOj6x_WFaGuOues7_EFQ/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Foco refletor ambulatorial",
+      "orcamento": 1,
+      "empresa": "Medpej",
+      "valor": 860.0,
+      "url": "https://drive.google.com/file/d/1degBvmodPkaMnqKKX71SgGuh_dXxm5VW/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Foco refletor ambulatorial",
+      "orcamento": 2,
+      "empresa": "HCenter",
+      "valor": 860.0,
+      "url": "https://drive.google.com/file/d/1w2vbjjAn0y06rvtnV8tHod8zR7MFvsoR/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Foco refletor ambulatorial",
+      "orcamento": 3,
+      "empresa": "Medicinalli",
+      "valor": 980.0,
+      "url": "https://drive.google.com/file/d/1IfPjwI4peOAbfOj6x_WFaGuOues7_EFQ/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Freezer Laboratorial",
+      "orcamento": 1,
+      "empresa": "Benzer",
+      "valor": 13200.0,
+      "url": "https://drive.google.com/file/d/15UpLCj-q-md-qR7nxtIM4cnm60s1TsDh/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Freezer Laboratorial",
+      "orcamento": 2,
+      "empresa": "Thermotemp",
+      "valor": 27200.0,
+      "url": "https://drive.google.com/file/d/1F41EPOhSRA3X8tr3mYS5ggeU28zzuNCi/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Freezer Laboratorial",
+      "orcamento": 3,
+      "empresa": "Biotecno",
+      "valor": 23520.0,
+      "url": "https://drive.google.com/file/d/1JyamlyR7G0a5i8HX47AQvrJfV0GjiL_y/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Gaveteiro",
+      "orcamento": 1,
+      "empresa": "Alberflex",
+      "valor": 1168.98,
+      "url": "https://drive.google.com/file/d/1X0js-DdGb1TybQmCKnSNZ3hzS9do1xfq/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Gaveteiro",
+      "orcamento": 2,
+      "empresa": "Set Comércio",
+      "valor": 950.0,
+      "url": "https://drive.google.com/file/d/11hQ5gv9qU5XuAMPwkX6SSNEkALWiTHJ0/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Gaveteiro",
+      "orcamento": 3,
+      "empresa": "Ufficioflex",
+      "valor": 833.5,
+      "url": "https://drive.google.com/file/d/1rVGnr2iOXJKy_YGRsGh3vvX98t40Plwo/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Gravador de Holter",
+      "orcamento": 1,
+      "empresa": "GSI",
+      "valor": 8790.0,
+      "url": "https://drive.google.com/file/d/1QTMHa2qoLEdL6Yw45uiuvEPjnqmlJafl/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Gravador de Holter",
+      "orcamento": 2,
+      "empresa": "Cardios",
+      "valor": 10696.0,
+      "url": "https://drive.google.com/file/d/1i7cRa8JOIQ5IssJKERtrUbj3OOH2SMex/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Gravador de Holter",
+      "orcamento": 3,
+      "empresa": "Dormed",
+      "valor": 7497.95,
+      "url": "https://drive.google.com/file/d/1Bw9CmKCyYFhay2bqhWapTdoQYlcGi4Un/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Gravador Digital (NVR)",
+      "orcamento": 1,
+      "empresa": "3D INFORMÁTICA",
+      "valor": 46000.0,
+      "url": "https://drive.google.com/file/d/1q71WtK9ebL1B0TIn4fMQC3npmBNIkec3/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Gravador Digital (NVR)",
+      "orcamento": 2,
+      "empresa": "JR informática",
+      "valor": 53330.0,
+      "url": "https://drive.google.com/file/d/1gwEsMebgcjQrZCI0gmUB9svAZpvUIdo0/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Gravador Digital (NVR)",
+      "orcamento": 3,
+      "empresa": "Sinal Digital",
+      "valor": 16592.0,
+      "url": "https://drive.google.com/file/d/1meuxs6M_OPKbKNFSPWlz_PQ04e0N8oAR/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Homogeneizador de tubos",
+      "orcamento": 1,
+      "empresa": "Décio",
+      "valor": 2098.0,
+      "url": "https://drive.google.com/file/d/1g7i2pZ7PjzCZ29tyI53HkbAm0df7lPl5/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Homogeneizador de tubos",
+      "orcamento": 2,
+      "empresa": "Generalmed",
+      "valor": 2549.56,
+      "url": "https://drive.google.com/file/d/1x3CJeUdAeU-0hBwR9iGoSZUj91_mkUjH/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Homogeneizador de tubos",
+      "orcamento": 3,
+      "empresa": "Lio Serum",
+      "valor": 1600.0,
+      "url": "https://drive.google.com/file/d/1u_VO04MxmGXcem9RlDAOlknY16J2_i6-/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Impedanciômetro automático",
+      "orcamento": 1,
+      "empresa": "Oto-Sonic",
+      "valor": 54800.0,
+      "url": "https://drive.google.com/file/d/1gOzhpMUkJDwZBoQ8cKWgrVhXoYZ8XpFd/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Impedanciômetro automático",
+      "orcamento": 2,
+      "empresa": "Vitasons",
+      "valor": 42600.0,
+      "url": "https://drive.google.com/file/d/1zkL2McOHVFl3HUToKZU18QhKpCvv3Tfc/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Impedanciômetro automático",
+      "orcamento": 3,
+      "empresa": "Diatec",
+      "valor": 52770.0,
+      "url": "https://drive.google.com/file/d/1i42IwjaV3hUI_EvBysY0FtDU56JInWFr/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Impressora de Código de Barras",
+      "orcamento": 1,
+      "empresa": "Sinal Digital",
+      "valor": 2998.0,
+      "url": "https://drive.google.com/file/d/1meuxs6M_OPKbKNFSPWlz_PQ04e0N8oAR/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Impressora de Código de Barras",
+      "orcamento": 2,
+      "empresa": "B2ti",
+      "valor": 890.0,
+      "url": "https://drive.google.com/file/d/1PdxfExylxhC-uTH7EIlHYybYHpHEo1dX/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Impressora de Código de Barras",
+      "orcamento": 3,
+      "empresa": "Lamara",
+      "valor": 1192.58,
+      "url": "https://drive.google.com/file/d/1ReSJsd1jnVcPNYIaZmOqZIfr2fvC2YhP/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Impressora de crachás de acesso",
+      "orcamento": 1,
+      "empresa": "Lamara",
+      "valor": 6592.0,
+      "url": "https://drive.google.com/file/d/1ReSJsd1jnVcPNYIaZmOqZIfr2fvC2YhP/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Impressora de crachás de acesso",
+      "orcamento": 2,
+      "empresa": "Sinal Digital",
+      "valor": 13998.0,
+      "url": "https://drive.google.com/file/d/1meuxs6M_OPKbKNFSPWlz_PQ04e0N8oAR/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Impressora de crachás de acesso",
+      "orcamento": 3,
+      "empresa": "B2 Bridge",
+      "valor": 5800.6,
+      "url": "https://drive.google.com/file/d/1bavLcaaXXWWdfB4XgdHT9tWTYyG6htGG/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Lâmpada de fenda",
+      "orcamento": 1,
+      "empresa": "Eyetec",
+      "valor": 42300.0,
+      "url": "https://drive.google.com/file/d/1K8xf8WIlkoQakDfEm0Ijw0E-Xy1EJOM0/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Lâmpada de fenda",
+      "orcamento": 2,
+      "empresa": "Suplimed",
+      "valor": 39900.0,
+      "url": "https://drive.google.com/file/d/1tMEuvlZtogMlddozBiBLczP4e6-Cj15K/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Lâmpada de fenda",
+      "orcamento": 3,
+      "empresa": "Projetos óptcos",
+      "valor": 18600.0,
+      "url": "https://drive.google.com/file/d/1sztrOqB2D8zbFYJDYhRCMCccwt3vtyEi/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Lâmpada de fenda com tonômetro",
+      "orcamento": 1,
+      "empresa": "Oftalmo Serv",
+      "valor": 202970.0,
+      "url": "https://drive.google.com/file/d/1g2oJIv491Bv9hdaQmP9TmX_Hx6Qfthdu/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Lâmpada de fenda com tonômetro",
+      "orcamento": 2,
+      "empresa": "Suplimed",
+      "valor": 52000.0,
+      "url": "https://drive.google.com/file/d/1tMEuvlZtogMlddozBiBLczP4e6-Cj15K/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Lâmpada de fenda com tonômetro",
+      "orcamento": 3,
+      "empresa": "Apramed",
+      "valor": "=19200+8000",
+      "url": "https://drive.google.com/file/d/18RGcjOhuMnux36pawBfVp0ch1GxtkNtO/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Laser oftalmológico endolaser",
+      "orcamento": 1,
+      "empresa": "Alcon",
+      "valor": 272000.0,
+      "url": "https://drive.google.com/file/d/1t3umUgjBxzvTAFtntZZo-A9Rci38rYW1/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Laser oftalmológico endolaser",
+      "orcamento": 2,
+      "empresa": "Oftalmo Serv",
+      "valor": 767000.0,
+      "url": "https://drive.google.com/file/d/1g2oJIv491Bv9hdaQmP9TmX_Hx6Qfthdu/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Laser oftalmológico endolaser",
+      "orcamento": 3,
+      "empresa": "Suplimed",
+      "valor": 188000.0,
+      "url": "https://drive.google.com/file/d/1tMEuvlZtogMlddozBiBLczP4e6-Cj15K/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Laser YAG e SLT combinados",
+      "orcamento": 1,
+      "empresa": "Alcon",
+      "valor": 424000.0,
+      "url": "https://drive.google.com/file/d/1t3umUgjBxzvTAFtntZZo-A9Rci38rYW1/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Laser YAG e SLT combinados",
+      "orcamento": 2,
+      "empresa": "Oftalmo Serv",
+      "valor": 570700.0,
+      "url": "https://drive.google.com/file/d/1g2oJIv491Bv9hdaQmP9TmX_Hx6Qfthdu/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Laser YAG e SLT combinados",
+      "orcamento": 3,
+      "empresa": "Optivision",
+      "valor": 358000.0,
+      "url": "https://drive.google.com/file/d/1PeRXLvzySTCktKzTXtvHDTx3Yb6J-nGA/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Lavadora ultrassônica 15 L",
+      "orcamento": 1,
+      "empresa": "Cirúrgica Ávila",
+      "valor": 38246.0,
+      "url": "https://drive.google.com/file/d/11L9WjB47xQWI8kpQ6F7tfKtz3-0wsp5d/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Lavadora ultrassônica 15 L",
+      "orcamento": 2,
+      "empresa": "Ecel",
+      "valor": 33900.0,
+      "url": "https://drive.google.com/file/d/1QEDvGjP7SiaYZ-ZU2EmKLhNxP9dzl4hW/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Lavadora ultrassônica 15 L",
+      "orcamento": 3,
+      "empresa": "Dormed",
+      "valor": 25537.95,
+      "url": "https://drive.google.com/file/d/1Bw9CmKCyYFhay2bqhWapTdoQYlcGi4Un/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Leitor de Código de Barras (Pistola)",
+      "orcamento": 1,
+      "empresa": "B2ti",
+      "valor": 395.0,
+      "url": "https://drive.google.com/file/d/1PdxfExylxhC-uTH7EIlHYybYHpHEo1dX/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Leitor de Código de Barras (Pistola)",
+      "orcamento": 2,
+      "empresa": "JR Informática",
+      "valor": 465.0,
+      "url": "https://drive.google.com/file/d/1dsyPpfw3sE5QIuJ4a54IlGwQmRVoGhYc/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Leitor de Código de Barras (Pistola)",
+      "orcamento": 3,
+      "empresa": "Sinal Digital",
+      "valor": 379.8,
+      "url": "https://drive.google.com/file/d/1meuxs6M_OPKbKNFSPWlz_PQ04e0N8oAR/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Licença CAL para Windows Server",
+      "orcamento": 1,
+      "empresa": "B2ti",
+      "valor": 430.0,
+      "url": "https://drive.google.com/file/d/1PdxfExylxhC-uTH7EIlHYybYHpHEo1dX/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Licença CAL para Windows Server",
+      "orcamento": 2,
+      "empresa": "JR Informática",
+      "valor": 415.0,
+      "url": "https://drive.google.com/file/d/1dsyPpfw3sE5QIuJ4a54IlGwQmRVoGhYc/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Licença CAL para Windows Server",
+      "orcamento": 3,
+      "empresa": "B2 Bridge",
+      "valor": 390.89,
+      "url": "https://drive.google.com/file/d/1bavLcaaXXWWdfB4XgdHT9tWTYyG6htGG/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Licença Sistema Operacional Windows Server 2025 Standard",
+      "orcamento": 1,
+      "empresa": "B2Ti",
+      "valor": 6600.0,
+      "url": "https://drive.google.com/file/d/1PdxfExylxhC-uTH7EIlHYybYHpHEo1dX/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Licença Sistema Operacional Windows Server 2025 Standard",
+      "orcamento": 2,
+      "empresa": "JR Informática",
+      "valor": 9699.0,
+      "url": "https://drive.google.com/file/d/1dsyPpfw3sE5QIuJ4a54IlGwQmRVoGhYc/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Licença Sistema Operacional Windows Server 2025 Standard",
+      "orcamento": 3,
+      "empresa": "B2 Bridge",
+      "valor": 11303.35,
+      "url": "https://drive.google.com/file/d/1bavLcaaXXWWdfB4XgdHT9tWTYyG6htGG/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Longarina de 2 lugares",
+      "orcamento": 1,
+      "empresa": "Ufficioflex",
+      "valor": 447.0,
+      "url": "https://drive.google.com/file/d/1uixj_DsbHarPA77Y2EPVQmyChugG5C4G/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Longarina de 2 lugares",
+      "orcamento": 2,
+      "empresa": "Pollo",
+      "valor": 427.53,
+      "url": "https://drive.google.com/file/d/1rtXGVfqfrugoXP_o3zEzc88sWUUyhwXr/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Longarina de 2 lugares",
+      "orcamento": 3,
+      "empresa": "Jonas  - Móveis para Escritório",
+      "valor": 465.0,
+      "url": "https://drive.google.com/file/d/1_c0S3LZaMZDmnmNgsSj5eso2rN8G0IHO/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Longarina de 3 lugares",
+      "orcamento": 1,
+      "empresa": "Alberflex",
+      "valor": 3638.75,
+      "url": "https://drive.google.com/file/d/1X0js-DdGb1TybQmCKnSNZ3hzS9do1xfq/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Longarina de 3 lugares",
+      "orcamento": 2,
+      "empresa": "Set Comércio",
+      "valor": 2610.0,
+      "url": "https://drive.google.com/file/d/11hQ5gv9qU5XuAMPwkX6SSNEkALWiTHJ0/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Longarina de 3 lugares",
+      "orcamento": 3,
+      "empresa": "Ufficioflex",
+      "valor": 535.0,
+      "url": "https://drive.google.com/file/d/1uixj_DsbHarPA77Y2EPVQmyChugG5C4G/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Maca de Exame",
+      "orcamento": 1,
+      "empresa": "Primed",
+      "valor": 1190.0,
+      "url": "https://drive.google.com/file/d/18h7fzPfytk5jzHnWvVCWyerkGrb_tIri/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Maca de Exame",
+      "orcamento": 2,
+      "empresa": "Medicinali",
+      "valor": 564.0,
+      "url": "https://drive.google.com/file/d/1XP8v8qK479NRQP5ETiaOyMKuy-PAf5-k/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Maca de Exame",
+      "orcamento": 3,
+      "empresa": "Cirurgica Mazzei",
+      "valor": 825.9,
+      "url": "https://drive.google.com/file/d/1feRcLdsBc3qEY0ROUlckcXwef7yCKHmJ/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Máquina de hemodiálise",
+      "orcamento": 3,
+      "empresa": "Fresenius",
+      "valor": 63500.0,
+      "url": "https://drive.google.com/file/d/1M1lhYnhKrtqjSrS54d6ZPSmPsQVSL5yI/view?usp=drive_link"
+    },
+    {
+      "equipamento": "maquina unitarizadora de medicamentos + alimentador automático",
+      "orcamento": 1,
+      "empresa": "Mea Modul",
+      "valor": 168619.15,
+      "url": "https://drive.google.com/file/d/1uPzy1RaXDc-HomxWCs_gpdh43111XJ25/view?usp=drive_link"
+    },
+    {
+      "equipamento": "maquina unitarizadora de medicamentos + alimentador automático",
+      "orcamento": 2,
+      "empresa": "Opuspac",
+      "valor": 235100.0,
+      "url": "https://drive.google.com/file/d/140BlsOrfVy9mi_W-mzxcZkk8pOk8as3P/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Marcapasso cardíaco externo",
+      "orcamento": 1,
+      "empresa": "Albinus",
+      "valor": 10997.95,
+      "url": "https://drive.google.com/file/d/1BW9uqfT1vgy0zXjtEMispUEiGDAwSTZL/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Marcapasso cardíaco externo",
+      "orcamento": 2,
+      "empresa": "Novamed Hospitalar",
+      "valor": 21234.67,
+      "url": "https://drive.google.com/file/d/15FDpTDU36VRzOj-Y1-G4TN4yNfClpmSW/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Marcapasso cardíaco externo",
+      "orcamento": 3,
+      "empresa": "Biométrica",
+      "valor": 12980.0,
+      "url": "https://drive.google.com/file/d/1SbyxTg8aLuzJthdiE8aozXADXn-5wSVP/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Medidor de cuff",
+      "orcamento": 1,
+      "empresa": "Medicinali",
+      "valor": 2300.0,
+      "url": "https://drive.google.com/file/d/1890UPPFSUGPGXfWwKjrXTqTg49oCYBG7/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Medidor de cuff",
+      "orcamento": 2,
+      "empresa": "MEDSYSTEM",
+      "valor": 2104.94,
+      "url": "https://drive.google.com/file/d/1dFa8nwG64yP_d5ebgRLe2FiwGg68_jgX/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Medidor de cuff",
+      "orcamento": 3,
+      "empresa": "Dormed",
+      "valor": 2897.95,
+      "url": "https://drive.google.com/file/d/1Bw9CmKCyYFhay2bqhWapTdoQYlcGi4Un/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Mesa Auxiliar (cirurgia)",
+      "orcamento": 1,
+      "empresa": "Medicinali",
+      "valor": 598.0,
+      "url": "https://drive.google.com/file/d/1890UPPFSUGPGXfWwKjrXTqTg49oCYBG7/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Mesa Auxiliar (cirurgia)",
+      "orcamento": 2,
+      "empresa": "L&M",
+      "valor": 1900.0,
+      "url": "https://drive.google.com/file/d/1GSr2XX6t0uC7kCmh8227lXB9wtb3-vwv/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Mesa Auxiliar (cirurgia)",
+      "orcamento": 3,
+      "empresa": "MGA",
+      "valor": 860.0,
+      "url": "https://drive.google.com/file/d/1hiXZAy6XxEX8BWZFyHkz1jB9dMzWF9rm/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Mesa Auxiliar (cirurgia)",
+      "orcamento": 1,
+      "empresa": "Medicinali",
+      "valor": 555.0,
+      "url": "https://drive.google.com/file/d/1890UPPFSUGPGXfWwKjrXTqTg49oCYBG7/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Mesa Auxiliar (cirurgia)",
+      "orcamento": 2,
+      "empresa": "L&M",
+      "valor": 610.0,
+      "url": "https://drive.google.com/file/d/1GSr2XX6t0uC7kCmh8227lXB9wtb3-vwv/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Mesa Auxiliar (cirurgia)",
+      "orcamento": 3,
+      "empresa": "MGA",
+      "valor": 820.0,
+      "url": "https://drive.google.com/file/d/1hiXZAy6XxEX8BWZFyHkz1jB9dMzWF9rm/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Mesa auxiliar com rodízios e prateleira 45x110x80 cm",
+      "orcamento": 1,
+      "empresa": "Medicinali",
+      "valor": 1125.0,
+      "url": "https://drive.google.com/file/d/1890UPPFSUGPGXfWwKjrXTqTg49oCYBG7/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Mesa auxiliar com rodízios e prateleira 45x110x80 cm",
+      "orcamento": 2,
+      "empresa": "L&M",
+      "valor": 1280.0,
+      "url": "https://drive.google.com/file/d/1GSr2XX6t0uC7kCmh8227lXB9wtb3-vwv/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Mesa auxiliar com rodízios e prateleira 45x110x80 cm",
+      "orcamento": 3,
+      "empresa": "MGA",
+      "valor": 1650.0,
+      "url": "https://drive.google.com/file/d/1hiXZAy6XxEX8BWZFyHkz1jB9dMzWF9rm/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Mesa Cirúrgica Elétrica - ALTA COMPLEXIDADE",
+      "orcamento": 1,
+      "empresa": "Barrfab 1.01+1.04",
+      "valor": 92088.0,
+      "url": "https://drive.google.com/file/d/1iuSj2j3YzhL0gN2Gf2a08mQD9tV2AhvS/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Mesa de cabeceira",
+      "orcamento": 1,
+      "empresa": "Ufficioflex",
+      "valor": 764.0,
+      "url": "https://drive.google.com/file/d/1uixj_DsbHarPA77Y2EPVQmyChugG5C4G/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Mesa de cabeceira",
+      "orcamento": 2,
+      "empresa": "Hospimetal",
+      "valor": 1400.0,
+      "url": "https://drive.google.com/file/d/17BHWpNlKNk1wN09VTL9SAnaEA55GKziM/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Mesa de cabeceira",
+      "orcamento": 3,
+      "empresa": "Medicinalli",
+      "valor": 599.0,
+      "url": "https://drive.google.com/file/d/1XP8v8qK479NRQP5ETiaOyMKuy-PAf5-k/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Mesa de Centro",
+      "orcamento": 1,
+      "empresa": "Ufficioflex",
+      "valor": 764.0,
+      "url": "https://drive.google.com/file/d/1uixj_DsbHarPA77Y2EPVQmyChugG5C4G/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Mesa de Mayo",
+      "orcamento": 1,
+      "empresa": "Medicinali",
+      "valor": 835.0,
+      "url": "https://drive.google.com/file/d/1890UPPFSUGPGXfWwKjrXTqTg49oCYBG7/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Mesa de Mayo",
+      "orcamento": 2,
+      "empresa": "MGA",
+      "valor": 860.0,
+      "url": "https://drive.google.com/file/d/1hiXZAy6XxEX8BWZFyHkz1jB9dMzWF9rm/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Mesa de Mayo",
+      "orcamento": 3,
+      "empresa": "Cirurgica Mazzei",
+      "valor": 869.2,
+      "url": "https://drive.google.com/file/d/1feRcLdsBc3qEY0ROUlckcXwef7yCKHmJ/view?usp=drive_link"
+    },
+    {
+      "equipamento": "mesa de pebolin",
+      "orcamento": 1,
+      "empresa": "Guanabara",
+      "valor": 3000.0,
+      "url": "https://drive.google.com/file/d/1HCZ1h3iDS2qWejfbWQGq9NkNR_5M5sl0/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Mesa de reunião",
+      "orcamento": 1,
+      "empresa": "Alberflex",
+      "valor": 2781.81,
+      "url": "https://drive.google.com/file/d/1EouHtM4k8mJs2f6SvWHcE3Wv3n1gHhd5/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Mesa de reunião",
+      "orcamento": 2,
+      "empresa": "Set Comércio",
+      "valor": 2500.0,
+      "url": "https://drive.google.com/file/d/11hQ5gv9qU5XuAMPwkX6SSNEkALWiTHJ0/view?usp=drive_link"
+    },
+    {
+      "equipamento": "mesa de tenis de mesa",
+      "orcamento": 1,
+      "empresa": "Guanabara",
+      "valor": 2700.0,
+      "url": "https://drive.google.com/file/d/1HCZ1h3iDS2qWejfbWQGq9NkNR_5M5sl0/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Mesa Oftalmológica",
+      "orcamento": 1,
+      "empresa": "Martinato",
+      "valor": 2053.52,
+      "url": "https://drive.google.com/file/d/1v2z-kay1z_X9OEvyowBCClQ5su_xELMM/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Mesa Oftalmológica",
+      "orcamento": 2,
+      "empresa": "Focus Optic",
+      "valor": 2100.0,
+      "url": "https://drive.google.com/file/d/1V_SFdaf76avOFo5cY2whs-Dla9-hP82F/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Mesa Oftalmológica",
+      "orcamento": 3,
+      "empresa": "Apramed",
+      "valor": 2500.0,
+      "url": "https://drive.google.com/file/d/18RGcjOhuMnux36pawBfVp0ch1GxtkNtO/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Mesa para Consultório",
+      "orcamento": 1,
+      "empresa": "Alberflex",
+      "valor": 1870.13,
+      "url": "https://drive.google.com/file/d/1EouHtM4k8mJs2f6SvWHcE3Wv3n1gHhd5/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Mesa para Consultório",
+      "orcamento": 2,
+      "empresa": "Set Comércio",
+      "valor": 2100.0,
+      "url": "https://drive.google.com/file/d/11hQ5gv9qU5XuAMPwkX6SSNEkALWiTHJ0/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Mesa para Consultório",
+      "orcamento": 3,
+      "empresa": "Ufficioflex",
+      "valor": 772.0,
+      "url": "https://drive.google.com/file/d/1uixj_DsbHarPA77Y2EPVQmyChugG5C4G/view?usp=sharing"
+    },
+    {
+      "equipamento": "Mesa para exame ginecológico com gabinete",
+      "orcamento": 1,
+      "empresa": "Gigante",
+      "valor": 17445.0,
+      "url": "https://drive.google.com/file/d/1CluxUfW4E7ceHQnpg07WI49iZD0e1AAd/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Mesa para exame ginecológico com gabinete",
+      "orcamento": 2,
+      "empresa": "Linet",
+      "valor": 65000.0,
+      "url": "https://drive.google.com/file/d/1kZroKuaAt9eAeiorW7P0vOkR6McIziSP/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Mesa para Impressora",
+      "orcamento": 1,
+      "empresa": "Set Comércio",
+      "valor": 1300.0,
+      "url": "https://drive.google.com/file/d/11hQ5gv9qU5XuAMPwkX6SSNEkALWiTHJ0/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Mesa para Impressora",
+      "orcamento": 2,
+      "empresa": "Ufficioflex",
+      "valor": 502.32,
+      "url": "https://drive.google.com/file/d/1uixj_DsbHarPA77Y2EPVQmyChugG5C4G/view?usp=sharing"
+    },
+    {
+      "equipamento": "Mesa para Impressora",
+      "orcamento": 3,
+      "empresa": "Alberflex",
+      "valor": 889.99,
+      "url": "https://drive.google.com/file/d/1EouHtM4k8mJs2f6SvWHcE3Wv3n1gHhd5/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Mesa para Refeição no Leito",
+      "orcamento": 1,
+      "empresa": "Vallitech",
+      "valor": 1395.0,
+      "url": "https://drive.google.com/file/d/1fjqkxOW_zT4uHrw6jGS3NXOFb4FDPkZl/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Mesa para Refeição no Leito",
+      "orcamento": 2,
+      "empresa": "Linet",
+      "valor": 5200.0,
+      "url": "https://drive.google.com/file/d/1kZroKuaAt9eAeiorW7P0vOkR6McIziSP/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Mesa para Refeição no Leito",
+      "orcamento": 3,
+      "empresa": "Medicinalli",
+      "valor": 586.0,
+      "url": "https://drive.google.com/file/d/1XP8v8qK479NRQP5ETiaOyMKuy-PAf5-k/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Mesa para refeitório",
+      "orcamento": 1,
+      "empresa": "Jonas  - Móveis para Escritório",
+      "valor": 1997.0,
+      "url": "https://drive.google.com/file/d/1_c0S3LZaMZDmnmNgsSj5eso2rN8G0IHO/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Microcomputador Estação de Laudo",
+      "orcamento": 1,
+      "empresa": "JR Soluções",
+      "valor": 22499.0,
+      "url": "https://drive.google.com/file/d/1dsyPpfw3sE5QIuJ4a54IlGwQmRVoGhYc/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Microcomputador Estação de Laudo",
+      "orcamento": 2,
+      "empresa": "3D INFORMÁTICA",
+      "valor": 18900.0,
+      "url": "https://drive.google.com/file/d/1q71WtK9ebL1B0TIn4fMQC3npmBNIkec3/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Microcomputador Estação de Laudo",
+      "orcamento": 3,
+      "empresa": "RADIX",
+      "valor": 87000.0,
+      "url": "https://drive.google.com/file/d/1gX3_BjToWW-I8RdSLBHWu_i1As-ep1zo/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Microcomputador Estação de Trabalho",
+      "orcamento": 1,
+      "empresa": "B2TI",
+      "valor": 5420.0,
+      "url": "https://drive.google.com/file/d/1PZcFjakX0e_I-FKysp_R5MCuyXuWy8yO/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Microcomputador Estação de Trabalho",
+      "orcamento": 2,
+      "empresa": "JR Soluções",
+      "valor": 6599.0,
+      "url": "https://drive.google.com/file/d/1dsyPpfw3sE5QIuJ4a54IlGwQmRVoGhYc/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Microcomputador Estação de Trabalho",
+      "orcamento": 3,
+      "empresa": "3D Informática",
+      "valor": 5200.0,
+      "url": "https://drive.google.com/file/d/1q71WtK9ebL1B0TIn4fMQC3npmBNIkec3/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Microscópio binocular 4 objetivas contraste de fase",
+      "orcamento": 1,
+      "empresa": "Nova Analítica",
+      "valor": 14119.22,
+      "url": "https://drive.google.com/file/d/14ky-ZpweJxgMyO3q_ndfmGOUa_oTAC6q/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Microscópio binocular 4 objetivas contraste de fase",
+      "orcamento": 2,
+      "empresa": "Spectrun",
+      "valor": 18585.0,
+      "url": "https://drive.google.com/file/d/18eKgirHf9ZjiFKkNcZK0S0xE1boTYV1v/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Microscópio binocular 5 objetivas planacromáticas",
+      "orcamento": 1,
+      "empresa": "Nova Analítica",
+      "valor": 17735.86,
+      "url": "https://drive.google.com/file/d/1G7WOqVVD_-7DsRWSlxdrjV_TvJfxcbkK/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Microscópio binocular 5 objetivas planacromáticas",
+      "orcamento": 2,
+      "empresa": "Spectrun",
+      "valor": 29942.5,
+      "url": "https://drive.google.com/file/d/18eKgirHf9ZjiFKkNcZK0S0xE1boTYV1v/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Microscópio cirúrgico para oftalmologia - ficara no bloco cirurgico ambulatorial",
+      "orcamento": 1,
+      "empresa": "Mogami",
+      "valor": 1051032.0,
+      "url": "https://drive.google.com/file/d/1g6HYNtShbWi_48HRTm46xwBE_gfoGg3C/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Microscópio cirúrgico para oftalmologia - ficara no bloco cirurgico ambulatorial",
+      "orcamento": 2,
+      "empresa": "Oftalmo Serv",
+      "valor": 1335000.0,
+      "url": "https://drive.google.com/file/d/1g2oJIv491Bv9hdaQmP9TmX_Hx6Qfthdu/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Microscópio cirúrgico para oftalmologia - ficara no bloco cirurgico ambulatorial",
+      "orcamento": 3,
+      "empresa": "Alcon",
+      "valor": 1098000.0,
+      "url": "https://drive.google.com/file/d/1vXOfsM9V5mZFcJ-EG7gJJYMWSmYTaXBs/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Microscópio especular de córnea",
+      "orcamento": 1,
+      "empresa": "Alcon",
+      "valor": 146000.0,
+      "url": "https://drive.google.com/file/d/1t3umUgjBxzvTAFtntZZo-A9Rci38rYW1/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Microscópio especular de córnea",
+      "orcamento": 2,
+      "empresa": "Eyetec",
+      "valor": 92400.0,
+      "url": "https://drive.google.com/file/d/1K8xf8WIlkoQakDfEm0Ijw0E-Xy1EJOM0/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Microscópio especular de córnea",
+      "orcamento": 3,
+      "empresa": "Mogami",
+      "valor": 255838.0,
+      "url": "https://drive.google.com/file/d/1g6HYNtShbWi_48HRTm46xwBE_gfoGg3C/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Mini PCs TVs Painéis de chamada",
+      "orcamento": 1,
+      "empresa": "3D INFORMÁTICA",
+      "valor": 2000.0,
+      "url": "https://drive.google.com/file/d/1q71WtK9ebL1B0TIn4fMQC3npmBNIkec3/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Mini PCs TVs Painéis de chamada",
+      "orcamento": 2,
+      "empresa": "ER Soluções",
+      "valor": 5149.0,
+      "url": "https://drive.google.com/file/d/1iOAH_9JIq-6EWh2Dfyz3RLG59wsTA2R6/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Mini PCs TVs Painéis de chamada",
+      "orcamento": 3,
+      "empresa": "JR Soluções",
+      "valor": 4449.0,
+      "url": "https://drive.google.com/file/d/1dsyPpfw3sE5QIuJ4a54IlGwQmRVoGhYc/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Monitor de pressão arterial, gravador",
+      "orcamento": 1,
+      "empresa": "HITEC Medical",
+      "valor": 8500.0,
+      "url": "https://drive.google.com/file/d/1rVx_1HSUkWNijuGbUSj528JoruKYUb5K/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Monitor Desfibrilador",
+      "orcamento": 1,
+      "empresa": "ProLife",
+      "valor": 31200.0,
+      "url": "https://drive.google.com/file/d/1YYu6bwUHc1hVfd88ga5-KAnj5yJFuran/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Monitor Desfibrilador",
+      "orcamento": 2,
+      "empresa": "InterCTI",
+      "valor": 21375.9,
+      "url": "https://drive.google.com/file/d/1kh4aroBqtUR76m9sMIyrRDlf0Kwo8Zzv/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Monitor Desfibrilador",
+      "orcamento": 3,
+      "empresa": "Ribertec",
+      "valor": 51275.0,
+      "url": "https://drive.google.com/file/d/1jhgvM2PhPeNYKMCydOaB8l1hKC9VpuBc/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Monitor multiparamétrico com analisador de gases",
+      "orcamento": 1,
+      "empresa": "UNNO",
+      "valor": 48000.0,
+      "url": "https://drive.google.com/file/d/1B3LEDcSvpN1cAe2rBYLDMFIQ-kKNyid6/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Monitor multiparamétrico com analisador de gases",
+      "orcamento": 2,
+      "empresa": "ProLife",
+      "valor": 20920.0,
+      "url": "https://drive.google.com/file/d/1YYu6bwUHc1hVfd88ga5-KAnj5yJFuran/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Monitor multiparamétrico com analisador de gases",
+      "orcamento": 3,
+      "empresa": "DF Comércio Hospitalar",
+      "valor": 52900.0,
+      "url": "https://drive.google.com/file/d/1p_VmlKwfMU4FtoqMuSXZTyt3uGUglJqy/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Monitor multiparamétrico 10\" (ECG, respiração, SpO2, PNI)",
+      "orcamento": 1,
+      "empresa": "DF Comércio Hospitalar",
+      "valor": 7900.0,
+      "url": "https://drive.google.com/file/d/1p_VmlKwfMU4FtoqMuSXZTyt3uGUglJqy/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Monitor multiparamétrico 10\" (ECG, respiração, SpO2, PNI)",
+      "orcamento": 2,
+      "empresa": "KVO",
+      "valor": 14200.0,
+      "url": "https://drive.google.com/file/d/1y7QJjU-duePMHTKte22_y3LT8uOUukE_/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Monitor multiparamétrico 10\" (ECG, respiração, SpO2, PNI)",
+      "orcamento": 3,
+      "empresa": "ProLife",
+      "valor": 20920.0,
+      "url": "https://drive.google.com/file/d/1YYu6bwUHc1hVfd88ga5-KAnj5yJFuran/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Monitor multiparamétrico com ETCO2 e PI",
+      "orcamento": 1,
+      "empresa": "KVO",
+      "valor": 24500.0,
+      "url": "https://drive.google.com/file/d/1y7QJjU-duePMHTKte22_y3LT8uOUukE_/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Monitor multiparamétrico com ETCO2 e PI",
+      "orcamento": 2,
+      "empresa": "ProLife",
+      "valor": 19000.0,
+      "url": "https://drive.google.com/file/d/1YYu6bwUHc1hVfd88ga5-KAnj5yJFuran/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Monitor multiparamétrico com ETCO2 e PI",
+      "orcamento": 3,
+      "empresa": "DF Comércio Hospitalar",
+      "valor": 15500.0,
+      "url": "https://drive.google.com/file/d/1p_VmlKwfMU4FtoqMuSXZTyt3uGUglJqy/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Monitor multiparamétrico com ETCO2, PI e DC",
+      "orcamento": 1,
+      "empresa": "KVO",
+      "valor": 27850.0,
+      "url": "https://drive.google.com/file/d/1y7QJjU-duePMHTKte22_y3LT8uOUukE_/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Monitor multiparamétrico com ETCO2, PI e DC",
+      "orcamento": 2,
+      "empresa": "UNNO",
+      "valor": 29950.0,
+      "url": "https://drive.google.com/file/d/1B3LEDcSvpN1cAe2rBYLDMFIQ-kKNyid6/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Monitor multiparamétrico com ETCO2, PI e DC",
+      "orcamento": 3,
+      "empresa": "DF Comércio Hospitalar",
+      "valor": 33590.0,
+      "url": "https://drive.google.com/file/d/1p_VmlKwfMU4FtoqMuSXZTyt3uGUglJqy/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Monitores Segunda Tela/Backup",
+      "orcamento": 1,
+      "empresa": "3D INFORMÁTICA",
+      "valor": 689.0,
+      "url": "https://drive.google.com/file/d/1q71WtK9ebL1B0TIn4fMQC3npmBNIkec3/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Monitores Segunda Tela/Backup",
+      "orcamento": 2,
+      "empresa": "B2TI",
+      "valor": 555.0,
+      "url": "https://drive.google.com/file/d/1PZcFjakX0e_I-FKysp_R5MCuyXuWy8yO/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Monitores Segunda Tela/Backup",
+      "orcamento": 3,
+      "empresa": "ER Soluções",
+      "valor": 539.0,
+      "url": "https://drive.google.com/file/d/1iOAH_9JIq-6EWh2Dfyz3RLG59wsTA2R6/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Negatoscópio",
+      "orcamento": 1,
+      "empresa": "Medicinali",
+      "valor": 780.0,
+      "url": "https://drive.google.com/file/d/1IfPjwI4peOAbfOj6x_WFaGuOues7_EFQ/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Negatoscópio",
+      "orcamento": 2,
+      "empresa": "MEDSYSTEM",
+      "valor": 722.83,
+      "url": "https://drive.google.com/file/d/1dFa8nwG64yP_d5ebgRLe2FiwGg68_jgX/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Negatoscópio",
+      "orcamento": 3,
+      "empresa": "Dormed",
+      "valor": 497.95,
+      "url": "https://drive.google.com/file/d/1Bw9CmKCyYFhay2bqhWapTdoQYlcGi4Un/view?usp=sharing"
+    },
+    {
+      "equipamento": "Nobreak (UPS) 6 kVA",
+      "orcamento": 1,
+      "empresa": "3D INFORMÁTICA",
+      "valor": 12000.0,
+      "url": "https://drive.google.com/file/d/1q71WtK9ebL1B0TIn4fMQC3npmBNIkec3/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Nobreak (UPS) 6 kVA",
+      "orcamento": 2,
+      "empresa": "B2TI",
+      "valor": 15831.0,
+      "url": "https://drive.google.com/file/d/1PZcFjakX0e_I-FKysp_R5MCuyXuWy8yO/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Nobreak (UPS) 6 kVA",
+      "orcamento": 3,
+      "empresa": "ER Soluções",
+      "valor": 17525.24,
+      "url": "https://drive.google.com/file/d/1iOAH_9JIq-6EWh2Dfyz3RLG59wsTA2R6/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Notebook - i7",
+      "orcamento": 1,
+      "empresa": "Lamara",
+      "valor": 6967.0,
+      "url": "https://drive.google.com/file/d/1ReSJsd1jnVcPNYIaZmOqZIfr2fvC2YhP/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Notebook - i7",
+      "orcamento": 2,
+      "empresa": "JR Soluções",
+      "valor": 7650.0,
+      "url": "https://drive.google.com/file/d/1dsyPpfw3sE5QIuJ4a54IlGwQmRVoGhYc/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Notebook - i7",
+      "orcamento": 3,
+      "empresa": "3D Informática",
+      "valor": 6590.0,
+      "url": "https://drive.google.com/file/d/17iTTXC3cRBenHGyYwbIzTr8CzTJQBKTb/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Oftalmoscópio binocular indireto",
+      "orcamento": 1,
+      "empresa": "Eyetec",
+      "valor": 9900.0,
+      "url": "https://drive.google.com/file/d/1K8xf8WIlkoQakDfEm0Ijw0E-Xy1EJOM0/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Oftalmoscópio binocular indireto",
+      "orcamento": 2,
+      "empresa": "Oftalmo Serv",
+      "valor": 48100.0,
+      "url": "https://drive.google.com/file/d/1g2oJIv491Bv9hdaQmP9TmX_Hx6Qfthdu/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Oftalmoscópio binocular indireto",
+      "orcamento": 3,
+      "empresa": "Apramed",
+      "valor": 6600.0,
+      "url": "https://drive.google.com/file/d/1VInkTd_IMi4Isqk4ADHAjrBe-lHlcLSh/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Oftalmoscópio direto",
+      "orcamento": 1,
+      "empresa": "Martinato",
+      "valor": 4080.0,
+      "url": "https://drive.google.com/file/d/1v2z-kay1z_X9OEvyowBCClQ5su_xELMM/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Oftalmoscópio direto",
+      "orcamento": 2,
+      "empresa": "Oftalmo Serv",
+      "valor": 23400.0,
+      "url": "https://drive.google.com/file/d/1g2oJIv491Bv9hdaQmP9TmX_Hx6Qfthdu/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Oftalmoscópio direto",
+      "orcamento": 3,
+      "empresa": "Medicinali",
+      "valor": 4200.0,
+      "url": "https://drive.google.com/file/d/1IfPjwI4peOAbfOj6x_WFaGuOues7_EFQ/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Otoscópio de sistema aberto",
+      "orcamento": 1,
+      "empresa": "Medicinalli",
+      "valor": 6705.0,
+      "url": "https://drive.google.com/file/d/1Xjjw_OAtcZv7lymvOJMhkbjsLdGCcuIN/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Otoscópio de sistema aberto",
+      "orcamento": 2,
+      "empresa": "Riber Médica",
+      "valor": 5299.0,
+      "url": "https://drive.google.com/file/d/1QZpG5XbWIbwN6NTuvxUGe9jKTazvtcuH/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Oxímetro de Dedo",
+      "orcamento": 1,
+      "empresa": "Mazzei",
+      "valor": 180.2,
+      "url": "https://drive.google.com/file/d/1feRcLdsBc3qEY0ROUlckcXwef7yCKHmJ/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Oxímetro de Dedo",
+      "orcamento": 2,
+      "empresa": "Dormed",
+      "valor": 117.95,
+      "url": "https://drive.google.com/file/d/1Bw9CmKCyYFhay2bqhWapTdoQYlcGi4Un/view?usp=sharing"
+    },
+    {
+      "equipamento": "Oxímetro de Dedo",
+      "orcamento": 3,
+      "empresa": "MEDSYSTEM",
+      "valor": 121.22,
+      "url": "https://drive.google.com/file/d/1dFa8nwG64yP_d5ebgRLe2FiwGg68_jgX/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Oxímetro de Pulso Portátil",
+      "orcamento": 1,
+      "empresa": "RTS",
+      "valor": 4038.18,
+      "url": "https://drive.google.com/file/d/19UUZyCMeNddPvZ6gaQM2OW6_-b6o42vL/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Oxímetro de Pulso Portátil",
+      "orcamento": 2,
+      "empresa": "Medicinali",
+      "valor": 2350.0,
+      "url": "https://drive.google.com/file/d/1IfPjwI4peOAbfOj6x_WFaGuOues7_EFQ/view?usp=sharing"
+    },
+    {
+      "equipamento": "Oxímetro de Pulso Portátil",
+      "orcamento": 3,
+      "empresa": "Dormed",
+      "valor": 1185.0,
+      "url": "https://drive.google.com/file/d/1Bw9CmKCyYFhay2bqhWapTdoQYlcGi4Un/view?usp=sharing"
+    },
+    {
+      "equipamento": "Poltrona de Recepção",
+      "orcamento": 2,
+      "empresa": "Hospimetal",
+      "valor": 1680.0,
+      "url": "https://drive.google.com/file/d/17BHWpNlKNk1wN09VTL9SAnaEA55GKziM/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Poltrona de Recepção",
+      "orcamento": 3,
+      "empresa": "PMP",
+      "valor": 1250.0,
+      "url": "https://drive.google.com/file/d/1twGsF9VeUTTg2-5TdkowdIIzbKynThop/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Poltrona Hospitalar",
+      "orcamento": 1,
+      "empresa": "Alberflex",
+      "valor": 1522.5,
+      "url": "https://drive.google.com/file/d/1EouHtM4k8mJs2f6SvWHcE3Wv3n1gHhd5/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Poltrona Hospitalar",
+      "orcamento": 2,
+      "empresa": "Hospimetal",
+      "valor": 1680.0,
+      "url": "https://drive.google.com/file/d/17BHWpNlKNk1wN09VTL9SAnaEA55GKziM/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Poltrona Hospitalar",
+      "orcamento": 3,
+      "empresa": "Medicinalli",
+      "valor": 1319.0,
+      "url": "https://drive.google.com/file/d/1XP8v8qK479NRQP5ETiaOyMKuy-PAf5-k/view"
+    },
+    {
+      "equipamento": "Projetor de Alta Luminosidade",
+      "orcamento": 1,
+      "empresa": "b2ti",
+      "valor": 3867.0,
+      "url": "https://drive.google.com/file/d/1PdxfExylxhC-uTH7EIlHYybYHpHEo1dX/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Projetor de Alta Luminosidade",
+      "orcamento": 2,
+      "empresa": "3D INFORMÁTICA",
+      "valor": 4290.0,
+      "url": "https://drive.google.com/file/d/1q71WtK9ebL1B0TIn4fMQC3npmBNIkec3/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Projetor de Alta Luminosidade",
+      "orcamento": 3,
+      "empresa": "JR Soluções",
+      "valor": 3799.0,
+      "url": "https://drive.google.com/file/d/1dsyPpfw3sE5QIuJ4a54IlGwQmRVoGhYc/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Projetor de optótipos",
+      "orcamento": 1,
+      "empresa": "Alcon",
+      "valor": 18000.0,
+      "url": "https://drive.google.com/file/d/1t3umUgjBxzvTAFtntZZo-A9Rci38rYW1/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Projetor de optótipos",
+      "orcamento": 2,
+      "empresa": "Projetos óptcos",
+      "valor": 9100.0,
+      "url": "https://drive.google.com/file/d/1sztrOqB2D8zbFYJDYhRCMCccwt3vtyEi/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Projetor de optótipos",
+      "orcamento": 3,
+      "empresa": "Oftalmo Serv",
+      "valor": 37215.0,
+      "url": "https://drive.google.com/file/d/1g2oJIv491Bv9hdaQmP9TmX_Hx6Qfthdu/view?usp=drive_link"
+    },
+    {
+      "equipamento": "PROTETOR DE CHUMBO - AVENTAL PARA PROTEÇÃO",
+      "orcamento": 1,
+      "empresa": "Frequencia X",
+      "valor": 1898.27,
+      "url": "https://drive.google.com/file/d/1--xu4NMSJfSt_VWdFT9qR8IRqSUpy14A/view?usp=drive_link"
+    },
+    {
+      "equipamento": "PROTETOR DE CHUMBO - AVENTAL PARA PROTEÇÃO",
+      "orcamento": 2,
+      "empresa": "Dormed",
+      "valor": 1912.8,
+      "url": "https://drive.google.com/file/d/1zt2INi8n-Gs4Z00_K-0Wh1Kjv3zjLp8Y/view?usp=drive_link"
+    },
+    {
+      "equipamento": "PROTETOR DE CHUMBO - AVENTAL PARA PROTEÇÃO",
+      "orcamento": 3,
+      "empresa": "GRX",
+      "valor": 4235.66,
+      "url": "https://drive.google.com/file/d/1OFQbwJEOqfervSoP0V0LVonDr3FhEAKR/view?usp=drive_link"
+    },
+    {
+      "equipamento": "PROTETOR DE CHUMBO - GONODAS",
+      "orcamento": 1,
+      "empresa": "Frequencia X",
+      "valor": 540.71,
+      "url": "https://drive.google.com/file/d/1--xu4NMSJfSt_VWdFT9qR8IRqSUpy14A/view?usp=drive_link"
+    },
+    {
+      "equipamento": "PROTETOR DE CHUMBO - GONODAS",
+      "orcamento": 2,
+      "empresa": "Dormed",
+      "valor": 1521.2,
+      "url": "https://drive.google.com/file/d/1zt2INi8n-Gs4Z00_K-0Wh1Kjv3zjLp8Y/view?usp=drive_link"
+    },
+    {
+      "equipamento": "PROTETOR DE CHUMBO - GONODAS",
+      "orcamento": 3,
+      "empresa": "GRX",
+      "valor": 628.39,
+      "url": "https://drive.google.com/file/d/1OFQbwJEOqfervSoP0V0LVonDr3FhEAKR/view?usp=drive_link"
+    },
+    {
+      "equipamento": "PROTETOR DE CHUMBO - TIREOIDE",
+      "orcamento": 1,
+      "empresa": "Frequencia X",
+      "valor": 335.0,
+      "url": "https://drive.google.com/file/d/1--xu4NMSJfSt_VWdFT9qR8IRqSUpy14A/view?usp=drive_link"
+    },
+    {
+      "equipamento": "PROTETOR DE CHUMBO - TIREOIDE",
+      "orcamento": 2,
+      "empresa": "Dormed",
+      "valor": 335.0,
+      "url": "https://drive.google.com/file/d/1zt2INi8n-Gs4Z00_K-0Wh1Kjv3zjLp8Y/view?usp=drive_link"
+    },
+    {
+      "equipamento": "PROTETOR DE CHUMBO - TIREOIDE",
+      "orcamento": 3,
+      "empresa": "GRX",
+      "valor": 401.2,
+      "url": "https://drive.google.com/file/d/1OFQbwJEOqfervSoP0V0LVonDr3FhEAKR/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Purificador de água",
+      "orcamento": 1,
+      "empresa": "Bem Estar",
+      "valor": 1290.0,
+      "url": "https://drive.google.com/file/d/1xVEVMr6NxQPOcmuZu1QO5EsE3nvkbw9p/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Purificador de água",
+      "orcamento": 2,
+      "empresa": "Rof e Meg",
+      "valor": 1122.0,
+      "url": "https://drive.google.com/file/d/1WphREU-Bu7yeLDTCLxIzT7uBwDaPF4zR/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Purificador de água",
+      "orcamento": 3,
+      "empresa": "Zanotti",
+      "valor": 752.0,
+      "url": "https://drive.google.com/file/d/1nNMQWZtf4caSC2I90kVgznUnWbYSS2tn/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Quadro de Vidro - para gestão a vista / areas de passagem para recados / areas administrativas",
+      "orcamento": 1,
+      "empresa": "Ufficioflex",
+      "valor": 599.0,
+      "url": "https://drive.google.com/file/d/1uixj_DsbHarPA77Y2EPVQmyChugG5C4G/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Rack para Equipamentos",
+      "orcamento": 1,
+      "empresa": "3D INFORMÁTICA",
+      "valor": 2900.0,
+      "url": "https://drive.google.com/file/d/1q71WtK9ebL1B0TIn4fMQC3npmBNIkec3/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Rack para Equipamentos",
+      "orcamento": 2,
+      "empresa": "ER Informatica",
+      "valor": 9400.6,
+      "url": "https://drive.google.com/file/d/1iOAH_9JIq-6EWh2Dfyz3RLG59wsTA2R6/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Rack para Equipamentos",
+      "orcamento": 3,
+      "empresa": "JR Soluções",
+      "valor": 8499.0,
+      "url": "https://drive.google.com/file/d/1dsyPpfw3sE5QIuJ4a54IlGwQmRVoGhYc/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Refrigerador com porta de vidro 500 L",
+      "orcamento": 1,
+      "empresa": "Bunker Comercial",
+      "valor": 28899.99,
+      "url": "https://drive.google.com/file/d/1wTciEz4dHqJF4hX_CHlBvpFOnZDTEeKQ/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Refrigerador para medicamentos 2-8°C com monitoramento",
+      "orcamento": 1,
+      "empresa": "Bunker Comercial",
+      "valor": 16000.0,
+      "url": "https://drive.google.com/file/d/1wTciEz4dHqJF4hX_CHlBvpFOnZDTEeKQ/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Refrigerador vertical para banco de sangue 340 bolsas",
+      "orcamento": 1,
+      "empresa": "Bunker Comercial",
+      "valor": 20000.0,
+      "url": "https://drive.google.com/file/d/1wTciEz4dHqJF4hX_CHlBvpFOnZDTEeKQ/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Relógios de ponto facial",
+      "orcamento": 1,
+      "empresa": "B2ti",
+      "valor": 2091.0,
+      "url": "https://drive.google.com/file/d/1PdxfExylxhC-uTH7EIlHYybYHpHEo1dX/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Relógios de ponto facial",
+      "orcamento": 2,
+      "empresa": "Madis",
+      "valor": 3600.0,
+      "url": "https://drive.google.com/file/d/1tZ6rTYwuXZIN50OwcFhR3TR86WnK4ZPa/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Relógios de ponto facial",
+      "orcamento": 3,
+      "empresa": "Sinal Digital",
+      "valor": 3125.5,
+      "url": "https://drive.google.com/file/d/1meuxs6M_OPKbKNFSPWlz_PQ04e0N8oAR/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Retinógrafo digital",
+      "orcamento": 1,
+      "empresa": "Oftalmo Serv",
+      "valor": 871000.0,
+      "url": "https://drive.google.com/file/d/1g2oJIv491Bv9hdaQmP9TmX_Hx6Qfthdu/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Retinógrafo digital",
+      "orcamento": 2,
+      "empresa": "Apramed",
+      "valor": 338000.0,
+      "url": "https://drive.google.com/file/d/18RGcjOhuMnux36pawBfVp0ch1GxtkNtO/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Secadora de traqueias",
+      "orcamento": 1,
+      "empresa": "Cirúrgica Ávila",
+      "valor": 52860.0,
+      "url": "https://drive.google.com/file/d/11L9WjB47xQWI8kpQ6F7tfKtz3-0wsp5d/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Secadora de traqueias",
+      "orcamento": 2,
+      "empresa": "Cisa",
+      "valor": 76889.0,
+      "url": "https://drive.google.com/file/d/11mPkXQwGirUXa89Rjoo2pA-P12iXRTJm/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Secadora de traqueias",
+      "orcamento": 3,
+      "empresa": "Medicinali",
+      "valor": 69000.0,
+      "url": "https://drive.google.com/file/d/1IfPjwI4peOAbfOj6x_WFaGuOues7_EFQ/view?usp=drive_link"
+    },
+    {
+      "equipamento": "seladora de plástico",
+      "orcamento": 1,
+      "empresa": "MEDSYSTEM",
+      "valor": 990.0,
+      "url": "https://drive.google.com/file/d/1dFa8nwG64yP_d5ebgRLe2FiwGg68_jgX/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Seladora para CME",
+      "orcamento": 1,
+      "empresa": "Cisa",
+      "valor": 24755.0,
+      "url": "https://drive.google.com/file/d/11mPkXQwGirUXa89Rjoo2pA-P12iXRTJm/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Seladora para CME",
+      "orcamento": 2,
+      "empresa": "Strattner",
+      "valor": 72043.88,
+      "url": "https://drive.google.com/file/d/1KK1JWdKzJ-MfBgpOrxk7jA1f3chEUaP6/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Seladora para CME",
+      "orcamento": 3,
+      "empresa": "Sispack",
+      "valor": 8745.0,
+      "url": "https://drive.google.com/file/d/1LU4rrYciviiDC-jNgCfsq7xMZrfn0HgA/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Servidor DICOM Router (PACS)",
+      "orcamento": 1,
+      "empresa": "LGTI",
+      "valor": "=300644/2",
+      "url": "https://drive.google.com/file/d/1z5ZACFmuu4cIGvve1a88Ci1ZsFnB-gh9/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Servidor DICOM Router (PACS)",
+      "orcamento": 2,
+      "empresa": "JR Soluções",
+      "valor": 135650.0,
+      "url": "https://drive.google.com/file/d/1TaYuaysrNS9tvvym38r0mwUGGkF7Z8p-/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Servidor DICOM Router (PACS)",
+      "orcamento": 3,
+      "empresa": "Sophix",
+      "valor": "=123600+15900",
+      "url": "https://drive.google.com/file/d/1v0flqnj1QhfmPIfLBdKKC46UsLgLhjSf/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Servidores de Aplicações/Oracle",
+      "orcamento": 1,
+      "empresa": "LGTI",
+      "valor": "=338209",
+      "url": "https://drive.google.com/file/d/1z5ZACFmuu4cIGvve1a88Ci1ZsFnB-gh9/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Servidores de Aplicações/Oracle",
+      "orcamento": 2,
+      "empresa": "JR Soluções",
+      "valor": 293458.0,
+      "url": "https://drive.google.com/file/d/1TaYuaysrNS9tvvym38r0mwUGGkF7Z8p-/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Servidores de Aplicações/Oracle",
+      "orcamento": 3,
+      "empresa": "Sophix",
+      "valor": 295900.0,
+      "url": "https://drive.google.com/file/d/1v0flqnj1QhfmPIfLBdKKC46UsLgLhjSf/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Servidores de Sistemas Locais",
+      "orcamento": 1,
+      "empresa": "LGTI",
+      "valor": "=300644/2",
+      "url": "https://drive.google.com/file/d/1z5ZACFmuu4cIGvve1a88Ci1ZsFnB-gh9/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Servidores de Sistemas Locais",
+      "orcamento": 2,
+      "empresa": "JR Soluções",
+      "valor": 135650.0,
+      "url": "https://drive.google.com/file/d/1TaYuaysrNS9tvvym38r0mwUGGkF7Z8p-/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Servidores de Sistemas Locais",
+      "orcamento": 3,
+      "empresa": "Sophix",
+      "valor": "=123600+15900",
+      "url": "https://drive.google.com/file/d/1v0flqnj1QhfmPIfLBdKKC46UsLgLhjSf/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Sistema de análise de MAPA",
+      "orcamento": 1,
+      "empresa": "HITEC Medical",
+      "valor": 8946.98,
+      "url": "https://drive.google.com/file/d/1rVx_1HSUkWNijuGbUSj528JoruKYUb5K/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Sistema de análise para Holter",
+      "orcamento": 1,
+      "empresa": "Cardios",
+      "valor": 40913.0,
+      "url": "https://drive.google.com/file/d/1i7cRa8JOIQ5IssJKERtrUbj3OOH2SMex/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Sistema de análise para Holter",
+      "orcamento": 2,
+      "empresa": "GSI",
+      "valor": 26990.0,
+      "url": "https://drive.google.com/file/d/1JbDuWeeL3JbR15ahLht2E-gt6QLJcfe7/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Sistema de análise para Holter",
+      "orcamento": 3,
+      "empresa": "Instramed",
+      "valor": 18090.0,
+      "url": "https://drive.google.com/file/d/1BfOUIPJuI3cBTlLHED62dJoqHw3uxkyz/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Sistema de elevação e transferência de pacientes",
+      "orcamento": 1,
+      "empresa": "Arjo",
+      "valor": 43000.0,
+      "url": "https://drive.google.com/file/d/1rUL9ZnjEa_tjLjQ3HA8_K0SvS8TuAm5g/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Sistema de elevação e transferência de pacientes",
+      "orcamento": 2,
+      "empresa": "Mogami",
+      "valor": 61150.0,
+      "url": "https://drive.google.com/file/d/1g6HYNtShbWi_48HRTm46xwBE_gfoGg3C/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Sistema de elevação e transferência de pacientes",
+      "orcamento": 3,
+      "empresa": "Medicinali",
+      "valor": 37900.0,
+      "url": "https://drive.google.com/file/d/1890UPPFSUGPGXfWwKjrXTqTg49oCYBG7/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Sistema de Imagem para Endoscopia",
+      "orcamento": 1,
+      "empresa": "Olympus",
+      "valor": 305836.34,
+      "url": "https://drive.google.com/file/d/1cVld-hLh8Uf5KA8B-APH0bWrPxGw6h_Y/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Sistema de Imagem para Endoscopia",
+      "orcamento": 2,
+      "empresa": "Labor Med",
+      "valor": 427028.0,
+      "url": "https://drive.google.com/file/d/1SVEu0BPXZ1_yEyzDGb8EXotypoWi9BUX/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Sistema de Imagem para Endoscopia",
+      "orcamento": 3,
+      "empresa": "Pentax",
+      "valor": 440246.19,
+      "url": "https://drive.google.com/file/d/1Ng8-jjvgtTUqSqYNUvahHK1VuGQbKW6b/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Sistema de monitorização ambulatorial de pressão arterial",
+      "orcamento": 1,
+      "empresa": "DF Comercio Hospitala",
+      "valor": 32000.0,
+      "url": "https://drive.google.com/file/d/1p_VmlKwfMU4FtoqMuSXZTyt3uGUglJqy/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Sistema de monitorização ambulatorial de pressão arterial",
+      "orcamento": 2,
+      "empresa": "Novamed Hospitalar",
+      "valor": 25980.65,
+      "url": "https://drive.google.com/file/d/15FDpTDU36VRzOj-Y1-G4TN4yNfClpmSW/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Sistema de osmose reversa",
+      "orcamento": 1,
+      "empresa": "Allcrom",
+      "valor": 43832.84,
+      "url": "https://drive.google.com/file/d/1c6EOuBZqt68WkJqGKBX_K6BkurMjVr6G/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Sistema de osmose reversa",
+      "orcamento": 2,
+      "empresa": "Merck",
+      "valor": 222603.0,
+      "url": "https://drive.google.com/file/d/1vzBBG8VAGew1psOkhPUy1HDkkDQs2T-5/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Sistema de osmose reversa",
+      "orcamento": 3,
+      "empresa": "Quimis",
+      "valor": 96849.34,
+      "url": "https://drive.google.com/file/d/13kvOnIPlm6YboMgV6FQxWIqUCFtQoR5v/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Sistema de Polissonografia",
+      "orcamento": 2,
+      "empresa": "Biomed",
+      "valor": "=524500+17000",
+      "url": "https://drive.google.com/file/d/1sbDB88EgE8InaQ_B3eiXvd0fH204Gxyk/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Sistema de videocirurgia completa - cirurgias torácicas e abdominais",
+      "orcamento": 1,
+      "empresa": "BBraun",
+      "valor": 339362.21,
+      "url": "https://drive.google.com/file/d/1EBVP2imz7hJwmS29WnKW3I9Z5kOro1yc/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Sistema de videocirurgia completa - cirurgias torácicas e abdominais",
+      "orcamento": 2,
+      "empresa": "Arthimed",
+      "valor": 372900.0,
+      "url": "https://drive.google.com/file/d/1lCTwumEQcM4-uyBCKUZxerDtRFvJDz_3/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Sistema de videocirurgia completa - cirurgias torácicas e abdominais",
+      "orcamento": 3,
+      "empresa": "Storz",
+      "valor": 786537.24,
+      "url": "https://drive.google.com/file/d/1mYsrlOcDruiBOG9Um1L971UE3qe2DMQ-/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Sistema para teste ergométrico cardíaco com esteira",
+      "orcamento": 1,
+      "empresa": "Vivamed",
+      "valor": 89500.0,
+      "url": "https://drive.google.com/file/d/14nZ_-fGT5VE2oV2wCc83071_7Ca2M8Vj/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Sistema para teste ergométrico cardíaco com esteira",
+      "orcamento": 2,
+      "empresa": "Aerosport",
+      "valor": 119985.0,
+      "url": "https://drive.google.com/file/d/1NFpYWK-aqpYHnX788YjtfR-reVNO3kS-/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Sistema para urodinâmica",
+      "orcamento": 1,
+      "empresa": "Dynamed",
+      "valor": 48990.0,
+      "url": "https://drive.google.com/file/d/16ynBg0uBJKiyvBSBAoxt33oOp2c_a451/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Sistema WiFi (Access Points com licenças)",
+      "orcamento": 1,
+      "empresa": "3D INFORMÁTICA",
+      "valor": 850.0,
+      "url": "https://drive.google.com/file/d/1q71WtK9ebL1B0TIn4fMQC3npmBNIkec3/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Sistema WiFi (Access Points com licenças)",
+      "orcamento": 2,
+      "empresa": "B2TI",
+      "valor": 995.0,
+      "url": "https://drive.google.com/file/d/1PZcFjakX0e_I-FKysp_R5MCuyXuWy8yO/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Sistema WiFi (Access Points com licenças)",
+      "orcamento": 3,
+      "empresa": "JR Soluções",
+      "valor": 1249.0,
+      "url": "https://drive.google.com/file/d/1dsyPpfw3sE5QIuJ4a54IlGwQmRVoGhYc/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Smart TV 43”",
+      "orcamento": 1,
+      "empresa": "3D INFORMATICA",
+      "valor": 1600.0,
+      "url": "https://drive.google.com/file/d/1q71WtK9ebL1B0TIn4fMQC3npmBNIkec3/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Smart TV 43”",
+      "orcamento": 2,
+      "empresa": "B2TI",
+      "valor": 1840.0,
+      "url": "https://drive.google.com/file/d/1PdxfExylxhC-uTH7EIlHYybYHpHEo1dX/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Smart TV 43”",
+      "orcamento": 3,
+      "empresa": "JR Soluções",
+      "valor": 1790.0,
+      "url": "https://drive.google.com/file/d/1dsyPpfw3sE5QIuJ4a54IlGwQmRVoGhYc/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Smart TV 55”",
+      "orcamento": 1,
+      "empresa": "3D INFORMATICA",
+      "valor": 2600.0,
+      "url": "https://drive.google.com/file/d/1q71WtK9ebL1B0TIn4fMQC3npmBNIkec3/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Smart TV 55”",
+      "orcamento": 2,
+      "empresa": "B2TI",
+      "valor": 2520.0,
+      "url": "https://drive.google.com/file/d/1PdxfExylxhC-uTH7EIlHYybYHpHEo1dX/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Smart TV 55”",
+      "orcamento": 3,
+      "empresa": "JR Soluções",
+      "valor": 2437.0,
+      "url": "https://drive.google.com/file/d/1dsyPpfw3sE5QIuJ4a54IlGwQmRVoGhYc/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Sofá em Vinil Hospitalar",
+      "orcamento": 1,
+      "empresa": "Alberflex",
+      "valor": 3830.92,
+      "url": "https://drive.google.com/file/d/1EouHtM4k8mJs2f6SvWHcE3Wv3n1gHhd5/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Sofá em Vinil Hospitalar",
+      "orcamento": 2,
+      "empresa": "Set Comércio",
+      "valor": 3100.0,
+      "url": "https://drive.google.com/file/d/11hQ5gv9qU5XuAMPwkX6SSNEkALWiTHJ0/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Sofá em Vinil Hospitalar",
+      "orcamento": 3,
+      "empresa": "Ufficioflex",
+      "valor": 3050.0,
+      "url": "https://drive.google.com/file/d/1pvVJZwfP0nOsizdCGJBfD6IUbRQ3IwKe/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Suporte de hamper",
+      "orcamento": 1,
+      "empresa": "Hospimetal",
+      "valor": 420.0,
+      "url": "https://drive.google.com/file/d/17BHWpNlKNk1wN09VTL9SAnaEA55GKziM/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Suporte de hamper",
+      "orcamento": 2,
+      "empresa": "L&M",
+      "valor": 325.0,
+      "url": "https://drive.google.com/file/d/10feQdvcJ8VKl0XrdQYiocQdo_ZHnAsWe/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Suporte de Soro",
+      "orcamento": 1,
+      "empresa": "Hospimetal",
+      "valor": 350.0,
+      "url": "https://drive.google.com/file/d/17BHWpNlKNk1wN09VTL9SAnaEA55GKziM/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Suporte de Soro",
+      "orcamento": 2,
+      "empresa": "L&M",
+      "valor": 395.0,
+      "url": "https://drive.google.com/file/d/10feQdvcJ8VKl0XrdQYiocQdo_ZHnAsWe/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Suporte de Soro",
+      "orcamento": 3,
+      "empresa": "Medicinalli",
+      "valor": 339.0,
+      "url": "https://drive.google.com/file/d/1XP8v8qK479NRQP5ETiaOyMKuy-PAf5-k/view?usp=drive_link"
+    },
+    {
+      "equipamento": "SUPORTE PORTA PROTETORES DE CHUMBO COM 4 CABIDES",
+      "orcamento": 1,
+      "empresa": "Frequencia X",
+      "valor": 799.8,
+      "url": "https://drive.google.com/file/d/1--xu4NMSJfSt_VWdFT9qR8IRqSUpy14A/view?usp=drive_link"
+    },
+    {
+      "equipamento": "SUPORTE PORTA PROTETORES DE CHUMBO COM 4 CABIDES",
+      "orcamento": 2,
+      "empresa": "GRX",
+      "valor": 884.87,
+      "url": "https://drive.google.com/file/d/1OFQbwJEOqfervSoP0V0LVonDr3FhEAKR/view?usp=drive_link"
+    },
+    {
+      "equipamento": "SUPORTE PORTA PROTETORES DE CHUMBO COM 4 CABIDES",
+      "orcamento": 3,
+      "empresa": "Dormed",
+      "valor": 1146.1,
+      "url": "https://drive.google.com/file/d/1zt2INi8n-Gs4Z00_K-0Wh1Kjv3zjLp8Y/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Switch borda",
+      "orcamento": 1,
+      "empresa": "JR Soluções",
+      "valor": "=26693.4+5914.42",
+      "url": "https://drive.google.com/file/d/1B02mFebw1O_eaHP3gfKUEz8q0T4FFKsd/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Switch borda",
+      "orcamento": 2,
+      "empresa": "Sophix",
+      "valor": "=27690+6100",
+      "url": "https://drive.google.com/file/d/1Xi3YI8By8no0yf2RFCx_Ev-1MWViwkA-/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Switch borda",
+      "orcamento": 3,
+      "empresa": "LGTI",
+      "valor": "=27946.99+6189",
+      "url": "https://drive.google.com/file/d/1YKEuR8_-3BCuhY8r974XpJ26E8e1hyBM/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Switch borda com PoE",
+      "orcamento": 1,
+      "empresa": "ER SOLUÇÕES",
+      "valor": 81483.245,
+      "url": "https://drive.google.com/file/d/1iOAH_9JIq-6EWh2Dfyz3RLG59wsTA2R6/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Switch borda com PoE",
+      "orcamento": 2,
+      "empresa": "JR Soluções",
+      "valor": "=26693.4+5914.42",
+      "url": "https://drive.google.com/file/d/1B02mFebw1O_eaHP3gfKUEz8q0T4FFKsd/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Switch borda com PoE",
+      "orcamento": 3,
+      "empresa": "Sophix",
+      "valor": "=27690+6100",
+      "url": "https://drive.google.com/file/d/1Xi3YI8By8no0yf2RFCx_Ev-1MWViwkA-/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Switch Core",
+      "orcamento": 1,
+      "empresa": "ER SOLUÇÕES",
+      "valor": 162966.49,
+      "url": "https://drive.google.com/file/d/1iOAH_9JIq-6EWh2Dfyz3RLG59wsTA2R6/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Switch Core",
+      "orcamento": 2,
+      "empresa": "JR Soluções",
+      "valor": "=253849+29467.42",
+      "url": "https://drive.google.com/file/d/1B02mFebw1O_eaHP3gfKUEz8q0T4FFKsd/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Switch Core",
+      "orcamento": 3,
+      "empresa": "Sophix",
+      "valor": "=256900+29490",
+      "url": "https://drive.google.com/file/d/1Xi3YI8By8no0yf2RFCx_Ev-1MWViwkA-/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Switch de Acesso",
+      "orcamento": 1,
+      "empresa": "3D INFORMATICA",
+      "valor": 1400.0,
+      "url": "https://drive.google.com/file/d/1q71WtK9ebL1B0TIn4fMQC3npmBNIkec3/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Switch de Acesso",
+      "orcamento": 2,
+      "empresa": "Sinal Digital",
+      "valor": 2297.0,
+      "url": "https://drive.google.com/file/d/1meuxs6M_OPKbKNFSPWlz_PQ04e0N8oAR/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Switch de Acesso",
+      "orcamento": 3,
+      "empresa": "B2 Bridge",
+      "valor": 2592.1,
+      "url": "https://drive.google.com/file/d/1bavLcaaXXWWdfB4XgdHT9tWTYyG6htGG/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Tablet",
+      "orcamento": 1,
+      "empresa": "B2ti",
+      "valor": 975.0,
+      "url": "https://drive.google.com/file/d/1PdxfExylxhC-uTH7EIlHYybYHpHEo1dX/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Tablet",
+      "orcamento": 2,
+      "empresa": "3D INFORMATICA",
+      "valor": 2400.0,
+      "url": "https://drive.google.com/file/d/1q71WtK9ebL1B0TIn4fMQC3npmBNIkec3/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Tablet",
+      "orcamento": 3,
+      "empresa": "JR Soluções",
+      "valor": 999.0,
+      "url": "https://drive.google.com/file/d/1dsyPpfw3sE5QIuJ4a54IlGwQmRVoGhYc/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Tela Elétrica de Projeção",
+      "orcamento": 1,
+      "empresa": "Sinal Digital",
+      "valor": 1295.5,
+      "url": "https://drive.google.com/file/d/1meuxs6M_OPKbKNFSPWlz_PQ04e0N8oAR/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Telefone celular",
+      "orcamento": 1,
+      "empresa": "B2ti",
+      "valor": 2049.0,
+      "url": "https://drive.google.com/file/d/1PdxfExylxhC-uTH7EIlHYybYHpHEo1dX/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Telefone celular",
+      "orcamento": 2,
+      "empresa": "Sinal Digital",
+      "valor": 1897.0,
+      "url": "https://drive.google.com/file/d/1meuxs6M_OPKbKNFSPWlz_PQ04e0N8oAR/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Telefone celular",
+      "orcamento": 3,
+      "empresa": "JR Soluções",
+      "valor": 2100.0,
+      "url": "https://drive.google.com/file/d/1dsyPpfw3sE5QIuJ4a54IlGwQmRVoGhYc/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Telefone IP",
+      "orcamento": 1,
+      "empresa": "3D INFORMATICA",
+      "valor": 316.0,
+      "url": "https://drive.google.com/file/d/1q71WtK9ebL1B0TIn4fMQC3npmBNIkec3/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Telefone IP",
+      "orcamento": 2,
+      "empresa": "JR Soluções",
+      "valor": 342.0,
+      "url": "https://drive.google.com/file/d/1dsyPpfw3sE5QIuJ4a54IlGwQmRVoGhYc/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Telefone IP",
+      "orcamento": 3,
+      "empresa": "Sinal Digital",
+      "valor": 395.5,
+      "url": "https://drive.google.com/file/d/1meuxs6M_OPKbKNFSPWlz_PQ04e0N8oAR/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Tomografia de Coerencia Óptica",
+      "orcamento": 1,
+      "empresa": "Mogami",
+      "valor": 651550.0,
+      "url": "https://drive.google.com/file/d/1g6HYNtShbWi_48HRTm46xwBE_gfoGg3C/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Tomografia de Coerencia Óptica",
+      "orcamento": 2,
+      "empresa": "Oftalmo Serv.pdf",
+      "valor": 1300000.0,
+      "url": "https://drive.google.com/file/d/1g2oJIv491Bv9hdaQmP9TmX_Hx6Qfthdu/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Tomografia de Coerencia Óptica",
+      "orcamento": 3,
+      "empresa": "EyeHome",
+      "valor": 932882.72,
+      "url": "https://drive.google.com/file/d/1UFY8ltIvkRcjV-I_vlmmiBTXB20X8eGt/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Tomografo computadorizado helicoidal 64 cortes",
+      "orcamento": 1,
+      "empresa": "GE Healthcare",
+      "valor": 2100000.0,
+      "url": "https://drive.google.com/file/d/1eKw9JvNA8XvqhWCl_4hv1o1i56lKA44E/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Tonômetro de aplanação portátil",
+      "orcamento": 1,
+      "empresa": "Martinato.pdf",
+      "valor": 6692.45,
+      "url": "https://drive.google.com/file/d/1v2z-kay1z_X9OEvyowBCClQ5su_xELMM/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Tonômetro de aplanação portátil",
+      "orcamento": 2,
+      "empresa": "Projetos Òpticos.pdf",
+      "valor": 6000.0,
+      "url": "https://drive.google.com/file/d/1sztrOqB2D8zbFYJDYhRCMCccwt3vtyEi/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Tonômetro de aplanação portátil",
+      "orcamento": 3,
+      "empresa": "Apramed.pdf",
+      "valor": 6100.0,
+      "url": "https://drive.google.com/file/d/1VInkTd_IMi4Isqk4ADHAjrBe-lHlcLSh/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Topógrafo de córnea",
+      "orcamento": 1,
+      "empresa": "EYETEC.pdf",
+      "valor": 77400.0,
+      "url": "https://drive.google.com/file/d/1K8xf8WIlkoQakDfEm0Ijw0E-Xy1EJOM0/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Topógrafo de córnea",
+      "orcamento": 2,
+      "empresa": "Mogami",
+      "valor": 151148.0,
+      "url": "https://drive.google.com/file/d/1g6HYNtShbWi_48HRTm46xwBE_gfoGg3C/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Topógrafo de córnea",
+      "orcamento": 3,
+      "empresa": "Oftalmo Serv.pdf",
+      "valor": 162500.0,
+      "url": "https://drive.google.com/file/d/1g2oJIv491Bv9hdaQmP9TmX_Hx6Qfthdu/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Torre de Endoscopia",
+      "orcamento": 1,
+      "empresa": "KVO",
+      "valor": 590000.0,
+      "url": "https://drive.google.com/file/d/1y7QJjU-duePMHTKte22_y3LT8uOUukE_/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Torre de Endoscopia",
+      "orcamento": 2,
+      "empresa": "Labor Med",
+      "valor": 427028.0,
+      "url": "https://drive.google.com/file/d/1SVEu0BPXZ1_yEyzDGb8EXotypoWi9BUX/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Torre de Endoscopia",
+      "orcamento": 3,
+      "empresa": "Strattner",
+      "valor": 463985.79,
+      "url": "https://drive.google.com/file/d/1c9cnBbuNx-2MEY5y44MgsR2fJjLQ6yN4/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Totem Auto Atendimento c/computador",
+      "orcamento": 1,
+      "empresa": "Lamara",
+      "valor": 7914.0,
+      "url": "https://drive.google.com/file/d/1ReSJsd1jnVcPNYIaZmOqZIfr2fvC2YhP/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Totem Auto Atendimento c/computador",
+      "orcamento": 2,
+      "empresa": "Sinal Digital",
+      "valor": 8065.0,
+      "url": "https://drive.google.com/file/d/1meuxs6M_OPKbKNFSPWlz_PQ04e0N8oAR/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Totem Auto Atendimento c/computador",
+      "orcamento": 3,
+      "empresa": "B2 Bridge",
+      "valor": 4299.85,
+      "url": "https://drive.google.com/file/d/1bavLcaaXXWWdfB4XgdHT9tWTYyG6htGG/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Transiluminador cutâneo",
+      "orcamento": 1,
+      "empresa": "MEDSYSTEM",
+      "valor": 2577.0,
+      "url": "https://drive.google.com/file/d/1dFa8nwG64yP_d5ebgRLe2FiwGg68_jgX/view?usp=drive_link"
+    },
+    {
+      "equipamento": "TVs para Painéis de Chamada/Kamban",
+      "orcamento": 1,
+      "empresa": "3D INFORMATICA",
+      "valor": 1600.0,
+      "url": "https://drive.google.com/file/d/1q71WtK9ebL1B0TIn4fMQC3npmBNIkec3/view?usp=drive_link"
+    },
+    {
+      "equipamento": "TVs para Painéis de Chamada/Kamban",
+      "orcamento": 2,
+      "empresa": "B2TI",
+      "valor": 1840.0,
+      "url": "https://drive.google.com/file/d/1PdxfExylxhC-uTH7EIlHYybYHpHEo1dX/view?usp=drive_link"
+    },
+    {
+      "equipamento": "TVs para Painéis de Chamada/Kamban",
+      "orcamento": 3,
+      "empresa": "JR Soluções",
+      "valor": 1790.0,
+      "url": "https://drive.google.com/file/d/1dsyPpfw3sE5QIuJ4a54IlGwQmRVoGhYc/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Ultrassom com Doppler colorido (uso geral)",
+      "orcamento": 1,
+      "empresa": "Konimagem",
+      "valor": 82700.0,
+      "url": "https://drive.google.com/file/d/19GF8ljj9J2tkoH2tRMxLKCTyq_cY8rQk/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Ultrassom diagnóstico transesofágico",
+      "orcamento": 1,
+      "empresa": "Konimagem",
+      "valor": 192500.0,
+      "url": "https://drive.google.com/file/d/19GF8ljj9J2tkoH2tRMxLKCTyq_cY8rQk/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Ultrassom Multiespecialidades",
+      "orcamento": 1,
+      "empresa": "Konimagem",
+      "valor": 64277.0,
+      "url": "https://drive.google.com/file/d/19GF8ljj9J2tkoH2tRMxLKCTyq_cY8rQk/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Ultrassom oftalmológico modo A e B",
+      "orcamento": 1,
+      "empresa": "Eyetec",
+      "valor": 61199.99,
+      "url": "https://drive.google.com/file/d/1K8xf8WIlkoQakDfEm0Ijw0E-Xy1EJOM0/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Ultrassom oftalmológico modo A e B",
+      "orcamento": 2,
+      "empresa": "Oftalmo Serv",
+      "valor": 162500.0,
+      "url": "https://drive.google.com/file/d/1g2oJIv491Bv9hdaQmP9TmX_Hx6Qfthdu/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Ultrassom oftalmológico modo A e B",
+      "orcamento": 3,
+      "empresa": "Focus Optic",
+      "valor": 58000.0,
+      "url": "https://drive.google.com/file/d/10cxrJSCcLaFvVqxEUJdOVCNnJoKc8-k2/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Van entre 8 e 10 lugares (417 TA longo)",
+      "orcamento": 1,
+      "empresa": "RENAULT",
+      "valor": 263843.0,
+      "url": "https://drive.google.com/file/d/1TLlWUYUzrQrdSdTqBDoGNvyRo_sNW6PA/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Ventilador Manual (Ambu)",
+      "orcamento": 1,
+      "empresa": "Cirurgica Fernandes",
+      "valor": 168.0,
+      "url": "https://drive.google.com/file/d/1WE6UUjJeOKBUYctqaNOriyAGoZ-lHwGU/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Ventilador Manual (Ambu)",
+      "orcamento": 2,
+      "empresa": "MEDSYSTEM",
+      "valor": 302.0,
+      "url": "https://drive.google.com/file/d/1dFa8nwG64yP_d5ebgRLe2FiwGg68_jgX/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Ventilador Manual (Ambu)",
+      "orcamento": 3,
+      "empresa": "Dormed",
+      "valor": 221.3,
+      "url": "https://drive.google.com/file/d/1Bw9CmKCyYFhay2bqhWapTdoQYlcGi4Un/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Ventilador pulmonar neonatal a obesidade mórbida",
+      "orcamento": 1,
+      "empresa": "Brazil 3 Business",
+      "valor": 65450.0,
+      "url": "https://drive.google.com/file/d/1-X1V3RGNwP3k9Zl1-rTLEAAJPXlVFY8f/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Videobroncoscópio",
+      "orcamento": 1,
+      "empresa": "Labor Med",
+      "valor": 238055.0,
+      "url": "https://drive.google.com/file/d/1SVEu0BPXZ1_yEyzDGb8EXotypoWi9BUX/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Videobroncoscópio",
+      "orcamento": 2,
+      "empresa": "Pentax",
+      "valor": 153055.84,
+      "url": "https://drive.google.com/file/d/1Ng8-jjvgtTUqSqYNUvahHK1VuGQbKW6b/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Videobroncoscópio",
+      "orcamento": 3,
+      "empresa": "Strattner",
+      "valor": 72601.5,
+      "url": "https://drive.google.com/file/d/1NBSloT89aiQVBeDSeIuK8Eq49RtSYXWi/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Videocolonoscópio",
+      "orcamento": 1,
+      "empresa": "Labor Med",
+      "valor": 283640.0,
+      "url": "https://drive.google.com/file/d/1SVEu0BPXZ1_yEyzDGb8EXotypoWi9BUX/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Videocolonoscópio",
+      "orcamento": 2,
+      "empresa": "Pentax",
+      "valor": 190413.89,
+      "url": "https://drive.google.com/file/d/1Ng8-jjvgtTUqSqYNUvahHK1VuGQbKW6b/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Videocolonoscópio",
+      "orcamento": 3,
+      "empresa": "Olympus",
+      "valor": 154930.88,
+      "url": "https://drive.google.com/file/d/1cVld-hLh8Uf5KA8B-APH0bWrPxGw6h_Y/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Videogastroscópio",
+      "orcamento": 1,
+      "empresa": "Labor Med",
+      "valor": 238055.0,
+      "url": "https://drive.google.com/file/d/1SVEu0BPXZ1_yEyzDGb8EXotypoWi9BUX/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Videogastroscópio",
+      "orcamento": 2,
+      "empresa": "Pentax",
+      "valor": 168672.03,
+      "url": "https://drive.google.com/file/d/1Ng8-jjvgtTUqSqYNUvahHK1VuGQbKW6b/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Videogastroscópio",
+      "orcamento": 3,
+      "empresa": "Olympus",
+      "valor": 147434.24,
+      "url": "https://drive.google.com/file/d/1cVld-hLh8Uf5KA8B-APH0bWrPxGw6h_Y/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Videolaringoscópio para via aérea dificil",
+      "orcamento": 1,
+      "empresa": "MA Hospitalar",
+      "valor": 8990.0,
+      "url": "https://drive.google.com/file/d/1W2HMPpUQEGX9jVXp9alg0Pykse-effN0/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Videolaringoscópio para via aérea dificil",
+      "orcamento": 2,
+      "empresa": "Medicinali",
+      "valor": 11000.0,
+      "url": "https://drive.google.com/file/d/1890UPPFSUGPGXfWwKjrXTqTg49oCYBG7/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Videolaringoscópio para via aérea dificil",
+      "orcamento": 3,
+      "empresa": "Ribertec",
+      "valor": 12900.0,
+      "url": "https://drive.google.com/file/d/12eaF2Ld2ibHlXrTTNoj5C5Bk1TR7GDni/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Videonasofibrolaringoscópio",
+      "orcamento": 1,
+      "empresa": "Pentax",
+      "valor": 172813.33,
+      "url": "https://drive.google.com/file/d/1Ng8-jjvgtTUqSqYNUvahHK1VuGQbKW6b/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Videonasofibrolaringoscópio",
+      "orcamento": 2,
+      "empresa": "Progmed",
+      "valor": 43700.0,
+      "url": "https://drive.google.com/file/d/1HaiMLwkgrpJjctB_Hn89f05IWrmVEz4e/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Videonasofibrolaringoscópio",
+      "orcamento": 3,
+      "empresa": "Strattner",
+      "valor": 68106.98,
+      "url": "https://drive.google.com/file/d/14HrWB4d2wl9DhUVt6_QxGvI6--6wr29B/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Vitreófago posterior",
+      "orcamento": 1,
+      "empresa": "Alcon",
+      "valor": 721000.0,
+      "url": "https://drive.google.com/file/d/1t3umUgjBxzvTAFtntZZo-A9Rci38rYW1/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Vitreófago posterior",
+      "orcamento": 2,
+      "empresa": "Bausch Lomb",
+      "valor": 550000.0,
+      "url": "https://drive.google.com/file/d/1D8R8fMK-w9uUChPXXXGTxy1s2yA3czxS/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Vitreófago posterior",
+      "orcamento": 3,
+      "empresa": "Vitreófago",
+      "valor": 990000.0,
+      "url": "https://drive.google.com/file/d/1MUR6k7OK-3KK4jiFxUKXEY2nyA3Dv_iN/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Vortex",
+      "orcamento": 1,
+      "empresa": "Allcrom",
+      "valor": 9926.32,
+      "url": "https://drive.google.com/file/d/1_hMw8GGW6T0RBQgQ0e7Qa3qSDPhW5IdN/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Vortex",
+      "orcamento": 2,
+      "empresa": "CheeseLab",
+      "valor": 1222.97,
+      "url": "https://drive.google.com/file/d/1QqwMDf3Us6JVt9t187pB-QA4F8DZ85yc/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Vortex",
+      "orcamento": 3,
+      "empresa": "Generalmed",
+      "valor": 738.01,
+      "url": "https://drive.google.com/file/d/1x3CJeUdAeU-0hBwR9iGoSZUj91_mkUjH/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Workstation de Alta Performance",
+      "orcamento": 1,
+      "empresa": "B2TI",
+      "valor": 13607.0,
+      "url": "https://drive.google.com/file/d/1PZcFjakX0e_I-FKysp_R5MCuyXuWy8yO/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Workstation de Alta Performance",
+      "orcamento": 2,
+      "empresa": "3D INFORMÁTICA",
+      "valor": 18900.0,
+      "url": "https://drive.google.com/file/d/1q71WtK9ebL1B0TIn4fMQC3npmBNIkec3/view?usp=drive_link"
+    },
+    {
+      "equipamento": "Workstation de Alta Performance",
+      "orcamento": 3,
+      "empresa": "JR Soluções",
+      "valor": 22499.0,
+      "url": "https://drive.google.com/file/d/1dsyPpfw3sE5QIuJ4a54IlGwQmRVoGhYc/view?usp=drive_link"
+    }
+  ]
+}

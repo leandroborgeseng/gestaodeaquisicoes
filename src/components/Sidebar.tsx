@@ -2,6 +2,7 @@
 
 import React from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { signOut, useSession } from "next-auth/react";
 import { Icons } from "./Icons";
@@ -96,18 +97,7 @@ export function Sidebar({ counts }: { counts: SidebarCounts }) {
   return (
     <aside className="sidebar">
       <div className="sidebar-brand">
-        <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-          <div style={{
-            width: 28, height: 28, borderRadius: 7,
-            background: "var(--fg)", color: "var(--bg-panel)",
-            display: "grid", placeItems: "center",
-            fontWeight: 700, fontSize: 11, letterSpacing: "-0.02em",
-          }}>A</div>
-          <div style={{ lineHeight: 1.2 }}>
-            <b style={{ display: "block", fontSize: 13, fontWeight: 600, letterSpacing: "-0.01em" }}>AION</b>
-            <span style={{ fontSize: 10.5, color: "var(--fg-dim)" }}>Aquisições</span>
-          </div>
-        </div>
+        <Image src="/aion-engenharia.png" alt="AION Engenharia" width={108} height={36} style={{ display: "block", objectFit: "contain" }} />
         <div style={{ fontSize: 10.5, color: "var(--fg-dim)", letterSpacing: "0.01em", paddingLeft: 2 }}>
           Sistema de Aquisição de Equipamentos
         </div>

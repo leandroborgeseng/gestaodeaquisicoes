@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
+import Image from "next/image";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -31,15 +32,7 @@ export default function LoginPage() {
         <div style={{ flex: "1 1 50%", display: "flex", flexDirection: "column", padding: "40px 56px" }}>
           {/* Brand */}
           <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-            <div style={{ display: "flex", flexDirection: "column", lineHeight: 1.2 }}>
-              <span style={{ fontSize: 16, fontWeight: 700, letterSpacing: "-0.02em", color: "var(--fg)" }}>AION</span>
-              <span style={{ fontSize: 10, color: "var(--fg-dim)", marginTop: -1 }}>Engenharia Hospitalar</span>
-            </div>
-            <div style={{ height: 24, width: 1, background: "var(--line)", margin: "0 4px" }} />
-            <div style={{ lineHeight: 1.2 }}>
-              <div style={{ fontSize: 12.5, fontWeight: 500, color: "var(--fg)" }}>Sistema de Aquisição</div>
-              <div style={{ fontSize: 11, color: "var(--fg-dim)" }}>de Equipamentos Hospitalares</div>
-            </div>
+            <Image src="/aion-engenharia.png" alt="AION Engenharia" width={140} height={47} style={{ display: "block", objectFit: "contain" }} />
           </div>
 
           {/* Form */}

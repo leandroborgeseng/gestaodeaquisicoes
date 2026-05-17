@@ -13,7 +13,13 @@ async function getItem(id: string) {
   return prisma.item.findUnique({
     where: { id },
     include: {
-      orcamentos: { include: { fornecedor: { select: { nome: true } } }, orderBy: { numero: "asc" } },
+      orcamentos: {
+        include: {
+          fornecedor: { select: { nome: true } },
+          anexos:     { orderBy: { createdAt: "desc" }, take: 5 },
+        },
+        orderBy: { numero: "asc" },
+      },
       cotacao: true,
       contratacao: { include: { fornecedor: true } },
       entregas: { orderBy: { createdAt: "desc" } },
@@ -133,9 +139,12 @@ export default async function ItemDetailPage({ params }: { params: { id: string 
             statusVsReferenciaFns: item.statusVsReferenciaFns,
             statusProcesso: item.statusProcesso,
             orcamentos: item.orcamentos.map((o) => ({
+              id: o.id,
               numero: o.numero,
               fornecedor: o.fornecedor.nome,
               valor: Number(o.valor),
+              cotacaoUrl: o.cotacaoUrl,
+              anexos: o.anexos.map((a) => ({ id: a.id, nomeOriginal: a.nomeOriginal, url: a.url, tamanho: a.tamanho })),
               data: o.dataOrcamento ? fmtDate(o.dataOrcamento) : null,
             })),
             cotacao: item.cotacao ? {
