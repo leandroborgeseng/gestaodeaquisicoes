@@ -15,9 +15,11 @@ interface AnexoItem {
 
 interface Props {
   itemId: string;
-  category: "nf" | "entrega" | "teste" | "contrato" | "cotacao" | "geral";
+  category: "nf" | "entrega" | "teste" | "contrato" | "cotacao" | "especificacao" | "geral";
+  orcamentoId?: string;
   existing?: AnexoItem[];
   label?: string;
+  compact?: boolean; // modo compacto para linhas de tabela
 }
 
 function fmtBytes(n: number) {
@@ -32,7 +34,7 @@ function FileIcon({ mime }: { mime: string }) {
   return <Icons.Clip style={{ width: 13, height: 13, color: "var(--fg-faint)" }} />;
 }
 
-export function AnexoUpload({ itemId, category, existing = [], label = "Anexar arquivo" }: Props) {
+export function AnexoUpload({ itemId, category, orcamentoId, existing = [], label = "Anexar arquivo", compact = false }: Props) {
   const inputRef  = useRef<HTMLInputElement>(null);
   const [files, setFiles]     = useState<AnexoItem[]>(existing);
   const [error, setError]     = useState("");
@@ -47,6 +49,7 @@ export function AnexoUpload({ itemId, category, existing = [], label = "Anexar a
       fd.append("file", file);
       fd.append("itemId", itemId);
       fd.append("category", category);
+      if (orcamentoId) fd.append("orcamentoId", orcamentoId);
 
       start(async () => {
         const res = await fetch("/api/upload", { method: "POST", body: fd });
@@ -72,9 +75,67 @@ export function AnexoUpload({ itemId, category, existing = [], label = "Anexar a
     handleFiles(e.dataTransfer.files);
   }
 
+  const input = (
+    <input
+      ref={inputRef}
+      type="file"
+      multiple
+      accept=".pdf,.jpg,.jpeg,.png,.webp"
+      style={{ display: "none" }}
+      onChange={(e) => handleFiles(e.target.files)}
+    />
+  );
+
+  // ── Modo compacto: botão inline + chips de arquivo ──────────────────────────
+  if (compact) {
+    return (
+      <div style={{ display: "flex", flexWrap: "wrap", alignItems: "center", gap: 6 }}>
+        {input}
+        {files.map((f) => (
+          <a
+            key={f.id}
+            href={f.url}
+            target="_blank"
+            rel="noopener noreferrer"
+            download
+            title={f.nomeOriginal}
+            style={{
+              display: "inline-flex", alignItems: "center", gap: 4,
+              padding: "3px 8px", borderRadius: 4, fontSize: 11, fontWeight: 500,
+              background: "var(--bg-soft)", border: "1px solid var(--line)",
+              color: "var(--fg-mid)", textDecoration: "none",
+              maxWidth: 160, overflow: "hidden",
+            }}
+          >
+            <FileIcon mime={f.mimeType} />
+            <span style={{ overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+              {f.nomeOriginal}
+            </span>
+          </a>
+        ))}
+        <button
+          type="button"
+          onClick={() => inputRef.current?.click()}
+          disabled={pending}
+          title="Anexar arquivo (PDF, JPEG, PNG)"
+          style={{
+            display: "inline-flex", alignItems: "center", gap: 4,
+            padding: "3px 8px", borderRadius: 4, fontSize: 11,
+            background: "none", border: "1px dashed var(--line-strong)",
+            color: "var(--fg-dim)", cursor: "pointer",
+          }}
+        >
+          <Icons.Clip style={{ width: 11, height: 11 }} />
+          {pending ? "…" : "Anexar"}
+        </button>
+        {error && <span style={{ color: "var(--danger)", fontSize: 11 }}>{error}</span>}
+      </div>
+    );
+  }
+
+  // ── Modo normal: drop zone + lista ─────────────────────────────────────────
   return (
     <div>
-      {/* Drop zone */}
       <div
         onClick={() => inputRef.current?.click()}
         onDragOver={(e) => e.preventDefault()}
@@ -86,14 +147,7 @@ export function AnexoUpload({ itemId, category, existing = [], label = "Anexar a
           transition: "background 0.1s",
         }}
       >
-        <input
-          ref={inputRef}
-          type="file"
-          multiple
-          accept=".pdf,.jpg,.jpeg,.png,.webp"
-          style={{ display: "none" }}
-          onChange={(e) => handleFiles(e.target.files)}
-        />
+        {input}
         <Icons.Clip style={{ width: 16, height: 16, color: "var(--fg-faint)", marginBottom: 6 }} />
         <div style={{ fontSize: 12, color: "var(--fg-dim)", marginBottom: 2 }}>
           {pending ? "Enviando…" : label}
@@ -105,7 +159,6 @@ export function AnexoUpload({ itemId, category, existing = [], label = "Anexar a
 
       {error && <p style={{ color: "var(--danger)", fontSize: 11.5, margin: "6px 0 0" }}>{error}</p>}
 
-      {/* File list */}
       {files.length > 0 && (
         <div style={{ marginTop: 10, display: "flex", flexDirection: "column", gap: 6 }}>
           {files.map((f) => (
@@ -125,10 +178,11 @@ export function AnexoUpload({ itemId, category, existing = [], label = "Anexar a
                 href={f.url}
                 target="_blank"
                 rel="noopener noreferrer"
+                download
                 className="btn ghost sm"
                 style={{ height: 24, padding: "0 8px", fontSize: 11 }}
               >
-                Abrir
+                <Icons.Download style={{ width: 11, height: 11 }} /> Download
               </a>
             </div>
           ))}

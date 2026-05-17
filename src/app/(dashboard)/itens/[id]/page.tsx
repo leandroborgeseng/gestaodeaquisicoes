@@ -19,7 +19,7 @@ async function getItem(id: string) {
       orcamentos: {
         include: {
           fornecedor: { select: { nome: true } },
-          anexos:     { orderBy: { createdAt: "desc" }, take: 5 },
+          anexos:     { select: { id: true, nomeOriginal: true, url: true, tamanho: true, mimeType: true }, orderBy: { createdAt: "desc" }, take: 20 },
         },
         orderBy: { numero: "asc" },
       },
@@ -179,7 +179,7 @@ export default async function ItemDetailPage({ params }: { params: { id: string 
               cotacaoUrl: o.cotacaoUrl,
               vencedor: o.vencedor,
               validadeAte: o.validadeAte ? fmtDate(o.validadeAte) : null,
-              anexos: o.anexos.map((a) => ({ id: a.id, nomeOriginal: a.nomeOriginal, url: a.url, tamanho: a.tamanho })),
+              anexos: o.anexos.map((a) => ({ id: a.id, nomeOriginal: a.nomeOriginal, url: a.url, tamanho: a.tamanho, mimeType: a.mimeType })),
               data: o.dataOrcamento ? fmtDate(o.dataOrcamento) : null,
             })),
             cotacao: item.cotacao ? {

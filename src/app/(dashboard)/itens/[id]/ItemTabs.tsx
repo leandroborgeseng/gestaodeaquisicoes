@@ -58,7 +58,7 @@ interface ItemData {
     cotacaoUrl: string | null;
     vencedor: boolean;
     validadeAte: string | null;
-    anexos: { id: string; nomeOriginal: string; url: string; tamanho: number }[];
+    anexos: { id: string; nomeOriginal: string; url: string; tamanho: number; mimeType: string }[];
   }[];
   cotacao: { dataInicio: string | null; dataConclusao: string | null; observacao: string | null } | null;
   numero: string;
@@ -731,6 +731,22 @@ function TabGeral({ item, menorValor }: { item: ItemData; menorValor: typeof ite
             {item.origemMenorValor && <MetaField label="Origem do preço" value={item.origemMenorValor} />}
             {item.valorReferenciaFns && <MetaField label="Referência FNS" value={<span className="mono">{fmtBRL(item.valorReferenciaFns)}/un</span>} />}
           </div>
+
+          {/* Arquivos da especificação técnica */}
+          <div style={{ marginTop: 18, paddingTop: 14, borderTop: "1px solid var(--line-soft)" }}>
+            <div style={{ fontSize: 11, fontWeight: 600, color: "var(--fg-dim)", textTransform: "uppercase", letterSpacing: "0.04em", marginBottom: 10 }}>
+              Arquivos da especificação
+            </div>
+            <AnexoUpload
+              itemId={item.id}
+              category="especificacao"
+              existing={item.anexosGerais
+                .filter((a) => a.url.includes("/especificacao/"))
+                .map((a) => ({ ...a, autor: { name: a.autor.name } }))
+              }
+              label="Anexar especificação técnica (PDF, imagem)"
+            />
+          </div>
         </div>
       </div>
 
@@ -885,14 +901,22 @@ function TabOrcamentos({ item, menorValor, fornecedoresList }: {
               <th>Data</th>
               <th style={{ textAlign: "right" }}>Unitário</th>
               <th style={{ textAlign: "right" }}>Total ({item.faseUnicaQtd} un)</th>
-              <th style={{ width: 60 }}>Doc</th>
+              <th>Arquivos da proposta</th>
               <th style={{ width: 40 }}></th>
             </tr>
           </thead>
           <tbody>
             {item.orcamentos.map((o) => {
-              const docUrl = o.anexos[0]?.url ?? o.cotacaoUrl;
               const diff = item.valorReferenciaFns ? (o.valor - item.valorReferenciaFns) / item.valorReferenciaFns : 0;
+              // Arquivos: anexos do orcamento + cotacaoUrl como link externo
+              const existingAnexos = o.anexos.map((a) => ({
+                id: a.id,
+                nomeOriginal: a.nomeOriginal,
+                url: a.url,
+                tamanho: a.tamanho,
+                mimeType: a.mimeType,
+                autor: { name: "" },
+              }));
               return (
                 <tr key={o.numero} style={{ background: o.vencedor ? "var(--ok-soft)" : undefined }}>
                   <td className="num">0{o.numero}</td>
@@ -916,13 +940,34 @@ function TabOrcamentos({ item, menorValor, fornecedoresList }: {
                     )}
                   </td>
                   <td className="num strong" style={{ textAlign: "right" }}>{fmtBRL(o.valor * item.faseUnicaQtd)}</td>
-                  <td>
-                    {docUrl ? (
-                      <a href={docUrl} target="_blank" rel="noopener noreferrer"
-                        className="btn ghost sm" style={{ height: 22, padding: "0 7px", fontSize: 10.5 }}>
-                        <Icons.Doc style={{ width: 10, height: 10 }} /> PDF
-                      </a>
-                    ) : <span style={{ fontSize: 11, color: "var(--fg-faint)" }}>—</span>}
+                  <td style={{ minWidth: 180 }}>
+                    <div style={{ display: "flex", flexWrap: "wrap", gap: 4, alignItems: "center" }}>
+                      {/* Link externo (Drive / URL) */}
+                      {o.cotacaoUrl && (
+                        <a
+                          href={o.cotacaoUrl}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          title="Abrir link externo"
+                          style={{
+                            display: "inline-flex", alignItems: "center", gap: 4,
+                            padding: "3px 8px", borderRadius: 4, fontSize: 11, fontWeight: 500,
+                            background: "var(--bg-soft)", border: "1px solid var(--line)",
+                            color: "var(--fg-mid)", textDecoration: "none",
+                          }}
+                        >
+                          <Icons.Doc style={{ width: 11, height: 11 }} /> Drive
+                        </a>
+                      )}
+                      {/* Arquivos locais com download */}
+                      <AnexoUpload
+                        itemId={item.id}
+                        orcamentoId={o.id}
+                        category="cotacao"
+                        existing={existingAnexos}
+                        compact
+                      />
+                    </div>
                   </td>
                   <td>
                     <button

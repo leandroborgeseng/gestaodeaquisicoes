@@ -22,9 +22,10 @@ export async function POST(req: NextRequest) {
   if (!session?.user) return NextResponse.json({ error: "Não autenticado" }, { status: 401 });
 
   const form = await req.formData();
-  const file     = form.get("file") as File | null;
-  const itemId   = form.get("itemId") as string | null;
-  const category = (form.get("category") as string | null) ?? "geral"; // nf | entrega | teste | contrato | cotacao | geral
+  const file        = form.get("file") as File | null;
+  const itemId      = form.get("itemId") as string | null;
+  const orcamentoId = (form.get("orcamentoId") as string | null) || null;
+  const category    = (form.get("category") as string | null) ?? "geral"; // nf | entrega | teste | contrato | cotacao | especificacao | geral
 
   if (!file)   return NextResponse.json({ error: "Arquivo não enviado" }, { status: 400 });
   if (!itemId) return NextResponse.json({ error: "itemId obrigatório" }, { status: 400 });
@@ -64,6 +65,7 @@ export async function POST(req: NextRequest) {
       bucket: "local",
       autorId: user.id,
       itemId: item.id,
+      ...(orcamentoId ? { orcamentoId } : {}),
     },
   });
 
