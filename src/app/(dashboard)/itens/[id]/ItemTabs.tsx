@@ -27,6 +27,7 @@ import {
 import { EditarItemModal } from "@/components/modals/GestaoModals";
 import { AnexoUpload } from "@/components/AnexoUpload";
 import { marcarConcluido } from "@/app/actions/items";
+import { PrintLabel } from "@/components/PrintLabel";
 
 interface ItemData {
   id: string;
@@ -1150,6 +1151,8 @@ function TabNotasFiscais({ item }: { item: ItemData }) {
 }
 
 function TabTestes({ item }: { item: ItemData }) {
+  const lastApproved = [...item.testes].reverse().find((t) => t.resultado === "APROVADO");
+
   return (
     <div className="card">
       <div className="card-head">
@@ -1174,6 +1177,22 @@ function TabTestes({ item }: { item: ItemData }) {
           {t.obs && <div style={{ fontSize: 11.5, color: "var(--fg-mid)", marginTop: 4, lineHeight: 1.4 }}>{t.obs}</div>}
         </div>
       ))}
+
+      {/* Etiqueta patrimonial — só aparece se houver ao menos um teste APROVADO */}
+      {lastApproved && (
+        <div style={{ padding: "14px 14px", borderTop: "1px solid var(--line-soft)", background: "var(--bg-soft)", borderRadius: "0 0 8px 8px" }}>
+          <div style={{ fontSize: 11, fontWeight: 600, color: "var(--fg-mid)", textTransform: "uppercase", letterSpacing: "0.04em", marginBottom: 10 }}>
+            Etiqueta patrimonial
+          </div>
+          <PrintLabel
+            itemId={item.id}
+            itemNumero={item.numero}
+            equipamento={item.equipamento}
+            dataVistoria={lastApproved.dataRealizado}
+            responsavel={lastApproved.responsavel}
+          />
+        </div>
+      )}
       <div style={{ padding: "14px 14px 16px", borderTop: "1px solid var(--line-soft)" }}>
         <div style={{ fontSize: 11, fontWeight: 600, color: "var(--fg-mid)", textTransform: "uppercase", letterSpacing: "0.04em", marginBottom: 8 }}>
           Laudos e evidências
