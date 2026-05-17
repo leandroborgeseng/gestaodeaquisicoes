@@ -3,7 +3,7 @@
 import { useState, useTransition } from "react";
 import { Icons } from "@/components/Icons";
 import { fmtBRL } from "@/lib/utils";
-import { publicarObservacao } from "@/app/actions/items";
+import { publicarObservacao, atualizarDescritivoTecnico } from "@/app/actions/items";
 import {
   RegistrarCotacaoModal,
   RegistrarContratoModal,
@@ -18,6 +18,9 @@ interface ItemData {
   equipamento: string;
   especificacao: string | null;
   especificacaoUrl?: string | null;
+  descritivoRenem?: string | null;
+  descritivoFns?: string | null;
+  descritivoTecnico?: string | null;
   valorReferenciaFns: number | null;
   faseUnicaQtd: number;
   presencaEmAta: boolean;
@@ -252,6 +255,124 @@ function MetaField({ label, value }: { label: string; value: React.ReactNode }) 
   );
 }
 
+function DescritivoCard({ item }: { item: ItemData }) {
+  const [editing, setEditing] = useState(false);
+  const [text, setText] = useState(item.descritivoTecnico ?? "");
+  const [saving, startSave] = useTransition();
+  const [saved, setSaved] = useState(false);
+  const [fnsExpanded, setFnsExpanded] = useState(false);
+
+  const hasFns = !!(item.descritivoFns || item.descritivoRenem);
+  const fnsText = item.descritivoFns || item.descritivoRenem || "";
+
+  function handleSave() {
+    startSave(async () => {
+      await atualizarDescritivoTecnico(item.id, text);
+      setEditing(false);
+      setSaved(true);
+      setTimeout(() => setSaved(false), 2500);
+    });
+  }
+
+  return (
+    <div className="card">
+      <div className="card-head">
+        <h3>Descritivo técnico</h3>
+        <div className="spacer" />
+        {saved && <span style={{ fontSize: 11, color: "var(--ok)" }}>Salvo ✓</span>}
+        {!editing && (
+          <button className="btn ghost sm" onClick={() => { setEditing(true); setSaved(false); }}>
+            {item.descritivoTecnico ? "Editar" : "Redigir descritivo"}
+          </button>
+        )}
+      </div>
+
+      {/* FNS base — collapsible */}
+      {hasFns && (
+        <div style={{ borderBottom: "1px solid var(--line-soft)", padding: "10px 14px" }}>
+          <button
+            onClick={() => setFnsExpanded((v) => !v)}
+            style={{
+              display: "flex", alignItems: "center", gap: 6, width: "100%",
+              background: "none", border: "none", cursor: "pointer",
+              fontSize: 11, color: "var(--fg-dim)", fontWeight: 600,
+              textTransform: "uppercase", letterSpacing: "0.04em",
+              padding: 0,
+            }}
+          >
+            <span style={{
+              display: "inline-block", transform: fnsExpanded ? "rotate(90deg)" : "rotate(0deg)",
+              transition: "transform 0.2s", fontSize: 10,
+            }}>▶</span>
+            Descritivo FNS / RENEM (referência imutável)
+          </button>
+          {fnsExpanded && (
+            <p style={{
+              margin: "8px 0 0", fontSize: 12.5, lineHeight: 1.6,
+              color: "var(--fg-mid)", background: "var(--bg-soft)",
+              padding: "10px 12px", borderRadius: 6, whiteSpace: "pre-wrap",
+            }}>
+              {fnsText}
+            </p>
+          )}
+        </div>
+      )}
+
+      {/* AION technical descriptive — editable */}
+      <div className="card-body">
+        {editing ? (
+          <div className="field">
+            <label style={{ fontSize: 11, fontWeight: 600, color: "var(--fg-dim)", textTransform: "uppercase", letterSpacing: "0.04em" }}>
+              Descritivo AION (especificação de compra)
+            </label>
+            <textarea
+              value={text}
+              onChange={(e) => setText(e.target.value)}
+              disabled={saving}
+              placeholder="Descreva as especificações técnicas que serão utilizadas no processo de compra…"
+              style={{ minHeight: 160, fontSize: 13, lineHeight: 1.6, marginTop: 6 }}
+            />
+            <div style={{ display: "flex", gap: 8, justifyContent: "flex-end", marginTop: 8 }}>
+              <button
+                className="btn ghost sm"
+                onClick={() => { setEditing(false); setText(item.descritivoTecnico ?? ""); }}
+                disabled={saving}
+              >
+                Cancelar
+              </button>
+              <button className="btn primary sm" onClick={handleSave} disabled={saving}>
+                {saving ? "Salvando…" : "Salvar"}
+              </button>
+            </div>
+          </div>
+        ) : item.descritivoTecnico ? (
+          <div>
+            <div style={{ fontSize: 11, fontWeight: 600, color: "var(--fg-dim)", textTransform: "uppercase", letterSpacing: "0.04em", marginBottom: 6 }}>
+              Descritivo AION (especificação de compra)
+            </div>
+            <p style={{ margin: 0, fontSize: 13, lineHeight: 1.6, color: "var(--fg)", whiteSpace: "pre-wrap" }}>
+              {item.descritivoTecnico}
+            </p>
+          </div>
+        ) : (
+          <div style={{
+            padding: "16px 12px", background: "var(--bg-soft)", borderRadius: 6,
+            border: "1px dashed var(--line-strong)", textAlign: "center",
+          }}>
+            <div style={{ fontSize: 12.5, color: "var(--fg-dim)", marginBottom: 8 }}>
+              Nenhum descritivo técnico AION redigido.
+            </div>
+            <div style={{ fontSize: 12, color: "var(--fg-faint)" }}>
+              O descritivo técnico é a especificação de compra que será usada no processo licitatório ou de contratação.
+              {hasFns && " Utilize o descritivo FNS como base para redigir o seu."}
+            </div>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
 function TabGeral({ item, menorValor }: { item: ItemData; menorValor: typeof item.orcamentos[0] | undefined }) {
   const max = Math.max(item.valorReferenciaFns ?? 0, ...item.orcamentos.map((o) => o.valor)) * 1.04;
   return (
@@ -279,6 +400,8 @@ function TabGeral({ item, menorValor }: { item: ItemData; menorValor: typeof ite
           </div>
         </div>
       </div>
+
+      <DescritivoCard item={item} />
 
       {item.orcamentos.length > 0 && (
         <div className="card">

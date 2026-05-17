@@ -66,6 +66,8 @@ model Item {
   descritivoRenem       String?
   especificacao         String?
   especificacaoUrl      String?
+  descritivoFns         String?
+  descritivoTecnico     String?
   numeroSiafisico       Int?
   valorReferenciaFns    Decimal?            @db.Decimal(15, 2)
   presencaEmAta         Boolean             @default(false)

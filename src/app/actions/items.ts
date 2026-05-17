@@ -246,6 +246,19 @@ export async function criarUsuario(formData: FormData) {
   return { success: true };
 }
 
+export async function atualizarDescritivoTecnico(itemId: string, texto: string) {
+  const user = await requireAuth();
+  if (user.role === "FORNECEDOR") return { error: "Sem permissão" };
+
+  await prisma.item.update({
+    where: { id: itemId },
+    data: { descritivoTecnico: texto.trim() || null },
+  });
+  await prisma.log.create({ data: { itemId, autorId: user.id, acao: "DESCRITIVO_TECNICO_ATUALIZADO" } });
+  revalidatePath(`/itens/${itemId}`);
+  return { success: true };
+}
+
 export async function criarFornecedor(formData: FormData) {
   const user = await requireAuth();
   if (user.role !== "ADMIN") return { error: "Sem permissão" };
