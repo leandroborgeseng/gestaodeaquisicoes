@@ -9,7 +9,8 @@ import { DashboardCharts } from "./DashboardCharts";
 export const dynamic = "force-dynamic";
 
 async function getDashboardData() {
-  const [totalItems, byStatus, recentLogs, totalValueAgg, contratacoes, acimaValor, atrasados] = await Promise.all([
+  const now = new Date();
+  const [totalItems, byStatus, recentLogs, totalValueAgg, contratacoes, acimaValor, atrasados, aguardandoAprovacao, propostasVencidas] = await Promise.all([
     prisma.item.count(),
     prisma.item.groupBy({ by: ["statusProcesso"], _count: { id: true } }),
     prisma.log.findMany({
@@ -27,7 +28,9 @@ async function getDashboardData() {
       where: { valorContratado: { not: null } },
     }),
     prisma.item.count({ where: { statusVsReferenciaFns: "ACIMA_DO_VALOR" } }),
-    prisma.entrega.count({ where: { dataPrevisao: { lt: new Date() }, dataEntrega: null } }),
+    prisma.entrega.count({ where: { dataPrevisao: { lt: now }, dataEntrega: null } }),
+    prisma.item.count({ where: { aprovado: false, statusProcesso: { notIn: ["CANCELADO", "CONCLUIDO"] } } }),
+    prisma.orcamento.count({ where: { validadeAte: { lt: now }, vencedor: false } }),
   ]);
 
   const contratadosTotal = byStatus
@@ -56,6 +59,8 @@ async function getDashboardData() {
     savingPct,
     acimaValor,
     atrasados,
+    aguardandoAprovacao,
+    propostasVencidas,
     recentLogs,
   };
 }
@@ -100,6 +105,8 @@ export default async function DashboardPage() {
   const alertas = [
     ...(data.atrasados > 0 ? [{ titulo: "Entregas atrasadas", motivo: `${data.atrasados} entregas com prazo vencido`, severidade: "alta" as const }] : []),
     ...(data.acimaValor > 0 ? [{ titulo: "Itens acima do valor FNS", motivo: `${data.acimaValor} itens sem justificativa`, severidade: "alta" as const }] : []),
+    ...(data.aguardandoAprovacao > 0 ? [{ titulo: "Itens aguardando aprovação", motivo: `${data.aguardandoAprovacao} ${data.aguardandoAprovacao === 1 ? "item aguarda" : "itens aguardam"} aprovação do administrador`, severidade: "media" as const }] : []),
+    ...(data.propostasVencidas > 0 ? [{ titulo: "Propostas com validade expirada", motivo: `${data.propostasVencidas} orçamentos com proposta vencida`, severidade: "media" as const }] : []),
   ];
 
   return (
@@ -174,7 +181,7 @@ export default async function DashboardPage() {
                 </span>
               </div>
             </div>
-            <div className="kpi" style={{ borderColor: (data.atrasados + data.acimaValor) > 0 ? "oklch(0.86 0.08 25)" : undefined }}>
+            <div className="kpi" style={{ borderColor: alertas.length > 0 ? "oklch(0.86 0.08 25)" : undefined }}>
               <div className="label">
                 <span style={{
                   display: "inline-flex", width: 14, height: 14, borderRadius: 3,
@@ -185,10 +192,11 @@ export default async function DashboardPage() {
                 </span>
                 Atenção necessária
               </div>
-              <div className="value">{data.atrasados + data.acimaValor}</div>
+              <div className="value">{alertas.length}</div>
               <div className="meta">
-                <span className="danger-text">{data.atrasados} entregas atrasadas</span>
-                <span className="muted">· {data.acimaValor} acima do valor</span>
+                {data.aguardandoAprovacao > 0 && <span className="warn-text">{data.aguardandoAprovacao} aguard. aprovação · </span>}
+                <span className="danger-text">{data.atrasados} atrasadas</span>
+                {data.propostasVencidas > 0 && <span className="muted"> · {data.propostasVencidas} propostas vencidas</span>}
               </div>
             </div>
           </div>
@@ -273,7 +281,9 @@ export default async function DashboardPage() {
               <div className="card-head">
                 <h3>Alertas</h3>
                 <div className="spacer" />
-                <span className="pill-soft warn">{alertas.length} ativos</span>
+                {alertas.length > 0
+                  ? <span className="pill-soft warn">{alertas.length} ativos</span>
+                  : <span className="pill-soft ok">Tudo ok</span>}
               </div>
               <div style={{ padding: "4px 0" }}>
                 {alertas.length === 0 ? (

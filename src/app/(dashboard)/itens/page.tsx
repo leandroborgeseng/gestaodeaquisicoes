@@ -9,7 +9,7 @@ import { ItemFilters } from "@/components/ItemFilters";
 
 export const dynamic = "force-dynamic";
 
-interface SearchParams { status?: string; q?: string; page?: string; vsRef?: string; setor?: string }
+interface SearchParams { status?: string; q?: string; page?: string; vsRef?: string; setor?: string; fase?: string; prioridade?: string }
 
 async function getItems(params: SearchParams) {
   const page = Math.max(1, parseInt(params.page ?? "1"));
@@ -20,6 +20,9 @@ async function getItems(params: SearchParams) {
   if (params.status && params.status !== "all") where.statusProcesso = params.status;
   if (params.vsRef && params.vsRef !== "all") where.statusVsReferenciaFns = params.vsRef;
   if (params.setor && params.setor !== "all") where.setorId = params.setor;
+  if (params.fase === "none") where.faseCompraId = null;
+  else if (params.fase && params.fase !== "all") where.faseCompraId = params.fase;
+  if (params.prioridade && params.prioridade !== "all") where.prioridade = params.prioridade;
   if (params.q) {
     where.OR = [
       { equipamento: { contains: params.q, mode: "insensitive" } },
@@ -27,20 +30,22 @@ async function getItems(params: SearchParams) {
     ];
   }
 
-  const [items, total, setores] = await Promise.all([
+  const [items, total, setores, fases] = await Promise.all([
     prisma.item.findMany({
       where, skip, take,
       orderBy: { numero: "asc" },
       include: {
         setor: true,
+        faseCompra: { select: { id: true, nome: true } },
         contratacao: { include: { fornecedor: { select: { nome: true } } } },
       },
     }),
     prisma.item.count({ where }),
     prisma.setor.findMany({ orderBy: { nome: "asc" }, select: { id: true, nome: true, sigla: true, cor: true } }),
+    prisma.faseCompra.findMany({ orderBy: { ordem: "asc" }, select: { id: true, nome: true } }),
   ]);
 
-  return { items, total, page, pages: Math.ceil(total / take), setores };
+  return { items, total, page, pages: Math.ceil(total / take), setores, fases };
 }
 
 export default async function ItensPage({ searchParams }: { searchParams: SearchParams }) {
@@ -72,7 +77,7 @@ export default async function ItensPage({ searchParams }: { searchParams: Search
           </div>
 
           {/* Filter bar */}
-          <ItemFilters current={searchParams} setores={data.setores} />
+          <ItemFilters current={searchParams} setores={data.setores} fases={data.fases} />
 
           {/* Table */}
           <div className="card" style={{ marginTop: 14 }}>
@@ -116,6 +121,15 @@ export default async function ItensPage({ searchParams }: { searchParams: Search
                                 {(item as any).setor.cor && <span style={{ width: 6, height: 6, borderRadius: "50%", background: (item as any).setor.cor }} />}
                                 {(item as any).setor.sigla ?? (item as any).setor.nome}
                               </span>
+                            )}
+                            {(item as any).pausado && (
+                              <span className="pill-soft warn" style={{ fontSize: 9.5 }}>⏸ Pausado</span>
+                            )}
+                            {(item as any).prioridade === "CRITICA" && (
+                              <span className="pill-soft danger" style={{ fontSize: 9.5 }}>Crítica</span>
+                            )}
+                            {(item as any).prioridade === "ALTA" && (
+                              <span className="pill-soft warn" style={{ fontSize: 9.5 }}>Alta</span>
                             )}
                           </div>
                         </div>

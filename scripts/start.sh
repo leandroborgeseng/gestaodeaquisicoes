@@ -48,7 +48,18 @@ else
 fi
 
 echo ""
-echo "--- [4/5] fetch FNS descriptives (background) ---"
+echo "--- [4/5] alerta diário de entregas (background cron) ---"
+ALERTAS_LOG="${UPLOAD_DIR}/alertas.log"
+if [ -n "${CRON_SECRET:-}" ]; then
+  (sleep 30 && curl -s -X POST "http://localhost:${PORT:-3000}/api/alertas" \
+    -H "Authorization: Bearer ${CRON_SECRET}" >> "${ALERTAS_LOG}" 2>&1) &
+  echo "    OK — disparará 30s após o servidor subir"
+else
+  echo "    [SKIP] CRON_SECRET não definido"
+fi
+
+echo ""
+echo "--- [5/5] fetch FNS descriptives (background) ---"
 FNS_LOG="${UPLOAD_DIR}/fns-fetch.log"
 if [ -f "scripts/fetch-fns-descriptives.js" ]; then
   node scripts/fetch-fns-descriptives.js >> "${FNS_LOG}" 2>&1 &
@@ -59,5 +70,5 @@ else
 fi
 
 echo ""
-echo "--- [5/5] next start on port ${PORT:-3000} ---"
+echo "--- [6/6] next start on port ${PORT:-3000} ---"
 exec npx next start -p "${PORT:-3000}"

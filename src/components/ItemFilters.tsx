@@ -25,28 +25,33 @@ const SELECT_STYLE: React.CSSProperties = {
 };
 
 interface Props {
-  current: { status?: string; q?: string; vsRef?: string; setor?: string };
+  current: { status?: string; q?: string; vsRef?: string; setor?: string; fase?: string; prioridade?: string };
   setores: { id: string; nome: string; sigla: string | null }[];
+  fases?: { id: string; nome: string }[];
 }
 
-export function ItemFilters({ current, setores }: Props) {
+export function ItemFilters({ current, setores, fases }: Props) {
   const router   = useRouter();
   const pathname = usePathname();
-  const [q, setQ]           = useState(current.q ?? "");
-  const [status, setStatus] = useState(current.status ?? "all");
-  const [vsRef, setVsRef]   = useState(current.vsRef ?? "all");
-  const [setor, setSetor]   = useState(current.setor ?? "all");
+  const [q, setQ]                 = useState(current.q ?? "");
+  const [status, setStatus]       = useState(current.status ?? "all");
+  const [vsRef, setVsRef]         = useState(current.vsRef ?? "all");
+  const [setor, setSetor]         = useState(current.setor ?? "all");
+  const [fase, setFase]           = useState(current.fase ?? "all");
+  const [prioridade, setPrioridade] = useState(current.prioridade ?? "all");
 
   const navigate = useCallback((overrides: Record<string, string>) => {
-    const merged = { q, status, vsRef, setor, ...overrides };
+    const merged = { q, status, vsRef, setor, fase, prioridade, ...overrides };
     const params = new URLSearchParams();
     if (merged.q) params.set("q", merged.q);
     if (merged.status && merged.status !== "all") params.set("status", merged.status);
     if (merged.vsRef && merged.vsRef !== "all") params.set("vsRef", merged.vsRef);
     if (merged.setor && merged.setor !== "all") params.set("setor", merged.setor);
+    if (merged.fase && merged.fase !== "all") params.set("fase", merged.fase);
+    if (merged.prioridade && merged.prioridade !== "all") params.set("prioridade", merged.prioridade);
     const qs = params.toString();
     router.replace(`${pathname}${qs ? "?" + qs : ""}`);
-  }, [router, pathname, q, status, vsRef, setor]);
+  }, [router, pathname, q, status, vsRef, setor, fase, prioridade]);
 
   return (
     <div style={{ display: "flex", gap: 8, alignItems: "center", flexWrap: "wrap" }}>
@@ -83,6 +88,24 @@ export function ItemFilters({ current, setores }: Props) {
           ))}
         </select>
       )}
+      {fases && fases.length > 0 && (
+        <select value={fase} style={SELECT_STYLE}
+          onChange={(e) => { setFase(e.target.value); navigate({ fase: e.target.value }); }}>
+          <option value="all">Todas as fases</option>
+          <option value="none">Sem fase</option>
+          {fases.map((f) => (
+            <option key={f.id} value={f.id}>{f.nome}</option>
+          ))}
+        </select>
+      )}
+      <select value={prioridade} style={SELECT_STYLE}
+        onChange={(e) => { setPrioridade(e.target.value); navigate({ prioridade: e.target.value }); }}>
+        <option value="all">Todas as prioridades</option>
+        <option value="CRITICA">Crítica</option>
+        <option value="ALTA">Alta</option>
+        <option value="MEDIA">Média</option>
+        <option value="BAIXA">Baixa</option>
+      </select>
     </div>
   );
 }

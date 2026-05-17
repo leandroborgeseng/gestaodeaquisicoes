@@ -1,5 +1,6 @@
 import { notFound } from "next/navigation";
 import { prisma } from "@/lib/prisma";
+import { auth } from "@/lib/auth";
 import { Topbar } from "@/components/Topbar";
 import { StatusPill } from "@/components/StatusPill";
 import { Icons } from "@/components/Icons";
@@ -14,6 +15,7 @@ async function getItem(id: string) {
     where: { id },
     include: {
       setor: true,
+      faseCompra: { select: { id: true, nome: true } },
       orcamentos: {
         include: {
           fornecedor: { select: { nome: true } },
@@ -50,8 +52,13 @@ const STATUS_ORDER = [
 ];
 
 export default async function ItemDetailPage({ params }: { params: { id: string } }) {
-  const item = await getItem(params.id);
+  const [item, session, fases] = await Promise.all([
+    getItem(params.id),
+    auth(),
+    prisma.faseCompra.findMany({ orderBy: { ordem: "asc" }, select: { id: true, nome: true } }),
+  ]);
   if (!item) notFound();
+  const userRole = session?.user?.role ?? "HOSPITAL";
 
   const currentStepIdx = STATUS_ORDER.indexOf(item.statusProcesso);
   const pipelineCurrentIdx = PIPELINE_STEPS.findIndex((s) => {
@@ -128,7 +135,7 @@ export default async function ItemDetailPage({ params }: { params: { id: string 
           </div>
 
           {/* Tabs */}
-          <ItemTabs item={{
+          <ItemTabs userRole={userRole} item={{
             id: item.id,
             equipamento: item.equipamento,
             especificacao: item.especificacao,
@@ -140,6 +147,14 @@ export default async function ItemDetailPage({ params }: { params: { id: string 
             numeroSerie: item.numeroSerie,
             localizacaoFisica: item.localizacaoFisica,
             patrimonioHospital: item.patrimonioHospital,
+            aprovado: item.aprovado,
+            aprovadoPor: item.aprovadoPor,
+            aprovadoEm: item.aprovadoEm ? fmtDate(item.aprovadoEm) : null,
+            pausado: item.pausado,
+            motivoPausa: item.motivoPausa,
+            prioridade: item.prioridade,
+            faseCompra: item.faseCompra,
+            fases,
             valorReferenciaFns: valorRef,
             faseUnicaQtd: qtd,
             presencaEmAta: item.presencaEmAta,
@@ -171,6 +186,8 @@ export default async function ItemDetailPage({ params }: { params: { id: string 
               vigencia: item.contratacao.dataVigencia ? fmtDate(item.contratacao.dataVigencia) : null,
               orcamentoVencedorId: item.contratacao.orcamentoVencedorId,
               negociacaoDireta: item.contratacao.negociacaoDireta,
+              prazoEntregaDias: item.contratacao.prazoEntregaDias,
+              multaDiariaPct: item.contratacao.multaDiariaPct ? Number(item.contratacao.multaDiariaPct) : null,
             } : null,
             entregas: item.entregas.map((e) => ({
               data: e.dataEntrega ? fmtDate(e.dataEntrega) : null,

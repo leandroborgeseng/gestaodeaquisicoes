@@ -25,6 +25,7 @@ function getNav(role: string, c: SidebarCounts): NavGroup[] {
       links: [
         { key: "dashboard", label: "Dashboard", href: "/dashboard", icon: <Icons.Dashboard /> },
         { key: "itens", label: "Itens", href: "/itens", icon: <Icons.Items />, count: c.itens },
+        { key: "fases", label: "Fases de compra", href: "/fases", icon: <Icons.Layers /> },
         { key: "relatorios", label: "Relatórios", href: "/relatorios", icon: <Icons.Reports /> },
       ],
     },

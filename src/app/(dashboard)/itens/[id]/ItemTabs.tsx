@@ -9,6 +9,13 @@ import {
   marcarOrcamentoVencedor,
   salvarPatrimonio,
   atribuirSetor,
+  aprovarItem,
+  revogarAprovacao,
+  pausarItem,
+  reativarItem,
+  moverParaFase,
+  definirPrioridade,
+  atualizarPrazoMulta,
 } from "@/app/actions/items";
 import {
   RegistrarCotacaoModal,
@@ -49,6 +56,14 @@ interface ItemData {
     anexos: { id: string; nomeOriginal: string; url: string; tamanho: number }[];
   }[];
   cotacao: { dataInicio: string | null; dataConclusao: string | null; observacao: string | null } | null;
+  aprovado: boolean;
+  aprovadoPor: string | null;
+  aprovadoEm: string | null;
+  pausado: boolean;
+  motivoPausa: string | null;
+  prioridade: string | null;
+  faseCompra: { id: string; nome: string } | null;
+  fases: { id: string; nome: string }[];
   contratacao: {
     numero: string | null;
     fornecedor: string;
@@ -58,6 +73,8 @@ interface ItemData {
     vigencia: string | null;
     orcamentoVencedorId: string | null;
     negociacaoDireta: boolean;
+    prazoEntregaDias: number | null;
+    multaDiariaPct: number | null;
   } | null;
   entregas: { data: string | null; previsao: string | null; qtd: number | null; responsavel: string | null; local: string | null; obs: string | null }[];
   notasFiscais: { numero: string; serie: string | null; emissora: string | null; emissao: string | null; entrada: string | null; valor: number | null; chave: string | null }[];
@@ -79,7 +96,7 @@ const TABS = [
   { id: "his", label: "Histórico" },
 ];
 
-export function ItemTabs({ item }: { item: ItemData }) {
+export function ItemTabs({ item, userRole }: { item: ItemData; userRole: string }) {
   const [activeTab, setActiveTab] = useState("geral");
   const [obsText, setObsText] = useState("");
   const [obsPending, startObsTransition] = useTransition();
@@ -146,6 +163,7 @@ export function ItemTabs({ item }: { item: ItemData }) {
 
         {/* Right rail */}
         <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+          <GestaoCard item={item} userRole={userRole} />
           {item.contratacao?.valor && (
             <div className="card" style={{ padding: "14px 14px 12px" }}>
               <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 14 }}>
@@ -272,6 +290,162 @@ function MetaField({ label, value }: { label: string; value: React.ReactNode }) 
     <div>
       <div style={{ fontSize: 10.5, color: "var(--fg-faint)", textTransform: "uppercase", letterSpacing: "0.04em", marginBottom: 2 }}>{label}</div>
       <div style={{ fontSize: 12 }}>{value}</div>
+    </div>
+  );
+}
+
+const PRIORIDADES = [
+  { v: "CRITICA", l: "Crítica", color: "#ef4444" },
+  { v: "ALTA",    l: "Alta",    color: "#f97316" },
+  { v: "MEDIA",   l: "Média",   color: "#eab308" },
+  { v: "BAIXA",   l: "Baixa",  color: "#22c55e" },
+];
+
+function GestaoCard({ item, userRole }: { item: ItemData; userRole: string }) {
+  const [pending, start] = useTransition();
+  const [pausaText, setPausaText] = useState("");
+  const [showPausaInput, setShowPausaInput] = useState(false);
+
+  function handleAprovar() {
+    start(async () => { await aprovarItem(item.id); });
+  }
+  function handleRevogar() {
+    start(async () => { await revogarAprovacao(item.id); });
+  }
+  function handlePausar() {
+    if (!pausaText.trim()) return;
+    start(async () => {
+      await pausarItem(item.id, pausaText);
+      setShowPausaInput(false);
+      setPausaText("");
+    });
+  }
+  function handleReativar() {
+    start(async () => { await reativarItem(item.id); });
+  }
+  function handleFase(faseId: string) {
+    start(async () => { await moverParaFase(item.id, faseId || null); });
+  }
+  function handlePrioridade(prioridade: string) {
+    start(async () => { await definirPrioridade(item.id, prioridade as any || null); });
+  }
+
+  return (
+    <div className="card">
+      <div className="card-head"><h3>Gestão de processo</h3></div>
+      <div className="card-body" style={{ display: "flex", flexDirection: "column", gap: 14 }}>
+
+        {/* Aprovação */}
+        <div>
+          <div style={{ fontSize: 11, color: "var(--fg-dim)", textTransform: "uppercase", letterSpacing: "0.04em", marginBottom: 6 }}>Aprovação</div>
+          {item.aprovado ? (
+            <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
+              <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
+                <span className="pill-soft ok">✓ Aprovado</span>
+                {item.aprovadoPor && <span style={{ fontSize: 11, color: "var(--fg-dim)" }}>por {item.aprovadoPor}</span>}
+              </div>
+              {item.aprovadoEm && <div style={{ fontSize: 10.5, color: "var(--fg-faint)" }}>{item.aprovadoEm}</div>}
+              {userRole === "ADMIN" && (
+                <button className="btn ghost sm" disabled={pending} onClick={handleRevogar} style={{ alignSelf: "flex-start", marginTop: 4 }}>
+                  Revogar aprovação
+                </button>
+              )}
+            </div>
+          ) : (
+            <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
+              <span className="pill-soft warn">Aguardando aprovação</span>
+              {userRole === "ADMIN" && (
+                <button className="btn primary sm" disabled={pending} onClick={handleAprovar} style={{ alignSelf: "flex-start", marginTop: 4 }}>
+                  {pending ? "Aprovando…" : "Aprovar para contratação"}
+                </button>
+              )}
+              {userRole !== "ADMIN" && (
+                <div style={{ fontSize: 11.5, color: "var(--fg-faint)" }}>Aguarde a aprovação do administrador para prosseguir com a contratação.</div>
+              )}
+            </div>
+          )}
+        </div>
+
+        {/* Pausa */}
+        <div>
+          <div style={{ fontSize: 11, color: "var(--fg-dim)", textTransform: "uppercase", letterSpacing: "0.04em", marginBottom: 6 }}>Status do processo</div>
+          {item.pausado ? (
+            <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
+              <span className="pill-soft warn">⏸ Pausado</span>
+              {item.motivoPausa && <div style={{ fontSize: 11.5, color: "var(--fg-mid)" }}>{item.motivoPausa}</div>}
+              <button className="btn ghost sm" disabled={pending} onClick={handleReativar} style={{ alignSelf: "flex-start", marginTop: 4 }}>
+                Reativar
+              </button>
+            </div>
+          ) : (
+            <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
+              <span className="pill-soft ok">▶ Em andamento</span>
+              {showPausaInput ? (
+                <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
+                  <input
+                    placeholder="Motivo da pausa…"
+                    value={pausaText}
+                    onChange={e => setPausaText(e.target.value)}
+                    disabled={pending}
+                    style={{ fontSize: 12, height: 28, padding: "0 8px", border: "1px solid var(--line)", borderRadius: 5, background: "var(--bg-panel)" }}
+                  />
+                  <div style={{ display: "flex", gap: 6 }}>
+                    <button className="btn sm" disabled={pending || !pausaText.trim()} onClick={handlePausar}>Confirmar pausa</button>
+                    <button className="btn ghost sm" onClick={() => setShowPausaInput(false)}>Cancelar</button>
+                  </div>
+                </div>
+              ) : (
+                <button className="btn ghost sm" onClick={() => setShowPausaInput(true)} style={{ alignSelf: "flex-start" }}>
+                  Pausar processo
+                </button>
+              )}
+            </div>
+          )}
+        </div>
+
+        {/* Fase */}
+        {item.fases.length > 0 && (
+          <div>
+            <div style={{ fontSize: 11, color: "var(--fg-dim)", textTransform: "uppercase", letterSpacing: "0.04em", marginBottom: 6 }}>Fase de compra</div>
+            <select
+              value={item.faseCompra?.id ?? ""}
+              disabled={pending}
+              onChange={e => handleFase(e.target.value)}
+              style={{
+                width: "100%", height: 28, padding: "0 8px",
+                border: "1px solid var(--line)", borderRadius: 5,
+                background: "var(--bg-panel)", fontSize: 12, color: "var(--fg)", outline: "none",
+              }}
+            >
+              <option value="">— Sem fase —</option>
+              {item.fases.map(f => <option key={f.id} value={f.id}>{f.nome}</option>)}
+            </select>
+          </div>
+        )}
+
+        {/* Prioridade */}
+        <div>
+          <div style={{ fontSize: 11, color: "var(--fg-dim)", textTransform: "uppercase", letterSpacing: "0.04em", marginBottom: 6 }}>Prioridade</div>
+          <div style={{ display: "flex", gap: 6, flexWrap: "wrap" }}>
+            {PRIORIDADES.map(p => (
+              <button
+                key={p.v}
+                className={`btn sm ${item.prioridade === p.v ? "" : "ghost"}`}
+                disabled={pending}
+                onClick={() => handlePrioridade(item.prioridade === p.v ? "" : p.v)}
+                style={{
+                  fontSize: 10.5, height: 24, padding: "0 8px",
+                  borderColor: item.prioridade === p.v ? p.color : undefined,
+                  background: item.prioridade === p.v ? p.color + "22" : undefined,
+                  color: item.prioridade === p.v ? p.color : undefined,
+                }}
+              >
+                {p.l}
+              </button>
+            ))}
+          </div>
+        </div>
+      </div>
     </div>
   );
 }
@@ -726,25 +900,94 @@ function TabCotacao({ item }: { item: ItemData }) {
 }
 
 function TabContratacao({ item, fornecedores }: { item: ItemData; fornecedores: string[] }) {
+  const [editingPrazo, setEditingPrazo] = useState(false);
+  const [prazo, setPrazo] = useState(String(item.contratacao?.prazoEntregaDias ?? ""));
+  const [multa, setMulta] = useState(String(item.contratacao?.multaDiariaPct != null ? (item.contratacao.multaDiariaPct * 100).toFixed(2) : ""));
+  const [saving, startSave] = useTransition();
+
+  function handleSavePrazo() {
+    startSave(async () => {
+      const prazoNum = parseInt(prazo) || null;
+      const multaNum = multa ? parseFloat(multa.replace(",", ".")) / 100 : null;
+      await atualizarPrazoMulta(item.id, { prazoEntregaDias: prazoNum, multaDiariaPct: multaNum });
+      setEditingPrazo(false);
+    });
+  }
+
+  const multaDiaria = item.contratacao?.multaDiariaPct && item.contratacao?.valor
+    ? item.contratacao.valor * Number(item.contratacao.multaDiariaPct)
+    : null;
+
   return (
-    <div className="card">
-      <div className="card-head"><h3>Contratação</h3></div>
-      <div className="card-body" style={{ display: "flex", flexDirection: "column", gap: 14 }}>
-        {item.contratacao ? (
-          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
-            {item.contratacao.numero && <MetaField label="Nº do contrato" value={<span className="mono">{item.contratacao.numero}</span>} />}
-            <MetaField label="Fornecedor" value={item.contratacao.fornecedor} />
-            {item.contratacao.valor && <MetaField label="Valor contratado" value={<span className="mono">{fmtBRL(item.contratacao.valor)}</span>} />}
-            {item.contratacao.dataAssinatura && <MetaField label="Data de assinatura" value={item.contratacao.dataAssinatura} />}
-            {item.contratacao.vigencia && <MetaField label="Vigência" value={item.contratacao.vigencia} />}
+    <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
+      <div className="card">
+        <div className="card-head"><h3>Contratação</h3></div>
+        <div className="card-body" style={{ display: "flex", flexDirection: "column", gap: 14 }}>
+          {item.contratacao ? (
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
+              {item.contratacao.numero && <MetaField label="Nº do contrato" value={<span className="mono">{item.contratacao.numero}</span>} />}
+              <MetaField label="Fornecedor" value={item.contratacao.fornecedor} />
+              {item.contratacao.valor && <MetaField label="Valor contratado" value={<span className="mono">{fmtBRL(item.contratacao.valor)}</span>} />}
+              {item.contratacao.dataAssinatura && <MetaField label="Data de assinatura" value={item.contratacao.dataAssinatura} />}
+              {item.contratacao.vigencia && <MetaField label="Vigência" value={item.contratacao.vigencia} />}
+            </div>
+          ) : (
+            <p style={{ margin: 0, color: "var(--fg-faint)", fontSize: 12.5 }}>Contratação não registrada.</p>
+          )}
+          <div style={{ display: "flex", gap: 8, paddingTop: 8, borderTop: "1px solid var(--line-soft)" }}>
+            <RegistrarContratoModal itemId={item.id} existing={!!item.contratacao} fornecedores={fornecedores} />
           </div>
-        ) : (
-          <p style={{ margin: 0, color: "var(--fg-faint)", fontSize: 12.5 }}>Contratação não registrada.</p>
-        )}
-        <div style={{ display: "flex", gap: 8, paddingTop: 8, borderTop: "1px solid var(--line-soft)" }}>
-          <RegistrarContratoModal itemId={item.id} existing={!!item.contratacao} fornecedores={fornecedores} />
         </div>
       </div>
+
+      {/* Prazo e multa */}
+      {item.contratacao && (
+        <div className="card">
+          <div className="card-head">
+            <h3>Prazo e penalidades</h3>
+            <div className="spacer" />
+            {!editingPrazo && (
+              <button className="btn ghost sm" onClick={() => setEditingPrazo(true)}>Editar</button>
+            )}
+          </div>
+          <div className="card-body" style={{ display: "flex", flexDirection: "column", gap: 14 }}>
+            {editingPrazo ? (
+              <>
+                <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
+                  <div className="field">
+                    <label>Prazo de entrega (dias)</label>
+                    <input type="number" value={prazo} onChange={e => setPrazo(e.target.value)} placeholder="30" disabled={saving} />
+                  </div>
+                  <div className="field">
+                    <label>Multa diária por atraso (%)</label>
+                    <input value={multa} onChange={e => setMulta(e.target.value)} placeholder="0,33" disabled={saving} />
+                  </div>
+                </div>
+                <div style={{ display: "flex", gap: 8, justifyContent: "flex-end" }}>
+                  <button className="btn ghost sm" onClick={() => setEditingPrazo(false)} disabled={saving}>Cancelar</button>
+                  <button className="btn primary sm" onClick={handleSavePrazo} disabled={saving}>{saving ? "Salvando…" : "Salvar"}</button>
+                </div>
+              </>
+            ) : (
+              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
+                <MetaField label="Prazo de entrega" value={item.contratacao.prazoEntregaDias ? `${item.contratacao.prazoEntregaDias} dias` : "—"} />
+                <MetaField label="Multa diária" value={
+                  item.contratacao.multaDiariaPct
+                    ? `${(Number(item.contratacao.multaDiariaPct) * 100).toFixed(2)}%`
+                    : "—"
+                } />
+                {multaDiaria && (
+                  <div style={{ gridColumn: "1/-1" }}>
+                    <MetaField label="Multa diária em R$" value={
+                      <span className="mono" style={{ color: "var(--danger)" }}>{fmtBRL(multaDiaria)}/dia</span>
+                    } />
+                  </div>
+                )}
+              </div>
+            )}
+          </div>
+        </div>
+      )}
     </div>
   );
 }

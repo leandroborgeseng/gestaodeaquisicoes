@@ -92,8 +92,9 @@ export default async function RelatoriosPage() {
   return (
     <>
       <Topbar crumbs={["3Colinas", "Relatórios"]}>
-        <button className="btn"><Icons.Download style={{ width: 12, height: 12 }} /> Excel</button>
-        <button className="btn primary"><Icons.Doc style={{ width: 12, height: 12 }} /> Gerar PDF</button>
+        <a href="/api/relatorios/excel" className="btn">
+          <Icons.Download style={{ width: 12, height: 12 }} /> Excel
+        </a>
       </Topbar>
 
       <div className="content">

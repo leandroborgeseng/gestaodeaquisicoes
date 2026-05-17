@@ -260,6 +260,22 @@ async function main() {
   }
   console.log(`✓ ${SETORES.length} setores`);
 
+  // 7. Fases de compra
+  const FASES = [
+    { nome: "Fase Única 2026",       descricao: "Todos os itens da fase única de aquisição 2026", ordem: 1 },
+    { nome: "Fase 2 / Aguardando",   descricao: "Itens aguardando aprovação ou recursos",          ordem: 2 },
+    { nome: "Reserva Técnica",       descricao: "Equipamentos de reposição e reserva",             ordem: 3 },
+    { nome: "Cancelado",             descricao: "Itens cancelados ou fora de escopo",              ordem: 99 },
+  ];
+  for (const f of FASES) {
+    await prisma.faseCompra.upsert({
+      where: { nome: f.nome },
+      create: f,
+      update: { descricao: f.descricao, ordem: f.ordem },
+    });
+  }
+  console.log(`✓ ${FASES.length} fases de compra`);
+
   console.log("✅ Seed complete");
 }
 

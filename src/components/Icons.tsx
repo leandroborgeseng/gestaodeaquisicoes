@@ -30,6 +30,11 @@ export const Icons = {
       <circle cx="11" cy="5.5" r="2" /><path d="M10.5 9.7c1.7.4 2.8 1.9 2.8 3.8" />
     </svg>
   ),
+  Layers: (p: IconProps) => (
+    <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" {...p}>
+      <path d="M2 5.5l6-3 6 3-6 3-6-3z" /><path d="M2 8.5l6 3 6-3" /><path d="M2 11.5l6 3 6-3" />
+    </svg>
+  ),
   Settings: (p: IconProps) => (
     <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" {...p}>
       <circle cx="8" cy="8" r="2" />

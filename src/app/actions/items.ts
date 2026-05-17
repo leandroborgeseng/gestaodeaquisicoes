@@ -3,7 +3,12 @@
 import { prisma } from "@/lib/prisma";
 import { auth } from "@/lib/auth";
 import { revalidatePath } from "next/cache";
-import { StatusProcesso } from "@prisma/client";
+import { StatusProcesso, PrioridadeItem } from "@prisma/client";
+import {
+  emailItemAprovado,
+  emailItemPausado,
+  emailNovoContrato,
+} from "@/lib/email";
 
 async function requireAuth() {
   const session = await auth();
@@ -74,6 +79,11 @@ export async function registrarContrato(itemId: string, formData: FormData) {
   const user = await requireAuth();
   if (user.role === "FORNECEDOR") return { error: "Sem permissão" };
 
+  if (user.role !== "ADMIN") {
+    const item = await prisma.item.findUnique({ where: { id: itemId }, select: { aprovado: true } });
+    if (!item?.aprovado) return { error: "Item precisa ser aprovado pelo administrador antes da contratação" };
+  }
+
   const fornecedorNome = (formData.get("fornecedor") as string)?.trim();
   const numeroContrato = formData.get("numeroContrato") as string;
   const dataAssinatura = formData.get("dataAssinatura") as string;
@@ -111,8 +121,22 @@ export async function registrarContrato(itemId: string, formData: FormData) {
     await prisma.contratacao.create({ data: { itemId, ...payload } });
   }
 
-  await prisma.item.update({ where: { id: itemId }, data: { statusProcesso: "CONTRATADO" } });
+  const itemData = await prisma.item.update({ where: { id: itemId }, data: { statusProcesso: "CONTRATADO" }, select: { numero: true, equipamento: true } });
   await prisma.log.create({ data: { itemId, autorId: user.id, acao: "CONTRATO_REGISTRADO" } });
+
+  // Notificar admins sobre novo contrato
+  const admins = await prisma.user.findMany({ where: { role: "ADMIN" }, select: { email: true } });
+  const adminEmails = admins.map((u) => u.email).filter(Boolean) as string[];
+  if (adminEmails.length > 0 && valor) {
+    emailNovoContrato({
+      to: adminEmails,
+      itemNumero: itemData.numero,
+      equipamento: itemData.equipamento,
+      fornecedor: forn!.nome,
+      valor,
+    }).catch(() => {});
+  }
+
   revalidatePath(`/itens/${itemId}`);
   return { success: true };
 }
@@ -305,6 +329,135 @@ export async function atualizarDescritivoTecnico(itemId: string, texto: string) 
     data: { descritivoTecnico: texto.trim() || null },
   });
   await prisma.log.create({ data: { itemId, autorId: user.id, acao: "DESCRITIVO_TECNICO_ATUALIZADO" } });
+  revalidatePath(`/itens/${itemId}`);
+  return { success: true };
+}
+
+export async function aprovarItem(itemId: string) {
+  const user = await requireAuth();
+  if (user.role !== "ADMIN") return { error: "Apenas administradores podem aprovar itens" };
+
+  const item = await prisma.item.update({
+    where: { id: itemId },
+    data: { aprovado: true, aprovadoPor: user.name ?? user.email, aprovadoEm: new Date() },
+    select: { numero: true, equipamento: true },
+  });
+  await prisma.log.create({ data: { itemId, autorId: user.id, acao: "ITEM_APROVADO" } });
+
+  // Notificar todos os usuários HOSPITAL por e-mail
+  const hospitalUsers = await prisma.user.findMany({ where: { role: "HOSPITAL" }, select: { email: true } });
+  const emails = hospitalUsers.map((u) => u.email).filter(Boolean) as string[];
+  if (emails.length > 0) {
+    emailItemAprovado({
+      to: emails,
+      itemNumero: item.numero,
+      equipamento: item.equipamento,
+      aprovadoPor: user.name ?? user.email ?? "Administrador",
+    }).catch(() => {});
+  }
+
+  revalidatePath(`/itens/${itemId}`);
+  revalidatePath("/itens");
+  revalidatePath("/dashboard");
+  return { success: true };
+}
+
+export async function revogarAprovacao(itemId: string) {
+  const user = await requireAuth();
+  if (user.role !== "ADMIN") return { error: "Apenas administradores podem revogar aprovações" };
+
+  await prisma.item.update({
+    where: { id: itemId },
+    data: { aprovado: false, aprovadoPor: null, aprovadoEm: null },
+  });
+  await prisma.log.create({ data: { itemId, autorId: user.id, acao: "APROVACAO_REVOGADA" } });
+  revalidatePath(`/itens/${itemId}`);
+  revalidatePath("/itens");
+  revalidatePath("/dashboard");
+  return { success: true };
+}
+
+export async function moverParaFase(itemId: string, faseId: string | null) {
+  const user = await requireAuth();
+  if (user.role === "FORNECEDOR") return { error: "Sem permissão" };
+
+  await prisma.item.update({ where: { id: itemId }, data: { faseCompraId: faseId } });
+  await prisma.log.create({ data: { itemId, autorId: user.id, acao: "FASE_ALTERADA" } });
+  revalidatePath(`/itens/${itemId}`);
+  revalidatePath("/itens");
+  revalidatePath("/fases");
+  return { success: true };
+}
+
+export async function pausarItem(itemId: string, motivo: string) {
+  const user = await requireAuth();
+  if (user.role === "FORNECEDOR") return { error: "Sem permissão" };
+
+  const item = await prisma.item.update({
+    where: { id: itemId },
+    data: { pausado: true, motivoPausa: motivo.trim() || null },
+    select: { numero: true, equipamento: true },
+  });
+  await prisma.log.create({ data: { itemId, autorId: user.id, acao: "ITEM_PAUSADO", detalhes: { motivo } } });
+
+  // Notificar admins
+  const admins = await prisma.user.findMany({ where: { role: "ADMIN" }, select: { email: true } });
+  const emails = admins.map((u) => u.email).filter(Boolean) as string[];
+  if (emails.length > 0) {
+    emailItemPausado({
+      to: emails,
+      itemNumero: item.numero,
+      equipamento: item.equipamento,
+      motivo,
+      pausadoPor: user.name ?? user.email ?? "Usuário",
+    }).catch(() => {});
+  }
+
+  revalidatePath(`/itens/${itemId}`);
+  revalidatePath("/itens");
+  return { success: true };
+}
+
+export async function reativarItem(itemId: string) {
+  const user = await requireAuth();
+  if (user.role === "FORNECEDOR") return { error: "Sem permissão" };
+
+  await prisma.item.update({
+    where: { id: itemId },
+    data: { pausado: false, motivoPausa: null },
+  });
+  await prisma.log.create({ data: { itemId, autorId: user.id, acao: "ITEM_REATIVADO" } });
+  revalidatePath(`/itens/${itemId}`);
+  revalidatePath("/itens");
+  return { success: true };
+}
+
+export async function definirPrioridade(itemId: string, prioridade: PrioridadeItem | null) {
+  const user = await requireAuth();
+  if (user.role === "FORNECEDOR") return { error: "Sem permissão" };
+
+  await prisma.item.update({ where: { id: itemId }, data: { prioridade } });
+  await prisma.log.create({ data: { itemId, autorId: user.id, acao: "PRIORIDADE_DEFINIDA", detalhes: { prioridade } } });
+  revalidatePath(`/itens/${itemId}`);
+  revalidatePath("/itens");
+  return { success: true };
+}
+
+export async function atualizarPrazoMulta(
+  itemId: string,
+  data: { prazoEntregaDias?: number | null; multaDiariaPct?: number | null }
+) {
+  const user = await requireAuth();
+  if (user.role === "FORNECEDOR") return { error: "Sem permissão" };
+
+  await prisma.contratacao.updateMany({
+    where: { itemId },
+    data: {
+      prazoEntregaDias: data.prazoEntregaDias ?? undefined,
+      multaDiariaPct:   data.multaDiariaPct   ?? undefined,
+    },
+  });
+  await prisma.log.create({ data: { itemId, autorId: user.id, acao: "PRAZO_MULTA_ATUALIZADO" } });
   revalidatePath(`/itens/${itemId}`);
   return { success: true };
 }
