@@ -1,6 +1,13 @@
 import { Topbar } from "@/components/Topbar";
+import { auth } from "@/lib/auth";
+import { DownloadStatusPanel } from "./DownloadStatusPanel";
 
-export default function ConfigPage() {
+export const dynamic = "force-dynamic";
+
+export default async function ConfigPage() {
+  const session = await auth();
+  const isAdmin = session?.user?.role === "ADMIN";
+
   return (
     <>
       <Topbar crumbs={["3Colinas", "Sistema", "Configurações"]} />
@@ -9,14 +16,19 @@ export default function ConfigPage() {
           <div className="page-head">
             <div>
               <h1>Configurações</h1>
-              <p>Configurações gerais do sistema.</p>
+              <p>Administração e status do sistema.</p>
             </div>
           </div>
-          <div className="card">
-            <div style={{ padding: "20px 14px", color: "var(--fg-faint)", fontSize: 12.5 }}>
-              Em desenvolvimento.
+
+          {isAdmin && <DownloadStatusPanel />}
+
+          {!isAdmin && (
+            <div className="card">
+              <div style={{ padding: "20px 14px", color: "var(--fg-faint)", fontSize: 12.5 }}>
+                Sem permissão de administrador.
+              </div>
             </div>
-          </div>
+          )}
         </div>
       </div>
     </>

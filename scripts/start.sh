@@ -32,10 +32,22 @@ echo "    UPLOAD_DIR = ${UPLOAD_DIR}"
 export UPLOAD_DIR
 
 echo ""
-echo "--- [2/3] prisma db push ---"
+echo "--- [2/4] prisma db push ---"
 npx prisma db push --skip-generate
 echo "    OK"
 
 echo ""
-echo "--- [3/3] next start on port ${PORT:-3000} ---"
+echo "--- [3/4] download Drive PDFs (background) ---"
+LOG_FILE="${UPLOAD_DIR}/download.log"
+# Só inicia se houver espaço e o script existir
+if [ -f "scripts/download-drive-files.js" ]; then
+  node scripts/download-drive-files.js >> "${LOG_FILE}" 2>&1 &
+  DOWNLOAD_PID=$!
+  echo "    PID ${DOWNLOAD_PID} | log: ${LOG_FILE}"
+else
+  echo "    [SKIP] scripts/download-drive-files.js não encontrado"
+fi
+
+echo ""
+echo "--- [4/4] next start on port ${PORT:-3000} ---"
 exec npx next start -p "${PORT:-3000}"
