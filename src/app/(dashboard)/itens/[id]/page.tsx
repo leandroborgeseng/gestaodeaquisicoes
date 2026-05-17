@@ -52,11 +52,12 @@ const STATUS_ORDER = [
 ];
 
 export default async function ItemDetailPage({ params }: { params: { id: string } }) {
-  const [item, session, fases, setores] = await Promise.all([
+  const [item, session, fases, setores, fornecedoresList] = await Promise.all([
     getItem(params.id),
     auth(),
     prisma.faseCompra.findMany({ orderBy: { ordem: "asc" }, select: { id: true, nome: true } }),
     prisma.setor.findMany({ orderBy: { nome: "asc" }, select: { id: true, nome: true, sigla: true } }),
+    prisma.fornecedor.findMany({ orderBy: { nome: "asc" }, select: { id: true, nome: true } }),
   ]);
   if (!item) notFound();
   const userRole = session?.user?.role ?? "HOSPITAL";
@@ -136,7 +137,7 @@ export default async function ItemDetailPage({ params }: { params: { id: string 
           </div>
 
           {/* Tabs */}
-          <ItemTabs userRole={userRole} setores={setores} item={{
+          <ItemTabs userRole={userRole} setores={setores} fornecedoresList={fornecedoresList} item={{
             id: item.id,
             numero: item.numero,
             numeroSiafisico: item.numeroSiafisico,
@@ -171,6 +172,7 @@ export default async function ItemDetailPage({ params }: { params: { id: string 
             statusProcesso: item.statusProcesso,
             orcamentos: item.orcamentos.map((o) => ({
               id: o.id,
+              fornecedorId: o.fornecedorId,
               numero: o.numero,
               fornecedor: o.fornecedor.nome,
               valor: Number(o.valor),

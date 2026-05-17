@@ -32,16 +32,18 @@ function Field({ label, children }: { label: string; children: React.ReactNode }
 }
 
 function ModalShell({
-  open, onOpenChange, title, children, pending, triggerLabel, triggerIcon,
+  open, onOpenChange, title, children, pending, triggerLabel, triggerIcon, triggerDisabled, triggerTitle,
 }: {
   open: boolean; onOpenChange: (v: boolean) => void;
   title: string; children: React.ReactNode;
   pending: boolean; triggerLabel: string; triggerIcon?: React.ReactNode;
+  triggerDisabled?: boolean; triggerTitle?: string;
 }) {
   return (
     <Dialog.Root open={open} onOpenChange={onOpenChange}>
       <Dialog.Trigger asChild>
-        <button className="btn primary sm">
+        <button className="btn primary sm" disabled={triggerDisabled} title={triggerTitle}
+          style={triggerDisabled ? { opacity: 0.45, cursor: "not-allowed" } : undefined}>
           {triggerIcon}
           {triggerLabel}
         </button>
@@ -115,8 +117,8 @@ export function RegistrarCotacaoModal({
 }
 
 export function RegistrarContratoModal({
-  itemId, existing, fornecedores,
-}: { itemId: string; existing: boolean; fornecedores: string[] }) {
+  itemId, existing, fornecedores, totalCotacoes,
+}: { itemId: string; existing: boolean; fornecedores: string[]; totalCotacoes?: number }) {
   const [open, setOpen] = useState(false);
   const [error, setError] = useState("");
   const [pending, startTransition] = useTransition();
@@ -130,6 +132,8 @@ export function RegistrarContratoModal({
     });
   }
 
+  const cotacoesInsuficientes = !existing && totalCotacoes !== undefined && totalCotacoes < 3;
+
   return (
     <ModalShell
       open={open} onOpenChange={setOpen}
@@ -137,9 +141,22 @@ export function RegistrarContratoModal({
       triggerLabel={existing ? "Atualizar contrato" : "Registrar contrato"}
       triggerIcon={<Icons.Pin style={{ width: 11, height: 11 }} />}
       pending={pending}
+      triggerDisabled={cotacoesInsuficientes}
+      triggerTitle={cotacoesInsuficientes ? `São necessárias 3 cotações (${totalCotacoes}/3 coletadas)` : undefined}
     >
       <form id="modal-form" onSubmit={handleSubmit}>
         <div className="dialog-body">
+          {cotacoesInsuficientes && (
+            <div style={{
+              padding: "10px 12px", marginBottom: 12, borderRadius: 6,
+              background: "var(--warn-soft, oklch(0.97 0.03 80))",
+              border: "1px solid var(--warn-line, oklch(0.88 0.06 80))",
+              fontSize: 12.5, color: "var(--fg-mid)",
+            }}>
+              ⚠️ São necessárias 3 cotações coletadas antes de registrar o contrato.
+              Atualmente: <strong>{totalCotacoes}/3</strong>.
+            </div>
+          )}
           <Field label="Fornecedor *">
             <input
               style={inputStyle} name="fornecedor" required

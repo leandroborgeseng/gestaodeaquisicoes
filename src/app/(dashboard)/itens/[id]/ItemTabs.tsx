@@ -7,6 +7,8 @@ import {
   publicarObservacao,
   atualizarDescritivoTecnico,
   marcarOrcamentoVencedor,
+  adicionarOrcamento,
+  removerOrcamento,
   salvarPatrimonio,
   atribuirSetor,
   aprovarItem,
@@ -48,6 +50,7 @@ interface ItemData {
   statusProcesso: string;
   orcamentos: {
     id: string;
+    fornecedorId: string;
     numero: number;
     fornecedor: string;
     valor: number;
@@ -106,11 +109,12 @@ interface SetorOpt { id: string; nome: string; sigla: string | null }
 interface FaseOpt  { id: string; nome: string }
 
 export function ItemTabs({
-  item, userRole, setores,
+  item, userRole, setores, fornecedoresList,
 }: {
   item: ItemData;
   userRole: string;
   setores: SetorOpt[];
+  fornecedoresList: { id: string; nome: string }[];
 }) {
   const [activeTab, setActiveTab] = useState("geral");
   const [obsText, setObsText] = useState("");
@@ -192,7 +196,7 @@ export function ItemTabs({
         <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
           {activeTab === "geral" && <TabGeral item={item} menorValor={menorValor} />}
           {activeTab === "orc" && (
-            <TabOrcamentos item={item} menorValor={menorValor} />
+            <TabOrcamentos item={item} menorValor={menorValor} fornecedoresList={fornecedoresList} />
           )}
           {activeTab === "cot" && (
             <TabCotacao item={item} />
@@ -783,32 +787,96 @@ function TabGeral({ item, menorValor }: { item: ItemData; menorValor: typeof ite
   );
 }
 
-function TabOrcamentos({ item, menorValor }: { item: ItemData; menorValor: typeof item.orcamentos[0] | undefined }) {
-  const [marking, startMark] = useTransition();
+function TabOrcamentos({ item, menorValor, fornecedoresList }: {
+  item: ItemData;
+  menorValor: typeof item.orcamentos[0] | undefined;
+  fornecedoresList: { id: string; nome: string }[];
+}) {
+  const [adding, startAdd] = useTransition();
+  const [removing, startRemove] = useTransition();
+  const [showForm, setShowForm] = useState(false);
+  const [addError, setAddError] = useState("");
 
+  const total = item.orcamentos.length;
+  const temVencedor = total >= 3;
   const melhorValor = menorValor?.valor ?? null;
   const valorContratado = item.contratacao?.valor ?? null;
   const valorRef = item.valorReferenciaFns ? item.valorReferenciaFns * item.faseUnicaQtd : null;
   const melhorTotal = melhorValor ? melhorValor * item.faseUnicaQtd : null;
+  const savingMercado    = valorRef && melhorTotal      ? valorRef    - melhorTotal    : null;
+  const savingNegociacao = melhorTotal && valorContratado ? melhorTotal - valorContratado : null;
+  const savingTotal      = valorRef && valorContratado   ? valorRef    - valorContratado  : null;
 
-  const savingMercado     = valorRef && melhorTotal   ? valorRef    - melhorTotal    : null;
-  const savingNegociacao  = melhorTotal && valorContratado ? melhorTotal - valorContratado : null;
-  const savingTotal       = valorRef && valorContratado   ? valorRef    - valorContratado  : null;
+  // Fornecedores que ainda não têm orçamento neste item (compara por ID)
+  const jaUsados = new Set(item.orcamentos.map((o) => o.fornecedorId));
+  const disponiveis = fornecedoresList.filter((f) => !jaUsados.has(f.id));
 
-  function handleMarcarVencedor(orcId: string, isAlreadyWinner: boolean) {
-    startMark(async () => {
-      await marcarOrcamentoVencedor(item.id, isAlreadyWinner ? null : orcId);
+  function handleAdd(e: React.FormEvent<HTMLFormElement>) {
+    e.preventDefault();
+    const fd = new FormData(e.currentTarget);
+    setAddError("");
+    startAdd(async () => {
+      const res = await adicionarOrcamento(item.id, fd);
+      if ("error" in res) { setAddError(String(res.error)); } else { setShowForm(false); }
     });
   }
 
+  function handleRemove(orcId: string) {
+    startRemove(async () => { await removerOrcamento(orcId, item.id); });
+  }
+
+  const inputStyle: React.CSSProperties = {
+    width: "100%", padding: "6px 8px", fontSize: 13,
+    border: "1px solid var(--line)", borderRadius: 5,
+    background: "var(--bg)", color: "var(--fg)",
+  };
+
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
+      {/* Progresso */}
       <div className="card">
         <div className="card-head">
-          <h3>Orçamentos coletados</h3>
-          <span className="sub">{item.orcamentos.length} fornecedores</span>
+          <h3>Cotações coletadas</h3>
           <div className="spacer" />
+          <span style={{ fontSize: 12, color: temVencedor ? "var(--ok)" : "var(--fg-dim)", fontWeight: 600 }}>
+            {total}/3 {temVencedor ? "✓ Completo" : "— aguardando"}
+          </span>
         </div>
+        {/* Barra de progresso */}
+        <div style={{ height: 4, background: "var(--line-soft)", margin: "0 0 0 0" }}>
+          <div style={{
+            height: "100%",
+            width: `${Math.min(total / 3, 1) * 100}%`,
+            background: temVencedor ? "var(--ok)" : "var(--accent)",
+            transition: "width 0.3s",
+          }} />
+        </div>
+
+        {temVencedor && (
+          <div style={{
+            padding: "10px 14px",
+            background: "var(--ok-soft)",
+            borderBottom: "1px solid var(--line-soft)",
+            display: "flex", alignItems: "center", gap: 8, fontSize: 12.5,
+          }}>
+            <span style={{ color: "var(--ok)", fontWeight: 700 }}>✓</span>
+            <span>
+              Vencedor automático (menor preço):{" "}
+              <strong>{menorValor?.fornecedor}</strong>{" "}
+              com <strong>{fmtBRL(menorValor!.valor)}</strong> por unidade
+            </span>
+          </div>
+        )}
+
+        {!temVencedor && (
+          <div style={{
+            padding: "8px 14px", fontSize: 12,
+            color: "var(--fg-dim)", borderBottom: "1px solid var(--line-soft)",
+          }}>
+            Adicione {3 - total} cotação{3 - total !== 1 ? "ões" : ""} para concluir a fase e eleger o vencedor automaticamente.
+          </div>
+        )}
+
         <table className="tbl">
           <thead>
             <tr>
@@ -817,13 +885,12 @@ function TabOrcamentos({ item, menorValor }: { item: ItemData; menorValor: typeo
               <th>Data</th>
               <th style={{ textAlign: "right" }}>Unitário</th>
               <th style={{ textAlign: "right" }}>Total ({item.faseUnicaQtd} un)</th>
-              <th style={{ width: 80 }}>Doc</th>
-              <th style={{ width: 90 }}>Vencedor</th>
+              <th style={{ width: 60 }}>Doc</th>
+              <th style={{ width: 40 }}></th>
             </tr>
           </thead>
           <tbody>
             {item.orcamentos.map((o) => {
-              const isMenor = o === menorValor;
               const docUrl = o.anexos[0]?.url ?? o.cotacaoUrl;
               const diff = item.valorReferenciaFns ? (o.valor - item.valorReferenciaFns) / item.valorReferenciaFns : 0;
               return (
@@ -832,8 +899,11 @@ function TabOrcamentos({ item, menorValor }: { item: ItemData; menorValor: typeo
                   <td>
                     <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
                       <span className="strong">{o.fornecedor}</span>
-                      {isMenor && <span className="pill-soft ok" style={{ fontSize: 9.5 }}>menor</span>}
-                      {o.vencedor && <span className="pill-soft ok" style={{ fontSize: 9.5, fontWeight: 700 }}>✓ vencedor</span>}
+                      {o.vencedor && (
+                        <span className="pill-soft ok" style={{ fontSize: 9.5, fontWeight: 700 }}>
+                          ✓ menor preço
+                        </span>
+                      )}
                     </div>
                   </td>
                   <td className="num">{o.data ?? "—"}</td>
@@ -849,31 +919,97 @@ function TabOrcamentos({ item, menorValor }: { item: ItemData; menorValor: typeo
                   <td>
                     {docUrl ? (
                       <a href={docUrl} target="_blank" rel="noopener noreferrer"
-                        className="btn ghost sm" style={{ height: 22, padding: "0 7px", fontSize: 10.5 }}
-                        title={o.anexos[0] ? "Arquivo local" : "Google Drive"}>
-                        <Icons.Doc style={{ width: 10, height: 10 }} />
-                        {o.anexos[0] ? "PDF" : "Drive"}
+                        className="btn ghost sm" style={{ height: 22, padding: "0 7px", fontSize: 10.5 }}>
+                        <Icons.Doc style={{ width: 10, height: 10 }} /> PDF
                       </a>
                     ) : <span style={{ fontSize: 11, color: "var(--fg-faint)" }}>—</span>}
                   </td>
                   <td>
                     <button
-                      className={`btn sm ${o.vencedor ? "primary" : "ghost"}`}
-                      style={{ fontSize: 10.5, height: 24, padding: "0 8px" }}
-                      disabled={marking}
-                      onClick={() => handleMarcarVencedor(o.id, o.vencedor)}
+                      className="btn ghost sm"
+                      style={{ fontSize: 10.5, height: 22, padding: "0 7px", color: "var(--danger)" }}
+                      disabled={removing}
+                      onClick={() => handleRemove(o.id)}
+                      title="Remover cotação"
                     >
-                      {o.vencedor ? "✓ Selecionado" : "Selecionar"}
+                      ×
                     </button>
                   </td>
                 </tr>
               );
             })}
             {item.orcamentos.length === 0 && (
-              <tr><td colSpan={7} style={{ padding: "20px 12px", color: "var(--fg-faint)", fontSize: 12.5 }}>Nenhum orçamento registrado.</td></tr>
+              <tr>
+                <td colSpan={7} style={{ padding: "20px 12px", color: "var(--fg-faint)", fontSize: 12.5 }}>
+                  Nenhuma cotação registrada. Adicione ao menos 3 para eleger o vencedor.
+                </td>
+              </tr>
             )}
           </tbody>
         </table>
+
+        {/* Formulário de adição */}
+        {total < 3 && !showForm && (
+          <div style={{ padding: "10px 14px", borderTop: "1px solid var(--line-soft)" }}>
+            <button className="btn ghost sm" onClick={() => setShowForm(true)}>
+              + Adicionar cotação
+            </button>
+          </div>
+        )}
+
+        {showForm && (
+          <form onSubmit={handleAdd} style={{
+            padding: "14px", borderTop: "1px solid var(--line-soft)",
+            display: "flex", flexDirection: "column", gap: 10,
+          }}>
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 10 }}>
+              <div>
+                <label style={{ fontSize: 11, color: "var(--fg-dim)", display: "block", marginBottom: 4 }}>
+                  Fornecedor *
+                </label>
+                <select name="fornecedorId" required style={inputStyle}>
+                  <option value="">Selecione…</option>
+                  {disponiveis.map((f) => (
+                    <option key={f.id} value={f.id}>{f.nome}</option>
+                  ))}
+                </select>
+              </div>
+              <div>
+                <label style={{ fontSize: 11, color: "var(--fg-dim)", display: "block", marginBottom: 4 }}>
+                  Valor unitário (R$) *
+                </label>
+                <input name="valor" required placeholder="0,00" inputMode="decimal" style={inputStyle} />
+              </div>
+              <div>
+                <label style={{ fontSize: 11, color: "var(--fg-dim)", display: "block", marginBottom: 4 }}>
+                  Data do orçamento
+                </label>
+                <input name="data" type="date" style={inputStyle} />
+              </div>
+            </div>
+            <div>
+              <label style={{ fontSize: 11, color: "var(--fg-dim)", display: "block", marginBottom: 4 }}>
+                Link do documento (opcional)
+              </label>
+              <input name="cotacaoUrl" type="url" placeholder="https://…" style={inputStyle} />
+            </div>
+            {addError && <p style={{ margin: 0, fontSize: 12, color: "var(--danger)" }}>{addError}</p>}
+            <div style={{ display: "flex", gap: 8 }}>
+              <button type="submit" className="btn primary sm" disabled={adding}>
+                {adding ? "Salvando…" : "Salvar cotação"}
+              </button>
+              <button type="button" className="btn ghost sm" onClick={() => { setShowForm(false); setAddError(""); }}>
+                Cancelar
+              </button>
+            </div>
+            {disponiveis.length === 0 && (
+              <p style={{ margin: 0, fontSize: 11.5, color: "var(--fg-dim)" }}>
+                Todos os fornecedores cadastrados já enviaram cotação. Cadastre novos fornecedores em{" "}
+                <a href="/fornecedores" style={{ color: "var(--accent)" }}>Fornecedores</a>.
+              </p>
+            )}
+          </form>
+        )}
       </div>
 
       {/* Saving 3 camadas */}
@@ -999,7 +1135,7 @@ function TabContratacao({ item, fornecedores }: { item: ItemData; fornecedores: 
             <p style={{ margin: 0, color: "var(--fg-faint)", fontSize: 12.5 }}>Contratação não registrada.</p>
           )}
           <div style={{ display: "flex", gap: 8, paddingTop: 8, borderTop: "1px solid var(--line-soft)" }}>
-            <RegistrarContratoModal itemId={item.id} existing={!!item.contratacao} fornecedores={fornecedores} />
+            <RegistrarContratoModal itemId={item.id} existing={!!item.contratacao} fornecedores={fornecedores} totalCotacoes={item.orcamentos.length} />
           </div>
         </div>
       </div>

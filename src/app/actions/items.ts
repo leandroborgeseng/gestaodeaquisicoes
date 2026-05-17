@@ -290,6 +290,104 @@ export async function marcarOrcamentoVencedor(itemId: string, orcamentoId: strin
   return { success: true };
 }
 
+// ─── Helpers para seleção automática de vencedor ──────────────────────────────
+
+// Fases que ainda estão na cotação — única janela em que podemos mexer no status
+const FASES_COTACAO = new Set<string>(["PENDENTE", "COTACAO_EM_ANDAMENTO", "COTACAO_CONCLUIDA"]);
+
+async function aplicarVencedorAutomatico(itemId: string) {
+  const [orcamentos, item] = await Promise.all([
+    prisma.orcamento.findMany({
+      where: { itemId },
+      select: { id: true, valor: true },
+      orderBy: { valor: "asc" },
+    }),
+    prisma.item.findUnique({ where: { id: itemId }, select: { statusProcesso: true } }),
+  ]);
+
+  if (!item) return null;
+
+  // Limpa flags de vencedor
+  await prisma.orcamento.updateMany({ where: { itemId }, data: { vencedor: false } });
+
+  if (orcamentos.length >= 3) {
+    const vencedor = orcamentos[0]; // menor valor (ordenado asc)
+    await prisma.orcamento.update({ where: { id: vencedor.id }, data: { vencedor: true } });
+    // Só atualiza status se o item ainda está na fase de cotação
+    if (FASES_COTACAO.has(item.statusProcesso)) {
+      await prisma.item.update({ where: { id: itemId }, data: { statusProcesso: "COTACAO_CONCLUIDA" } });
+    }
+    // Atualiza link na contratação se ela existir
+    await prisma.contratacao.updateMany({ where: { itemId }, data: { orcamentoVencedorId: vencedor.id } });
+    return vencedor.id;
+  } else if (FASES_COTACAO.has(item.statusProcesso)) {
+    // < 3 cotações: mantém ou regride para EM_ANDAMENTO (só dentro da janela de cotação)
+    const novoStatus = orcamentos.length > 0 ? "COTACAO_EM_ANDAMENTO" : "PENDENTE";
+    await prisma.item.update({ where: { id: itemId }, data: { statusProcesso: novoStatus } });
+  }
+  return null;
+}
+
+export async function adicionarOrcamento(itemId: string, formData: FormData) {
+  const user = await requireAuth();
+  if (user.role === "FORNECEDOR") return { error: "Sem permissão" };
+
+  const fornecedorId = (formData.get("fornecedorId") as string)?.trim();
+  const valorStr     = (formData.get("valor") as string)?.trim().replace(",", ".");
+  const data         = formData.get("data") as string | null;
+  const cotacaoUrl   = (formData.get("cotacaoUrl") as string | null) || null;
+
+  if (!fornecedorId || !valorStr) return { error: "Fornecedor e valor são obrigatórios" };
+  const valor = parseFloat(valorStr);
+  if (isNaN(valor) || valor <= 0) return { error: "Valor inválido" };
+
+  // Verificar se esse fornecedor já tem orçamento nesse item
+  const existe = await prisma.orcamento.findFirst({ where: { itemId, fornecedorId } });
+  if (existe) return { error: "Esse fornecedor já enviou um orçamento para este item" };
+
+  const count = await prisma.orcamento.count({ where: { itemId } });
+
+  await prisma.orcamento.create({
+    data: {
+      itemId,
+      fornecedorId,
+      valor,
+      numero: count + 1,
+      dataOrcamento: data ? new Date(data) : null,
+      cotacaoUrl,
+    },
+  });
+
+  await aplicarVencedorAutomatico(itemId);
+  await prisma.log.create({ data: { itemId, autorId: user.id, acao: "COTACAO_REGISTRADA" } });
+  revalidatePath(`/itens/${itemId}`);
+  return { success: true };
+}
+
+export async function removerOrcamento(orcamentoId: string, itemId: string) {
+  const user = await requireAuth();
+  if (user.role === "FORNECEDOR") return { error: "Sem permissão" };
+
+  // Desvincular da contratação ANTES de deletar (evita foreign key constraint)
+  await prisma.contratacao.updateMany({
+    where: { itemId, orcamentoVencedorId: orcamentoId },
+    data: { orcamentoVencedorId: null },
+  });
+
+  await prisma.orcamento.delete({ where: { id: orcamentoId } });
+
+  // Renumerar os restantes
+  const restantes = await prisma.orcamento.findMany({ where: { itemId }, orderBy: { numero: "asc" } });
+  for (let i = 0; i < restantes.length; i++) {
+    await prisma.orcamento.update({ where: { id: restantes[i].id }, data: { numero: i + 1 } });
+  }
+
+  await aplicarVencedorAutomatico(itemId);
+  await prisma.log.create({ data: { itemId, autorId: user.id, acao: "COTACAO_REGISTRADA" } });
+  revalidatePath(`/itens/${itemId}`);
+  return { success: true };
+}
+
 export async function salvarPatrimonio(
   itemId: string,
   data: { numeroSerie?: string; localizacaoFisica?: string; patrimonioHospital?: string }

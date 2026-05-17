@@ -88,9 +88,9 @@ function MetaItem({ label, value }: { label: string; value: React.ReactNode }) {
 export default async function FornecedorDetailPage({
   params,
 }: {
-  params: Promise<{ id: string }>;
+  params: { id: string };
 }) {
-  const { id } = await params;
+  const { id } = params;
   const fornecedor = await getFornecedor(id);
   if (!fornecedor) notFound();
 
