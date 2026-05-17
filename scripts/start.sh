@@ -37,9 +37,8 @@ npx prisma db push --skip-generate
 echo "    OK"
 
 echo ""
-echo "--- [3/4] download Drive PDFs (background) ---"
+echo "--- [3/5] download Drive PDFs (background) ---"
 LOG_FILE="${UPLOAD_DIR}/download.log"
-# Só inicia se houver espaço e o script existir
 if [ -f "scripts/download-drive-files.js" ]; then
   node scripts/download-drive-files.js >> "${LOG_FILE}" 2>&1 &
   DOWNLOAD_PID=$!
@@ -49,5 +48,16 @@ else
 fi
 
 echo ""
-echo "--- [4/4] next start on port ${PORT:-3000} ---"
+echo "--- [4/5] fetch FNS descriptives (background) ---"
+FNS_LOG="${UPLOAD_DIR}/fns-fetch.log"
+if [ -f "scripts/fetch-fns-descriptives.js" ]; then
+  node scripts/fetch-fns-descriptives.js >> "${FNS_LOG}" 2>&1 &
+  FNS_PID=$!
+  echo "    PID ${FNS_PID} | log: ${FNS_LOG}"
+else
+  echo "    [SKIP] scripts/fetch-fns-descriptives.js não encontrado"
+fi
+
+echo ""
+echo "--- [5/5] next start on port ${PORT:-3000} ---"
 exec npx next start -p "${PORT:-3000}"
