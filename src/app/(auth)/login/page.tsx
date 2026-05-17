@@ -21,7 +21,16 @@ export default function LoginPage() {
       setError("Email ou senha inválidos.");
       setLoading(false);
     } else {
-      router.push("/dashboard");
+      // Respect ?callbackUrl (set by middleware for mobile users)
+      const params = new URLSearchParams(window.location.search);
+      const cb = params.get("callbackUrl");
+      if (cb && cb.startsWith("/") && !cb.startsWith("//")) {
+        router.push(cb);
+      } else {
+        const isPhone = /(iPhone|iPod|(Android.*Mobile)|BlackBerry|IEMobile|Opera Mini)/i
+          .test(navigator.userAgent);
+        router.push(isPhone ? "/m" : "/dashboard");
+      }
     }
   }
 
