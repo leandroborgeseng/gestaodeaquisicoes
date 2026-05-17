@@ -52,10 +52,11 @@ const STATUS_ORDER = [
 ];
 
 export default async function ItemDetailPage({ params }: { params: { id: string } }) {
-  const [item, session, fases] = await Promise.all([
+  const [item, session, fases, setores] = await Promise.all([
     getItem(params.id),
     auth(),
     prisma.faseCompra.findMany({ orderBy: { ordem: "asc" }, select: { id: true, nome: true } }),
+    prisma.setor.findMany({ orderBy: { nome: "asc" }, select: { id: true, nome: true, sigla: true } }),
   ]);
   if (!item) notFound();
   const userRole = session?.user?.role ?? "HOSPITAL";
@@ -135,8 +136,10 @@ export default async function ItemDetailPage({ params }: { params: { id: string 
           </div>
 
           {/* Tabs */}
-          <ItemTabs userRole={userRole} item={{
+          <ItemTabs userRole={userRole} setores={setores} item={{
             id: item.id,
+            numero: item.numero,
+            numeroSiafisico: item.numeroSiafisico,
             equipamento: item.equipamento,
             especificacao: item.especificacao,
             especificacaoUrl: item.especificacaoUrl,
@@ -150,6 +153,11 @@ export default async function ItemDetailPage({ params }: { params: { id: string 
             aprovado: item.aprovado,
             aprovadoPor: item.aprovadoPor,
             aprovadoEm: item.aprovadoEm ? fmtDate(item.aprovadoEm) : null,
+            anexosGerais: item.anexos.map((a) => ({
+              id: a.id, nomeOriginal: a.nomeOriginal, url: a.url,
+              tamanho: a.tamanho, mimeType: a.mimeType,
+              autor: { name: a.autor.name },
+            })),
             pausado: item.pausado,
             motivoPausa: item.motivoPausa,
             prioridade: item.prioridade,

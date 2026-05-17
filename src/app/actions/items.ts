@@ -483,3 +483,88 @@ export async function criarFornecedor(formData: FormData) {
   revalidatePath("/fornecedores");
   return { success: true };
 }
+
+export async function criarItem(formData: FormData) {
+  const user = await requireAuth();
+  if (user.role === "FORNECEDOR") return { error: "Sem permissão" };
+
+  const equipamento = (formData.get("equipamento") as string)?.trim();
+  const numero      = (formData.get("numero") as string)?.trim();
+  if (!equipamento) return { error: "Nome do equipamento obrigatório" };
+  if (!numero)      return { error: "Número do item obrigatório" };
+
+  const qtd     = parseInt(formData.get("qtd") as string) || 1;
+  const siaf    = parseInt(formData.get("siafisico") as string) || null;
+  const valRef  = parseDecimal(formData.get("valorRef") as string);
+  const setorId = (formData.get("setorId") as string) || null;
+  const faseId  = (formData.get("faseId") as string) || null;
+  const especif = (formData.get("especificacao") as string)?.trim() || null;
+
+  try {
+    const item = await prisma.item.create({
+      data: {
+        numero,
+        equipamento,
+        especificacao: especif,
+        faseUnicaQtd:       qtd,
+        numeroSiafisico:    siaf,
+        valorReferenciaFns: valRef ?? undefined,
+        setorId:    setorId || undefined,
+        faseCompraId: faseId || undefined,
+        statusProcesso: "PENDENTE",
+      },
+    });
+    await prisma.log.create({ data: { itemId: item.id, autorId: user.id, acao: "ITEM_CRIADO" } });
+  } catch (e: any) {
+    if (e.code === "P2002") return { error: `Número "${numero}" já está em uso` };
+    throw e;
+  }
+
+  revalidatePath("/itens");
+  return { success: true };
+}
+
+export async function editarItem(itemId: string, formData: FormData) {
+  const user = await requireAuth();
+  if (user.role === "FORNECEDOR") return { error: "Sem permissão" };
+
+  const equipamento = (formData.get("equipamento") as string)?.trim();
+  if (!equipamento) return { error: "Nome do equipamento obrigatório" };
+
+  const qtd    = parseInt(formData.get("qtd") as string) || undefined;
+  const siaf   = parseInt(formData.get("siafisico") as string) || null;
+  const valRef = parseDecimal(formData.get("valorRef") as string);
+  const setorId  = (formData.get("setorId") as string) || null;
+  const faseId   = (formData.get("faseId") as string) || null;
+  const especif  = (formData.get("especificacao") as string)?.trim() || null;
+  const ata      = formData.get("presencaEmAta") === "true";
+
+  await prisma.item.update({
+    where: { id: itemId },
+    data: {
+      equipamento,
+      especificacao:      especif,
+      faseUnicaQtd:       qtd,
+      numeroSiafisico:    siaf,
+      valorReferenciaFns: valRef ?? undefined,
+      setorId:     setorId || null,
+      faseCompraId: faseId || null,
+      presencaEmAta: ata,
+    },
+  });
+  await prisma.log.create({ data: { itemId, autorId: user.id, acao: "ITEM_EDITADO" } });
+  revalidatePath(`/itens/${itemId}`);
+  revalidatePath("/itens");
+  return { success: true };
+}
+
+export async function marcarConcluido(itemId: string) {
+  const user = await requireAuth();
+  if (user.role === "FORNECEDOR") return { error: "Sem permissão" };
+
+  await prisma.item.update({ where: { id: itemId }, data: { statusProcesso: "CONCLUIDO" } });
+  await prisma.log.create({ data: { itemId, autorId: user.id, acao: "ITEM_CONCLUIDO" } });
+  revalidatePath(`/itens/${itemId}`);
+  revalidatePath("/itens");
+  return { success: true };
+}

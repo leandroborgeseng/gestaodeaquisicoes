@@ -24,7 +24,9 @@ import {
   RegistrarNFModal,
   RegistrarTesteModal,
 } from "@/components/modals/ItemModals";
+import { EditarItemModal } from "@/components/modals/GestaoModals";
 import { AnexoUpload } from "@/components/AnexoUpload";
+import { marcarConcluido } from "@/app/actions/items";
 
 interface ItemData {
   id: string;
@@ -40,7 +42,6 @@ interface ItemData {
   patrimonioHospital?: string | null;
   valorReferenciaFns: number | null;
   faseUnicaQtd: number;
-  presencaEmAta: boolean;
   origemMenorValor: string | null;
   statusVsReferenciaFns: string | null;
   statusProcesso: string;
@@ -56,9 +57,13 @@ interface ItemData {
     anexos: { id: string; nomeOriginal: string; url: string; tamanho: number }[];
   }[];
   cotacao: { dataInicio: string | null; dataConclusao: string | null; observacao: string | null } | null;
+  numero: string;
+  numeroSiafisico: number | null;
+  presencaEmAta: boolean;
   aprovado: boolean;
   aprovadoPor: string | null;
   aprovadoEm: string | null;
+  anexosGerais: { id: string; nomeOriginal: string; url: string; tamanho: number; mimeType: string; autor: { name: string } }[];
   pausado: boolean;
   motivoPausa: string | null;
   prioridade: string | null;
@@ -96,16 +101,30 @@ const TABS = [
   { id: "his", label: "Histórico" },
 ];
 
-export function ItemTabs({ item, userRole }: { item: ItemData; userRole: string }) {
+interface SetorOpt { id: string; nome: string; sigla: string | null }
+interface FaseOpt  { id: string; nome: string }
+
+export function ItemTabs({
+  item, userRole, setores,
+}: {
+  item: ItemData;
+  userRole: string;
+  setores: SetorOpt[];
+}) {
   const [activeTab, setActiveTab] = useState("geral");
   const [obsText, setObsText] = useState("");
   const [obsPending, startObsTransition] = useTransition();
+  const [conclPending, startConcl] = useTransition();
   const menorValor = item.orcamentos.reduce(
     (min, o) => o.valor < (min?.valor ?? Infinity) ? o : min,
     item.orcamentos[0]
   );
 
   const fornecedoresOrcamento = item.orcamentos.map((o) => o.fornecedor);
+
+  function handleConcluir() {
+    startConcl(async () => { await marcarConcluido(item.id); });
+  }
 
   function handlePublicar() {
     if (!obsText.trim()) return;
@@ -118,7 +137,7 @@ export function ItemTabs({ item, userRole }: { item: ItemData; userRole: string 
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: 0 }}>
       {/* Tab bar */}
-      <div style={{ display: "flex", borderBottom: "1px solid var(--line)", gap: 0, marginBottom: 18 }}>
+      <div style={{ display: "flex", borderBottom: "1px solid var(--line)", gap: 0, marginBottom: 18, alignItems: "flex-end" }}>
         {TABS.map((t) => {
           const badge = typeof t.badge === "function" ? t.badge(item) : undefined;
           const active = activeTab === t.id;
@@ -138,6 +157,33 @@ export function ItemTabs({ item, userRole }: { item: ItemData; userRole: string 
             </button>
           );
         })}
+        <div style={{ flex: 1 }} />
+        <div style={{ display: "flex", gap: 6, paddingBottom: 6 }}>
+          {userRole !== "FORNECEDOR" && (
+            <EditarItemModal
+              setores={setores}
+              fases={item.fases}
+              item={{
+                id: item.id, numero: item.numero, equipamento: item.equipamento,
+                especificacao: item.especificacao, qtd: item.faseUnicaQtd,
+                siafisico: item.numeroSiafisico ?? null,
+                valorRef: item.valorReferenciaFns,
+                setorId: item.setor?.id ?? null,
+                faseId: item.faseCompra?.id ?? null,
+                presencaEmAta: item.presencaEmAta,
+              }}
+            />
+          )}
+          {item.statusProcesso !== "CONCLUIDO" && userRole !== "FORNECEDOR" && (
+            <button
+              className="btn primary sm"
+              disabled={conclPending}
+              onClick={handleConcluir}
+            >
+              {conclPending ? "…" : "Marcar concluído"}
+            </button>
+          )}
+        </div>
       </div>
 
       {/* Content */}
@@ -918,6 +964,23 @@ function TabContratacao({ item, fornecedores }: { item: ItemData; fornecedores: 
     ? item.contratacao.valor * Number(item.contratacao.multaDiariaPct)
     : null;
 
+  // Calcular atraso automaticamente
+  const { diasAtraso, multaAcumulada } = (() => {
+    const ctr = item.contratacao;
+    if (!ctr?.prazoEntregaDias || !ctr?.dataAssinatura || item.statusProcesso === "ENTREGUE" ||
+        item.statusProcesso === "CONCLUIDO" || item.statusProcesso === "NF_RECEBIDA") {
+      return { diasAtraso: null, multaAcumulada: null };
+    }
+    const assinatura = new Date(ctr.dataAssinatura.split("/").reverse().join("-"));
+    const prazoFim = new Date(assinatura);
+    prazoFim.setDate(prazoFim.getDate() + ctr.prazoEntregaDias);
+    const hoje = new Date();
+    if (hoje <= prazoFim) return { diasAtraso: null, multaAcumulada: null };
+    const dias = Math.floor((hoje.getTime() - prazoFim.getTime()) / 86_400_000);
+    const multa = multaDiaria ? dias * multaDiaria : null;
+    return { diasAtraso: dias, multaAcumulada: multa };
+  })();
+
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
       <div className="card">
@@ -985,6 +1048,25 @@ function TabContratacao({ item, fornecedores }: { item: ItemData; fornecedores: 
                 )}
               </div>
             )}
+
+            {/* Alerta de atraso automático */}
+            {diasAtraso !== null && (
+              <div style={{
+                marginTop: 8, padding: "12px 14px", borderRadius: 8,
+                background: "var(--danger-soft)", border: "1px solid oklch(0.85 0.06 25)",
+                display: "flex", flexDirection: "column", gap: 4,
+              }}>
+                <div style={{ fontSize: 12.5, fontWeight: 600, color: "var(--danger)" }}>
+                  ⚠ Entrega com {diasAtraso} dias de atraso
+                </div>
+                {multaAcumulada !== null && (
+                  <div style={{ fontSize: 12, color: "var(--danger)" }}>
+                    Multa acumulada: <span className="mono" style={{ fontWeight: 700 }}>{fmtBRL(multaAcumulada)}</span>
+                    <span style={{ fontSize: 11, opacity: 0.7 }}> ({fmtBRL(multaDiaria!)}/dia × {diasAtraso} dias)</span>
+                  </div>
+                )}
+              </div>
+            )}
           </div>
         </div>
       )}
@@ -1019,7 +1101,11 @@ function TabEntregas({ item }: { item: ItemData }) {
         <div style={{ fontSize: 11, fontWeight: 600, color: "var(--fg-mid)", textTransform: "uppercase", letterSpacing: "0.04em", marginBottom: 8 }}>
           Evidências de recebimento
         </div>
-        <AnexoUpload itemId={item.id} category="entrega" label="Anexar checklist, foto ou laudo de recebimento" />
+        <AnexoUpload
+          itemId={item.id} category="entrega"
+          label="Anexar checklist, foto ou laudo de recebimento"
+          existing={item.anexosGerais.filter((a) => a.url.includes("/entrega/"))}
+        />
       </div>
     </div>
   );
@@ -1053,7 +1139,11 @@ function TabNotasFiscais({ item }: { item: ItemData }) {
         <div style={{ fontSize: 11, fontWeight: 600, color: "var(--fg-mid)", textTransform: "uppercase", letterSpacing: "0.04em", marginBottom: 8 }}>
           Arquivos da NF
         </div>
-        <AnexoUpload itemId={item.id} category="nf" label="Anexar PDF da nota fiscal" />
+        <AnexoUpload
+          itemId={item.id} category="nf"
+          label="Anexar PDF da nota fiscal"
+          existing={item.anexosGerais.filter((a) => a.url.includes("/nf/"))}
+        />
       </div>
     </div>
   );
@@ -1088,7 +1178,11 @@ function TabTestes({ item }: { item: ItemData }) {
         <div style={{ fontSize: 11, fontWeight: 600, color: "var(--fg-mid)", textTransform: "uppercase", letterSpacing: "0.04em", marginBottom: 8 }}>
           Laudos e evidências
         </div>
-        <AnexoUpload itemId={item.id} category="teste" label="Anexar laudo técnico, checklist ou relatório de teste" />
+        <AnexoUpload
+          itemId={item.id} category="teste"
+          label="Anexar laudo técnico, checklist ou relatório de teste"
+          existing={item.anexosGerais.filter((a) => a.url.includes("/teste/"))}
+        />
       </div>
     </div>
   );

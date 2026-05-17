@@ -6,6 +6,7 @@ import { fmtBRL, fmtNum, STATUS_LABELS } from "@/lib/utils";
 import Link from "next/link";
 import { Decimal } from "@prisma/client/runtime/library";
 import { ItemFilters } from "@/components/ItemFilters";
+import { NovoItemModal } from "@/components/modals/GestaoModals";
 
 export const dynamic = "force-dynamic";
 
@@ -70,9 +71,7 @@ export default async function ItensPage({ searchParams }: { searchParams: Search
               <p>{data.total} equipamentos · Fase Única 2026 · R$ 24,99M referência FNS</p>
             </div>
             <div className="actions">
-              <button className="btn primary">
-                <Icons.Plus style={{ width: 12, height: 12 }} /> Adicionar item
-              </button>
+              <NovoItemModal setores={data.setores} fases={data.fases} />
             </div>
           </div>
 
