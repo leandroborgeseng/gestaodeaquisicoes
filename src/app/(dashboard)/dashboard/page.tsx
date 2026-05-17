@@ -140,7 +140,7 @@ export default async function DashboardPage() {
           </div>
 
           {/* KPI Row */}
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 12, marginBottom: 18 }}>
+          <div className="kpi-grid" style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 12, marginBottom: 18 }}>
             <div className="kpi">
               <div className="label">
                 Itens contratados{" "}

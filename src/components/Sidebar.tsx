@@ -6,6 +6,7 @@ import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { signOut, useSession } from "next-auth/react";
 import { Icons } from "./Icons";
+import { useSidebar } from "./SidebarCtx";
 
 export interface SidebarCounts {
   itens: number;
@@ -83,6 +84,7 @@ function getNav(role: string, c: SidebarCounts): NavGroup[] {
 export function Sidebar({ counts }: { counts: SidebarCounts }) {
   const pathname = usePathname();
   const { data: session } = useSession();
+  const { open, close } = useSidebar();
   const role = session?.user?.role ?? "HOSPITAL";
   const nav = getNav(role, counts);
   const name = session?.user?.name ?? "Usuário";
@@ -95,60 +97,75 @@ export function Sidebar({ counts }: { counts: SidebarCounts }) {
     return pathname.startsWith(base);
   }
 
+  function handleLinkClick() {
+    close();
+  }
+
   return (
-    <aside className="sidebar">
-      <div className="sidebar-brand">
-        <Image src="/aion-engenharia.png" alt="AION Engenharia" width={108} height={36} style={{ display: "block", objectFit: "contain" }} />
-        <div style={{ fontSize: 10.5, color: "var(--fg-dim)", letterSpacing: "0.01em", paddingLeft: 2 }}>
-          Sistema de Aquisição de Equipamentos
-        </div>
-      </div>
+    <>
+      {/* Mobile backdrop */}
+      {open && (
+        <div
+          className="sidebar-backdrop"
+          onClick={close}
+          aria-hidden
+        />
+      )}
 
-      <div className="sidebar-org">
-        <div className="avatar" style={{ background: "var(--bg-soft)", color: "var(--fg-mid)", border: "1px solid var(--line)" }}>3C</div>
-        <div className="label">
-          <b>Hospital Três Colinas</b>
-          <small>Fase Única · 2026</small>
-        </div>
-        <Icons.ChevDown style={{ width: 14, height: 14, color: "var(--fg-faint)" }} />
-      </div>
-
-      <div style={{ flex: 1, overflow: "auto" }}>
-        {nav.map((group, gi) => (
-          <div key={gi} className="nav-section" style={{ marginBottom: 4 }}>
-            {group.heading && <div className="heading">{group.heading}</div>}
-            {group.links.map((l) => (
-              <Link key={l.key} href={l.href} className={`nav-item ${isActive(l.href) ? "active" : ""}`}>
-                <span style={{ width: 15, height: 15, flexShrink: 0, color: isActive(l.href) ? "var(--accent)" : "var(--fg-faint)" }}>
-                  {l.icon}
-                </span>
-                <span>{l.label}</span>
-                {l.count != null && <span className="count">{l.count}</span>}
-              </Link>
-            ))}
-          </div>
-        ))}
-      </div>
-
-      <div className="sidebar-foot">
-        <div className="user-chip">
-          <div className="avatar">{name.split(" ").map((w: string) => w[0]).join("").slice(0, 2).toUpperCase()}</div>
-          <div className="info">
-            <b>{name}</b>
-            <small>{email}</small>
+      <aside className={`sidebar${open ? " sidebar-open" : ""}`}>
+        <div className="sidebar-brand">
+          <Image src="/aion-engenharia.png" alt="AION Engenharia" width={108} height={36} style={{ display: "block", objectFit: "contain" }} />
+          <div style={{ fontSize: 10.5, color: "var(--fg-dim)", letterSpacing: "0.01em", paddingLeft: 2 }}>
+            Sistema de Aquisição de Equipamentos
           </div>
         </div>
-        <div style={{ display: "flex", alignItems: "center", gap: 6, padding: "5px 8px" }}>
-          <span style={{ fontSize: 10.5, color: "var(--fg-faint)", flex: 1 }}>{roleLabel}</span>
-          <button
-            className="btn ghost sm"
-            onClick={() => signOut({ callbackUrl: "/login" })}
-            style={{ height: 22, padding: "0 6px", fontSize: 11 }}
-          >
-            <Icons.Logout style={{ width: 12, height: 12 }} /> Sair
-          </button>
+
+        <div className="sidebar-org">
+          <div className="avatar" style={{ background: "var(--bg-soft)", color: "var(--fg-mid)", border: "1px solid var(--line)" }}>3C</div>
+          <div className="label">
+            <b>Hospital Três Colinas</b>
+            <small>Fase Única · 2026</small>
+          </div>
+          <Icons.ChevDown style={{ width: 14, height: 14, color: "var(--fg-faint)" }} />
         </div>
-      </div>
-    </aside>
+
+        <div style={{ flex: 1, overflow: "auto" }}>
+          {nav.map((group, gi) => (
+            <div key={gi} className="nav-section" style={{ marginBottom: 4 }}>
+              {group.heading && <div className="heading">{group.heading}</div>}
+              {group.links.map((l) => (
+                <Link key={l.key} href={l.href} className={`nav-item ${isActive(l.href) ? "active" : ""}`} onClick={handleLinkClick}>
+                  <span style={{ width: 15, height: 15, flexShrink: 0, color: isActive(l.href) ? "var(--accent)" : "var(--fg-faint)" }}>
+                    {l.icon}
+                  </span>
+                  <span>{l.label}</span>
+                  {l.count != null && <span className="count">{l.count}</span>}
+                </Link>
+              ))}
+            </div>
+          ))}
+        </div>
+
+        <div className="sidebar-foot">
+          <div className="user-chip">
+            <div className="avatar">{name.split(" ").map((w: string) => w[0]).join("").slice(0, 2).toUpperCase()}</div>
+            <div className="info">
+              <b>{name}</b>
+              <small>{email}</small>
+            </div>
+          </div>
+          <div style={{ display: "flex", alignItems: "center", gap: 6, padding: "5px 8px" }}>
+            <span style={{ fontSize: 10.5, color: "var(--fg-faint)", flex: 1 }}>{roleLabel}</span>
+            <button
+              className="btn ghost sm"
+              onClick={() => signOut({ callbackUrl: "/login" })}
+              style={{ height: 22, padding: "0 6px", fontSize: 11 }}
+            >
+              <Icons.Logout style={{ width: 12, height: 12 }} /> Sair
+            </button>
+          </div>
+        </div>
+      </aside>
+    </>
   );
 }

@@ -1,6 +1,7 @@
 import { SessionProvider } from "next-auth/react";
 import { auth } from "@/lib/auth";
 import { Sidebar } from "@/components/Sidebar";
+import { SidebarProvider } from "@/components/SidebarCtx";
 import { prisma } from "@/lib/prisma";
 
 export default async function DashboardLayout({ children }: { children: React.ReactNode }) {
@@ -18,10 +19,12 @@ export default async function DashboardLayout({ children }: { children: React.Re
 
   return (
     <SessionProvider session={session}>
-      <div className="app-shell" style={{ minHeight: "100vh" }}>
-        <Sidebar counts={{ itens, fornecedores, usuarios, entregasPendentes, nfsPendentes, testesPendentes }} />
-        <div className="main">{children}</div>
-      </div>
+      <SidebarProvider>
+        <div className="app-shell" style={{ minHeight: "100vh" }}>
+          <Sidebar counts={{ itens, fornecedores, usuarios, entregasPendentes, nfsPendentes, testesPendentes }} />
+          <div className="main">{children}</div>
+        </div>
+      </SidebarProvider>
     </SessionProvider>
   );
 }

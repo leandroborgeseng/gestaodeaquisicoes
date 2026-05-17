@@ -2,6 +2,7 @@
 
 import { useSession } from "next-auth/react";
 import { Icons } from "./Icons";
+import { useSidebar } from "./SidebarCtx";
 
 interface TopbarProps {
   crumbs: string[];
@@ -14,12 +15,22 @@ function getInitials(name: string): string {
 
 export function Topbar({ crumbs, children }: TopbarProps) {
   const { data: session } = useSession();
+  const { toggle } = useSidebar();
   const name = session?.user?.name ?? "Usuário";
   const role = session?.user?.role ?? "HOSPITAL";
   const roleLabel = role === "ADMIN" ? "Consultoria" : role === "FORNECEDOR" ? "Fornecedor" : "Hospital";
 
   return (
     <div className="topbar">
+      {/* Hambúrguer — só visível no mobile */}
+      <button className="menu-btn" onClick={toggle} aria-label="Menu">
+        <svg width={18} height={18} viewBox="0 0 18 18" fill="none" stroke="currentColor" strokeWidth={1.6} strokeLinecap="round">
+          <line x1="2" y1="4.5" x2="16" y2="4.5" />
+          <line x1="2" y1="9"   x2="16" y2="9" />
+          <line x1="2" y1="13.5" x2="16" y2="13.5" />
+        </svg>
+      </button>
+
       <div className="crumbs">
         {crumbs.map((c, i) => (
           <span key={i} style={{ display: "flex", alignItems: "center", gap: 6 }}>
@@ -30,7 +41,7 @@ export function Topbar({ crumbs, children }: TopbarProps) {
       </div>
       <div className="spacer" />
       {children}
-      <div className="search" style={{ minWidth: 200 }}>
+      <div className="search topbar-search" style={{ minWidth: 200 }}>
         <Icons.Search style={{ width: 13, height: 13 }} />
         <input placeholder="Buscar item, NF, contrato..." />
         <span className="kbd">⌘K</span>
@@ -39,7 +50,7 @@ export function Topbar({ crumbs, children }: TopbarProps) {
         <Icons.Bell style={{ width: 15, height: 15 }} />
         <span style={{ position: "absolute", top: 5, right: 5, width: 6, height: 6, borderRadius: "50%", background: "var(--danger)" }} />
       </button>
-      <div style={{
+      <div className="topbar-user" style={{
         display: "flex", alignItems: "center", gap: 6,
         padding: "3px 4px 3px 8px", border: "1px solid var(--line)",
         borderRadius: 6, background: "var(--bg-panel)",

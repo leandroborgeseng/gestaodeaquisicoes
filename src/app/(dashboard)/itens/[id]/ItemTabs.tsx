@@ -138,7 +138,7 @@ export function ItemTabs({
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: 0 }}>
       {/* Tab bar */}
-      <div style={{ display: "flex", borderBottom: "1px solid var(--line)", gap: 0, marginBottom: 18, alignItems: "flex-end" }}>
+      <div className="tabs-bar" style={{ display: "flex", borderBottom: "1px solid var(--line)", gap: 0, marginBottom: 18, alignItems: "flex-end", overflowX: "auto" }}>
         {TABS.map((t) => {
           const badge = typeof t.badge === "function" ? t.badge(item) : undefined;
           const active = activeTab === t.id;
@@ -188,7 +188,7 @@ export function ItemTabs({
       </div>
 
       {/* Content */}
-      <div style={{ display: "grid", gridTemplateColumns: "minmax(0,1fr) 300px", gap: 16 }}>
+      <div className="item-detail-grid" style={{ display: "grid", gridTemplateColumns: "minmax(0,1fr) 300px", gap: 16 }}>
         <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
           {activeTab === "geral" && <TabGeral item={item} menorValor={menorValor} />}
           {activeTab === "orc" && (

@@ -80,6 +80,7 @@ export default async function ItensPage({ searchParams }: { searchParams: Search
 
           {/* Table */}
           <div className="card" style={{ marginTop: 14 }}>
+            <div className="tbl-scroll">
             <table className="tbl">
               <thead>
                 <tr>
@@ -158,6 +159,7 @@ export default async function ItensPage({ searchParams }: { searchParams: Search
                 })}
               </tbody>
             </table>
+            </div>
 
             {/* Pagination */}
             <div style={{

@@ -131,7 +131,7 @@ export default async function ItemDetailPage({ params }: { params: { id: string 
           </div>
 
           {/* Pipeline */}
-          <div className="card" style={{ marginBottom: 16, padding: "14px 18px" }}>
+          <div className="card pipeline-wrap" style={{ marginBottom: 16, padding: "14px 18px" }}>
             <Pipeline steps={PIPELINE_STEPS} currentStatus={item.statusProcesso} />
           </div>
 

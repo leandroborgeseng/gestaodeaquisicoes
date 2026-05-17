@@ -54,7 +54,7 @@ export function ItemFilters({ current, setores, fases }: Props) {
   }, [router, pathname, q, status, vsRef, setor, fase, prioridade]);
 
   return (
-    <div style={{ display: "flex", gap: 8, alignItems: "center", flexWrap: "wrap" }}>
+    <div className="filters-bar" style={{ display: "flex", gap: 8, alignItems: "center", flexWrap: "wrap" }}>
       <div className="search" style={{ minWidth: 260 }}>
         <Icons.Search style={{ width: 13, height: 13 }} />
         <input

@@ -359,3 +359,121 @@ body {
 .app-shell ::-webkit-scrollbar { width: 6px; height: 6px; }
 .app-shell ::-webkit-scrollbar-thumb { background: var(--line-strong); border-radius: 3px; }
 .app-shell ::-webkit-scrollbar-track { background: transparent; }
+
+/* ── Table scroll wrapper ───────────────────────────────────────── */
+.tbl-scroll { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+
+/* ── Mobile hambúrguer (oculto em desktop) ──────────────────────── */
+.menu-btn {
+  display: none;
+  width: 32px; height: 32px; border-radius: 6px;
+  border: 1px solid var(--line); background: var(--bg-panel);
+  color: var(--fg-mid); align-items: center; justify-content: center;
+  cursor: pointer; flex-shrink: 0;
+}
+
+/* ── Sidebar backdrop (mobile) ──────────────────────────────────── */
+.sidebar-backdrop {
+  position: fixed; inset: 0; z-index: 299;
+  background: oklch(0 0 0 / 0.45);
+  backdrop-filter: blur(2px);
+}
+
+/* ══════════════════════════════════════════════════════════════════
+   RESPONSIVE — ≤ 768px
+══════════════════════════════════════════════════════════════════ */
+@media (max-width: 768px) {
+
+  /* Hambúrguer visível */
+  .menu-btn { display: flex; }
+
+  /* Sidebar vira drawer deslizante */
+  .sidebar {
+    position: fixed;
+    top: 0; left: 0;
+    height: 100dvh;
+    z-index: 300;
+    transform: translateX(-100%);
+    transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: none;
+  }
+  .sidebar.sidebar-open {
+    transform: translateX(0);
+    box-shadow: 4px 0 32px oklch(0 0 0 / 0.18);
+  }
+
+  /* Main ocupa tudo */
+  .main { width: 100%; min-width: 0; }
+
+  /* Topbar */
+  .topbar { padding: 8px 12px; gap: 8px; min-height: 48px; }
+  .topbar-search { display: none; }       /* esconde busca — abre com ⌘K */
+  .topbar-user { display: none; }         /* esconde chip de usuário — já está na sidebar */
+  .crumbs { font-size: 12px; gap: 4px; }
+  .crumbs .sep { display: none; }         /* "3Colinas / Itens" → só "Itens" */
+  .crumbs span:not(:last-child) { display: none; }
+
+  /* Content padding */
+  .content-inner { padding: 14px 12px 72px; }
+
+  /* Page head */
+  .page-head { flex-wrap: wrap; gap: 10px; margin-bottom: 14px; }
+  .page-head .actions { margin-left: 0; width: 100%; flex-wrap: wrap; }
+  .page-head h1 { font-size: 17px; }
+
+  /* KPIs — 2 colunas no mobile */
+  .kpi-grid { grid-template-columns: repeat(2, 1fr) !important; gap: 10px !important; }
+
+  /* Card head — quebra em coluna quando botões são muitos */
+  .card-head { flex-wrap: wrap; gap: 8px; }
+
+  /* Tabelas — scroll horizontal */
+  .card .tbl-scroll,
+  .tbl-scroll { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+  .tbl { min-width: 560px; }              /* garante que a tabela não esmaga */
+
+  /* Dialog — bottom sheet */
+  .dialog-overlay { padding: 0; align-items: flex-end; }
+  .dialog {
+    max-width: 100% !important;
+    border-radius: 16px 16px 0 0;
+    max-height: 92dvh;
+    animation: sheetIn 0.22s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  @keyframes sheetIn {
+    from { transform: translateY(100%); }
+    to   { transform: translateY(0); }
+  }
+
+  /* Filters — empilha verticalmente */
+  .filters-bar { flex-direction: column !important; align-items: stretch !important; }
+  .filters-bar .search { min-width: 0 !important; width: 100%; }
+  .filters-bar select { width: 100%; height: 36px !important; }
+
+  /* Pipeline — scroll horizontal */
+  .pipeline-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; padding-bottom: 4px; }
+  .pipeline-wrap > div { min-width: 560px; }
+
+  /* Tabs — scroll horizontal */
+  .tabs-bar { overflow-x: auto; -webkit-overflow-scrolling: touch; gap: 2px; }
+  .tabs-bar button { flex-shrink: 0; }
+
+  /* Grids de 2 ou 3 colunas → 1 coluna */
+  .grid-cols-2,
+  .grid-cols-3 { grid-template-columns: 1fr !important; }
+
+  /* Item detail: main + rail → coluna única */
+  .item-detail-grid { grid-template-columns: 1fr !important; }
+
+  /* Botões sm ficam um pouco maiores (toque) */
+  .btn.sm { height: 32px; padding: 0 12px; font-size: 12px; }
+}
+
+/* ══════════════════════════════════════════════════════════════════
+   RESPONSIVE — ≤ 480px (phones pequenos)
+══════════════════════════════════════════════════════════════════ */
+@media (max-width: 480px) {
+  .content-inner { padding: 12px 10px 80px; }
+  .kpi-grid { grid-template-columns: 1fr !important; }
+  .kpi .value { font-size: 20px; }
+}
