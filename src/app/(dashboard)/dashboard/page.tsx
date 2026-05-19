@@ -60,7 +60,7 @@ async function getFinanceChartData(): Promise<{ mes: string; valor: number }[]> 
 
 async function getDashboardData() {
   const now = new Date();
-  const [totalItems, byStatus, recentLogs, totalValueAgg, contratacoes, acimaValor, atrasados, aguardandoAprovacao, propostasVencidas, porCategoria] = await Promise.all([
+  const [totalItems, byStatus, recentLogs, totalValueAgg, contratacoes, atrasados, aguardandoAprovacao, propostasVencidas, porCategoria, itensFns] = await Promise.all([
     prisma.item.count(),
     prisma.item.groupBy({ by: ["statusProcesso"], _count: { id: true } }),
     prisma.log.findMany({
@@ -77,11 +77,19 @@ async function getDashboardData() {
       },
       where: { valorContratado: { not: null } },
     }),
-    prisma.item.count({ where: { statusVsReferenciaFns: "ACIMA_DO_VALOR" } }),
     prisma.entrega.count({ where: { dataPrevisao: { lt: now }, dataEntrega: null } }),
     prisma.item.count({ where: { aprovado: false, statusProcesso: { notIn: ["CANCELADO", "CONCLUIDO"] } } }),
     prisma.orcamento.count({ where: { validadeAte: { lt: now }, vencedor: false } }),
     prisma.item.groupBy({ by: ["categoria"], _count: { id: true } }),
+    // Dados para análise FNS: todos os itens com valor de referência e cotação
+    prisma.item.findMany({
+      select: {
+        statusVsReferenciaFns: true,
+        valorReferenciaFns: true,
+        faseUnicaQtd: true,
+        faseUnicaValorTotal: true,
+      },
+    }),
   ]);
 
   const contratadosTotal = byStatus
@@ -106,6 +114,41 @@ async function getDashboardData() {
     MOBILIARIO:       porCategoria.find(c => c.categoria === "MOBILIARIO")?._count.id        ?? 0,
   };
 
+  // ── Análise vs. Tabela FNS ────────────────────────────────────────────────
+  let abaixoCount = 0, abaixoValorCotado = 0, abaixoValorRef = 0;
+  let acimaCount  = 0, acimaValorCotado  = 0, acimaValorRef  = 0;
+  let totalFnsRef = 0, totalMelhorCotacao = 0;
+
+  for (const it of itensFns) {
+    const ref = it.valorReferenciaFns ? Number(it.valorReferenciaFns) * (it.faseUnicaQtd ?? 1) : 0;
+    const melhor = Number(it.faseUnicaValorTotal ?? 0);
+
+    if (ref > 0) totalFnsRef += ref;
+    if (melhor > 0) totalMelhorCotacao += melhor;
+
+    if (it.statusVsReferenciaFns === "ABAIXO_DO_VALOR" && melhor > 0 && ref > 0) {
+      abaixoCount++;
+      abaixoValorCotado += melhor;
+      abaixoValorRef    += ref;
+    } else if (it.statusVsReferenciaFns === "ACIMA_DO_VALOR" && melhor > 0 && ref > 0) {
+      acimaCount++;
+      acimaValorCotado += melhor;
+      acimaValorRef    += ref;
+    }
+  }
+
+  const economiaAbaixo  = abaixoValorRef  - abaixoValorCotado;   // quanto poupou nos abaixo
+  const excessoAcima    = acimaValorCotado - acimaValorRef;       // quanto gastará a mais nos acima
+  const economiaiLiquida = economiaAbaixo - excessoAcima;         // saldo líquido
+
+  // Saldo disponível = verba FNS total - melhor cotação total (itens cotados) - ref FNS (itens sem cotação)
+  // Simplificado: totalFnsRef - totalMelhorCotacao (diferença entre envelope FNS e melhor proposta conhecida)
+  const saldoDisponivel = totalFnsRef > 0 && totalMelhorCotacao > 0
+    ? totalFnsRef - totalMelhorCotacao
+    : null;
+
+  const acimaValor = acimaCount; // mantém compatibilidade com alertas
+
   return {
     totalItems,
     byStatus,
@@ -120,6 +163,17 @@ async function getDashboardData() {
     propostasVencidas,
     recentLogs,
     catCount,
+    // FNS analysis
+    abaixoCount,
+    abaixoValorCotado,
+    economiaAbaixo,
+    acimaCount,
+    acimaValorCotado,
+    excessoAcima,
+    economiaiLiquida,
+    totalFnsRef,
+    totalMelhorCotacao,
+    saldoDisponivel,
   };
 }
 
@@ -315,6 +369,117 @@ export default async function DashboardPage() {
                 </div>
               </a>
             ))}
+          </div>
+
+          {/* ── Análise vs. Tabela FNS ── */}
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 10, marginBottom: 14 }}>
+
+            {/* Abaixo da tabela */}
+            <div style={{
+              padding: "14px 16px", borderRadius: 8,
+              background: "oklch(0.96 0.04 145)", border: "1px solid oklch(0.84 0.08 145)",
+            }}>
+              <div style={{ display: "flex", alignItems: "center", gap: 6, marginBottom: 10 }}>
+                <span style={{ fontSize: 15 }}>↓</span>
+                <span style={{ fontSize: 11, fontWeight: 600, color: "oklch(0.38 0.10 145)", textTransform: "uppercase", letterSpacing: "0.04em" }}>
+                  Abaixo da tabela FNS
+                </span>
+              </div>
+              <div style={{ fontSize: 22, fontWeight: 700, letterSpacing: "-0.02em", color: "oklch(0.38 0.10 145)", lineHeight: 1 }}>
+                {fmtNum(data.abaixoCount)} <small style={{ fontSize: 13, fontWeight: 500 }}>itens</small>
+              </div>
+              <div style={{ marginTop: 8, fontSize: 12.5, fontWeight: 600, color: "oklch(0.38 0.10 145)" }}>
+                {fmtBRL(data.abaixoValorCotado)}
+              </div>
+              <div style={{ fontSize: 11, color: "oklch(0.45 0.09 145)", marginTop: 2 }}>
+                valor total das cotações
+              </div>
+            </div>
+
+            {/* Acima da tabela */}
+            <div style={{
+              padding: "14px 16px", borderRadius: 8,
+              background: "oklch(0.97 0.03 25)", border: "1px solid oklch(0.88 0.06 25)",
+            }}>
+              <div style={{ display: "flex", alignItems: "center", gap: 6, marginBottom: 10 }}>
+                <span style={{ fontSize: 15 }}>↑</span>
+                <span style={{ fontSize: 11, fontWeight: 600, color: "oklch(0.48 0.14 25)", textTransform: "uppercase", letterSpacing: "0.04em" }}>
+                  Acima da tabela FNS
+                </span>
+              </div>
+              <div style={{ fontSize: 22, fontWeight: 700, letterSpacing: "-0.02em", color: "oklch(0.48 0.14 25)", lineHeight: 1 }}>
+                {fmtNum(data.acimaCount)} <small style={{ fontSize: 13, fontWeight: 500 }}>itens</small>
+              </div>
+              <div style={{ marginTop: 8, fontSize: 12.5, fontWeight: 600, color: "oklch(0.48 0.14 25)" }}>
+                {fmtBRL(data.acimaValorCotado)}
+              </div>
+              <div style={{ fontSize: 11, color: "oklch(0.52 0.12 25)", marginTop: 2 }}>
+                {data.excessoAcima > 0 ? `+${fmtBRL(data.excessoAcima)} acima da ref. FNS` : "valor total das cotações"}
+              </div>
+            </div>
+
+            {/* Economia líquida */}
+            <div style={{
+              padding: "14px 16px", borderRadius: 8,
+              background: data.economiaiLiquida >= 0 ? "oklch(0.96 0.04 145)" : "oklch(0.97 0.03 25)",
+              border: `1px solid ${data.economiaiLiquida >= 0 ? "oklch(0.84 0.08 145)" : "oklch(0.88 0.06 25)"}`,
+            }}>
+              <div style={{ display: "flex", alignItems: "center", gap: 6, marginBottom: 10 }}>
+                <span style={{ fontSize: 15 }}>≈</span>
+                <span style={{ fontSize: 11, fontWeight: 600, color: "var(--fg-dim)", textTransform: "uppercase", letterSpacing: "0.04em" }}>
+                  Economia líquida
+                </span>
+              </div>
+              <div style={{
+                fontSize: 22, fontWeight: 700, letterSpacing: "-0.02em", lineHeight: 1,
+                color: data.economiaiLiquida >= 0 ? "oklch(0.38 0.10 145)" : "oklch(0.48 0.14 25)",
+              }}>
+                {data.economiaiLiquida >= 0 ? "" : "−"}{fmtBRL(Math.abs(data.economiaiLiquida))}
+              </div>
+              <div style={{ marginTop: 8, fontSize: 11, color: "var(--fg-dim)" }}>
+                economia (↓) menos excesso (↑)
+              </div>
+              {data.totalFnsRef > 0 && (
+                <div style={{ marginTop: 4, fontSize: 10.5, color: "var(--fg-faint)" }}>
+                  {((Math.abs(data.economiaiLiquida) / data.totalFnsRef) * 100).toFixed(1)}% da verba FNS
+                </div>
+              )}
+            </div>
+
+            {/* Saldo disponível */}
+            <div style={{
+              padding: "14px 16px", borderRadius: 8,
+              background: "var(--accent-soft)", border: "1px solid var(--accent-line)",
+            }}>
+              <div style={{ display: "flex", alignItems: "center", gap: 6, marginBottom: 10 }}>
+                <span style={{ fontSize: 15 }}>◎</span>
+                <span style={{ fontSize: 11, fontWeight: 600, color: "var(--accent)", textTransform: "uppercase", letterSpacing: "0.04em" }}>
+                  Saldo disponível
+                </span>
+              </div>
+              <div style={{ fontSize: 22, fontWeight: 700, letterSpacing: "-0.02em", lineHeight: 1, color: "var(--accent)" }}>
+                {data.saldoDisponivel != null
+                  ? fmtBRL(Math.max(0, data.saldoDisponivel))
+                  : <span style={{ fontSize: 16, color: "var(--fg-faint)" }}>—</span>}
+              </div>
+              <div style={{ marginTop: 8, fontSize: 11, color: "var(--fg-dim)" }}>
+                verba FNS − melhor cotação
+              </div>
+              {data.totalFnsRef > 0 && data.totalMelhorCotacao > 0 && (
+                <div style={{ marginTop: 6 }}>
+                  <div style={{ height: 3, borderRadius: 2, background: "var(--bg-soft)", overflow: "hidden" }}>
+                    <div style={{
+                      height: "100%", borderRadius: 2, background: "var(--accent)",
+                      width: `${Math.min(100, (data.totalMelhorCotacao / data.totalFnsRef) * 100)}%`,
+                    }} />
+                  </div>
+                  <div style={{ fontSize: 10.5, color: "var(--fg-faint)", marginTop: 3 }}>
+                    {((data.totalMelhorCotacao / data.totalFnsRef) * 100).toFixed(1)}% da verba FNS comprometido
+                  </div>
+                </div>
+              )}
+            </div>
+
           </div>
 
           {/* KPI Row */}
