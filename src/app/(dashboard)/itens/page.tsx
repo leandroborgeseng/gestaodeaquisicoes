@@ -14,6 +14,7 @@ export const dynamic = "force-dynamic";
 interface SearchParams {
   status?: string; q?: string; page?: string; vsRef?: string;
   setor?: string; fase?: string; prioridade?: string; categoria?: string;
+  sort?: string; order?: string;
 }
 
 const CAT_TABS = [
@@ -52,10 +53,21 @@ async function getItems(params: SearchParams) {
     ];
   }
 
+  // Ordenação
+  const sort  = params.sort  ?? "numero";
+  const order = (params.order === "desc" ? "desc" : "asc") as "asc" | "desc";
+  const ORDER_MAP: Record<string, Record<string, unknown>> = {
+    numero:   { numero: order },
+    valor:    { faseUnicaValorTotal: order },
+    qtd:      { faseUnicaQtd: order },
+    vsref:    { menorValorUnitario: order },
+  };
+  const orderBy = ORDER_MAP[sort] ?? { numero: "asc" };
+
   const [items, total, setores, fases] = await Promise.all([
     prisma.item.findMany({
       where, skip, take,
-      orderBy: { numero: "asc" },
+      orderBy,
       include: {
         setor: true,
         faseCompra: { select: { id: true, nome: true } },
@@ -67,7 +79,7 @@ async function getItems(params: SearchParams) {
     prisma.faseCompra.findMany({ orderBy: { ordem: "asc" }, select: { id: true, nome: true } }),
   ]);
 
-  return { items, total, page, pages: Math.ceil(total / take), setores, fases };
+  return { items, total, page, pages: Math.ceil(total / take), setores, fases, sort, order };
 }
 
 export default async function ItensPage({ searchParams }: { searchParams: SearchParams }) {
@@ -144,13 +156,13 @@ export default async function ItensPage({ searchParams }: { searchParams: Search
             <table className="tbl">
               <thead>
                 <tr>
-                  <th style={{ width: 80 }}>Nº</th>
+                  <SortTh col="numero"  label="Nº"          sort={data.sort} order={data.order} sp={searchParams} style={{ width: 80 }} />
                   <th>Equipamento</th>
                   <th style={{ width: 160 }}>Status</th>
                   <th>Fornecedor</th>
-                  <th style={{ textAlign: "right", width: 100 }}>Qtd</th>
-                  <th style={{ textAlign: "right", width: 140 }}>Valor total</th>
-                  <th style={{ textAlign: "right", width: 120 }}>Vs FNS</th>
+                  <SortTh col="qtd"    label="Qtd"         sort={data.sort} order={data.order} sp={searchParams} style={{ textAlign: "right", width: 100 }} />
+                  <SortTh col="valor"  label="Valor total" sort={data.sort} order={data.order} sp={searchParams} style={{ textAlign: "right", width: 140 }} />
+                  <SortTh col="vsref"  label="Vs FNS"      sort={data.sort} order={data.order} sp={searchParams} style={{ textAlign: "right", width: 120 }} />
                   <th style={{ width: 60 }}></th>
                 </tr>
               </thead>
@@ -260,6 +272,46 @@ export default async function ItensPage({ searchParams }: { searchParams: Search
         </div>
       </div>
     </>
+  );
+}
+
+function SortTh({
+  col, label, sort, order, sp, style,
+}: {
+  col: string; label: string; sort: string; order: string;
+  sp: SearchParams; style?: React.CSSProperties;
+}) {
+  const active   = sort === col;
+  const nextOrder = active && order === "asc" ? "desc" : "asc";
+  const params   = new URLSearchParams({
+    ...(sp.status     ? { status: sp.status }         : {}),
+    ...(sp.q          ? { q: sp.q }                   : {}),
+    ...(sp.vsRef      ? { vsRef: sp.vsRef }            : {}),
+    ...(sp.setor      ? { setor: sp.setor }            : {}),
+    ...(sp.fase       ? { fase: sp.fase }              : {}),
+    ...(sp.prioridade ? { prioridade: sp.prioridade }  : {}),
+    ...(sp.categoria  ? { categoria: sp.categoria }    : {}),
+    sort: col,
+    order: nextOrder,
+  });
+
+  return (
+    <th style={style}>
+      <Link
+        href={`/itens?${params.toString()}`}
+        style={{
+          display: "inline-flex", alignItems: "center", gap: 4,
+          color: active ? "var(--fg)" : "var(--fg-dim)",
+          textDecoration: "none", fontWeight: active ? 600 : 500,
+          userSelect: "none",
+        }}
+      >
+        {label}
+        <span style={{ fontSize: 10, opacity: active ? 1 : 0.35, lineHeight: 1 }}>
+          {active ? (order === "asc" ? "↑" : "↓") : "↕"}
+        </span>
+      </Link>
+    </th>
   );
 }
 
