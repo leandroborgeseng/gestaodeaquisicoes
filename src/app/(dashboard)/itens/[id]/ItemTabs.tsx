@@ -8,6 +8,7 @@ import {
   atualizarDescritivoTecnico,
   marcarOrcamentoVencedor,
   adicionarOrcamento,
+  adicionarCotacaoConsultiva,
   removerOrcamento,
   salvarPatrimonio,
   atribuirSetor,
@@ -60,6 +61,7 @@ interface ItemData {
     data: string | null;
     cotacaoUrl: string | null;
     vencedor: boolean;
+    consultiva: boolean;
     validadeAte: string | null;
     anexos: { id: string; nomeOriginal: string; url: string; tamanho: number; mimeType: string }[];
   }[];
@@ -1043,11 +1045,12 @@ function guessMime(nome: string): string {
   return map[ext] ?? "application/octet-stream";
 }
 
-function OrcamentoRow({ o, item, removing, onRemove }: {
+function OrcamentoRow({ o, item, removing, onRemove, cellOnly = false }: {
   o: ItemData["orcamentos"][0];
   item: ItemData;
   removing: boolean;
   onRemove: (id: string) => void;
+  cellOnly?: boolean;
 }) {
   const hadLocal = o.anexos.length > 0;
 
@@ -1165,6 +1168,11 @@ function OrcamentoRow({ o, item, removing, onRemove }: {
     );
   }
 
+  // Modo cellOnly: só renderiza o conteúdo de arquivos (usado na tabela de cotações consultivas)
+  if (cellOnly) {
+    return <FilesCell />;
+  }
+
   return (
     <tr style={{ background: o.vencedor ? "var(--ok-soft)" : undefined }}>
       <td className="num">0{o.numero}</td>
@@ -1189,7 +1197,23 @@ function OrcamentoRow({ o, item, removing, onRemove }: {
 
       {/* ── Coluna de arquivos com status ── */}
       <td style={{ minWidth: 240, verticalAlign: "middle" }}>
-        {showUrlInput ? (
+        <FilesCell />
+      </td>
+
+      <td>
+        <button
+          className="btn ghost sm"
+          style={{ fontSize: 10.5, height: 22, padding: "0 7px", color: "var(--danger)" }}
+          disabled={removing}
+          onClick={() => onRemove(o.id)}
+          title="Remover cotação"
+        >×</button>
+      </td>
+    </tr>
+  );
+
+  function FilesCell() {
+    return showUrlInput ? (
           <UrlInputInline />
         ) : status === "baixando" ? (
           <div style={{ display: "flex", alignItems: "center", gap: 7, padding: "4px 0" }}>
@@ -1300,22 +1324,8 @@ function OrcamentoRow({ o, item, removing, onRemove }: {
               compact
             />
           </div>
-        )}
-      </td>
-
-      <td>
-        <button
-          className="btn ghost sm"
-          style={{ fontSize: 10.5, height: 22, padding: "0 7px", color: "var(--danger)" }}
-          disabled={removing}
-          onClick={() => onRemove(o.id)}
-          title="Remover cotação"
-        >
-          ×
-        </button>
-      </td>
-    </tr>
-  );
+        );
+  }
 }
 
 function TabOrcamentos({ item, menorValor, fornecedoresList }: {
@@ -1323,24 +1333,54 @@ function TabOrcamentos({ item, menorValor, fornecedoresList }: {
   menorValor: typeof item.orcamentos[0] | undefined;
   fornecedoresList: { id: string; nome: string }[];
 }) {
-  const [adding, startAdd] = useTransition();
-  const [removing, startRemove] = useTransition();
-  const [showForm, setShowForm] = useState(false);
-  const [addError, setAddError] = useState("");
+  const [adding, startAdd]           = useTransition();
+  const [addingConsult, startConsult] = useTransition();
+  const [removing, startRemove]      = useTransition();
+  const [showForm, setShowForm]       = useState(false);
+  const [showConsultForm, setShowConsultForm] = useState(false);
+  const [addError, setAddError]       = useState("");
+  const [consultError, setConsultError] = useState("");
 
-  const total = item.orcamentos.length;
+  // Separar cotações normais (hospital) das consultivas (AION)
+  const orcHospital   = item.orcamentos.filter((o) => !o.consultiva);
+  const orcConsultiva = item.orcamentos.filter((o) => o.consultiva);
+
+  const total      = orcHospital.length;
   const temVencedor = total >= 3;
-  const melhorValor = menorValor?.valor ?? null;
-  const valorContratado = item.contratacao?.valor ?? null;
-  const valorRef = item.valorReferenciaFns ? item.valorReferenciaFns * item.faseUnicaQtd : null;
-  const melhorTotal = melhorValor ? melhorValor * item.faseUnicaQtd : null;
-  const savingMercado    = valorRef && melhorTotal      ? valorRef    - melhorTotal    : null;
-  const savingNegociacao = melhorTotal && valorContratado ? melhorTotal - valorContratado : null;
-  const savingTotal      = valorRef && valorContratado   ? valorRef    - valorContratado  : null;
 
-  // Fornecedores que ainda não têm orçamento neste item (compara por ID)
-  const jaUsados = new Set(item.orcamentos.map((o) => o.fornecedorId));
-  const disponiveis = fornecedoresList.filter((f) => !jaUsados.has(f.id));
+  // Melhor preço do hospital (vencedor ou menor entre os normais)
+  const menorHospital = orcHospital.reduce<typeof item.orcamentos[0] | undefined>(
+    (min, o) => o.valor < (min?.valor ?? Infinity) ? o : min,
+    undefined,
+  );
+  const melhorValorHospital = menorHospital?.valor ?? null;
+
+  // Melhor cotação consultiva
+  const menorConsultiva = orcConsultiva.reduce<typeof item.orcamentos[0] | undefined>(
+    (min, o) => o.valor < (min?.valor ?? Infinity) ? o : min,
+    undefined,
+  );
+  const melhorValorConsultiva = menorConsultiva?.valor ?? null;
+
+  const valorContratado = item.contratacao?.valor ?? null;
+  const valorRef    = item.valorReferenciaFns ? item.valorReferenciaFns * item.faseUnicaQtd : null;
+  const melhorTotal = melhorValorHospital ? melhorValorHospital * item.faseUnicaQtd : null;
+  const consultTotal = melhorValorConsultiva ? melhorValorConsultiva * item.faseUnicaQtd : null;
+
+  const savingMercado    = valorRef && melhorTotal ? valorRef - melhorTotal : null;
+  const savingConsultivo = melhorTotal && consultTotal ? melhorTotal - consultTotal : null;  // hospital → consultiva
+  const savingNegociacao = (consultTotal ?? melhorTotal) != null && valorContratado
+    ? (consultTotal ?? melhorTotal)! - valorContratado : null;
+  const savingTotal      = valorRef && valorContratado ? valorRef - valorContratado : null;
+
+  const jaUsadosHospital = new Set(orcHospital.map((o) => o.fornecedorId));
+  const disponiveis = fornecedoresList.filter((f) => !jaUsadosHospital.has(f.id));
+
+  const inputStyle: React.CSSProperties = {
+    width: "100%", padding: "6px 8px", fontSize: 13,
+    border: "1px solid var(--line)", borderRadius: 5,
+    background: "var(--bg)", color: "var(--fg)",
+  };
 
   function handleAdd(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -1352,29 +1392,34 @@ function TabOrcamentos({ item, menorValor, fornecedoresList }: {
     });
   }
 
+  function handleAddConsultiva(e: React.FormEvent<HTMLFormElement>) {
+    e.preventDefault();
+    const fd = new FormData(e.currentTarget);
+    setConsultError("");
+    startConsult(async () => {
+      const res = await adicionarCotacaoConsultiva(item.id, fd);
+      if ("error" in res) { setConsultError(String(res.error)); } else { setShowConsultForm(false); }
+    });
+  }
+
   function handleRemove(orcId: string) {
     startRemove(async () => { await removerOrcamento(orcId, item.id); });
   }
 
-  const inputStyle: React.CSSProperties = {
-    width: "100%", padding: "6px 8px", fontSize: 13,
-    border: "1px solid var(--line)", borderRadius: 5,
-    background: "var(--bg)", color: "var(--fg)",
-  };
-
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
-      {/* Progresso */}
+
+      {/* ── Cotações do Hospital ─────────────────────────────────────── */}
       <div className="card">
         <div className="card-head">
-          <h3>Cotações coletadas</h3>
+          <h3>Cotações do hospital</h3>
           <div className="spacer" />
           <span style={{ fontSize: 12, color: temVencedor ? "var(--ok)" : "var(--fg-dim)", fontWeight: 600 }}>
             {total}/3 {temVencedor ? "✓ Completo" : "— aguardando"}
           </span>
         </div>
-        {/* Barra de progresso */}
-        <div style={{ height: 4, background: "var(--line-soft)", margin: "0 0 0 0" }}>
+
+        <div style={{ height: 4, background: "var(--line-soft)" }}>
           <div style={{
             height: "100%",
             width: `${Math.min(total / 3, 1) * 100}%`,
@@ -1385,26 +1430,22 @@ function TabOrcamentos({ item, menorValor, fornecedoresList }: {
 
         {temVencedor && (
           <div style={{
-            padding: "10px 14px",
-            background: "var(--ok-soft)",
+            padding: "10px 14px", background: "var(--ok-soft)",
             borderBottom: "1px solid var(--line-soft)",
             display: "flex", alignItems: "center", gap: 8, fontSize: 12.5,
           }}>
             <span style={{ color: "var(--ok)", fontWeight: 700 }}>✓</span>
             <span>
-              Vencedor automático (menor preço):{" "}
-              <strong>{menorValor?.fornecedor}</strong>{" "}
-              com <strong>{fmtBRL(menorValor!.valor)}</strong> por unidade
+              Melhor proposta do hospital:{" "}
+              <strong>{menorHospital?.fornecedor}</strong>{" "}
+              com <strong>{fmtBRL(menorHospital!.valor)}</strong>/un
             </span>
           </div>
         )}
 
         {!temVencedor && (
-          <div style={{
-            padding: "8px 14px", fontSize: 12,
-            color: "var(--fg-dim)", borderBottom: "1px solid var(--line-soft)",
-          }}>
-            Adicione {3 - total} cotação{3 - total !== 1 ? "ões" : ""} para concluir a fase e eleger o vencedor automaticamente.
+          <div style={{ padding: "8px 14px", fontSize: 12, color: "var(--fg-dim)", borderBottom: "1px solid var(--line-soft)" }}>
+            Adicione {3 - total} cotação{3 - total !== 1 ? "ões" : ""} para concluir e eleger o vencedor automaticamente.
           </div>
         )}
 
@@ -1421,16 +1462,10 @@ function TabOrcamentos({ item, menorValor, fornecedoresList }: {
             </tr>
           </thead>
           <tbody>
-            {item.orcamentos.map((o) => (
-              <OrcamentoRow
-                key={o.numero}
-                o={o}
-                item={item}
-                removing={removing}
-                onRemove={handleRemove}
-              />
+            {orcHospital.map((o) => (
+              <OrcamentoRow key={o.id} o={o} item={item} removing={removing} onRemove={handleRemove} />
             ))}
-            {item.orcamentos.length === 0 && (
+            {orcHospital.length === 0 && (
               <tr>
                 <td colSpan={7} style={{ padding: "20px 12px", color: "var(--fg-faint)", fontSize: 12.5 }}>
                   Nenhuma cotação registrada. Adicione ao menos 3 para eleger o vencedor.
@@ -1440,84 +1475,233 @@ function TabOrcamentos({ item, menorValor, fornecedoresList }: {
           </tbody>
         </table>
 
-        {/* Formulário de adição */}
         {total < 3 && !showForm && (
           <div style={{ padding: "10px 14px", borderTop: "1px solid var(--line-soft)" }}>
-            <button className="btn ghost sm" onClick={() => setShowForm(true)}>
-              + Adicionar cotação
-            </button>
+            <button className="btn ghost sm" onClick={() => setShowForm(true)}>+ Adicionar cotação</button>
           </div>
         )}
 
         {showForm && (
-          <form onSubmit={handleAdd} style={{
-            padding: "14px", borderTop: "1px solid var(--line-soft)",
-            display: "flex", flexDirection: "column", gap: 10,
-          }}>
+          <form onSubmit={handleAdd} style={{ padding: 14, borderTop: "1px solid var(--line-soft)", display: "flex", flexDirection: "column", gap: 10 }}>
             <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 10 }}>
               <div>
-                <label style={{ fontSize: 11, color: "var(--fg-dim)", display: "block", marginBottom: 4 }}>
-                  Fornecedor *
-                </label>
+                <label style={{ fontSize: 11, color: "var(--fg-dim)", display: "block", marginBottom: 4 }}>Fornecedor *</label>
                 <select name="fornecedorId" required style={inputStyle}>
                   <option value="">Selecione…</option>
-                  {disponiveis.map((f) => (
-                    <option key={f.id} value={f.id}>{f.nome}</option>
-                  ))}
+                  {disponiveis.map((f) => <option key={f.id} value={f.id}>{f.nome}</option>)}
                 </select>
               </div>
               <div>
-                <label style={{ fontSize: 11, color: "var(--fg-dim)", display: "block", marginBottom: 4 }}>
-                  Valor unitário (R$) *
-                </label>
+                <label style={{ fontSize: 11, color: "var(--fg-dim)", display: "block", marginBottom: 4 }}>Valor unitário (R$) *</label>
                 <input name="valor" required placeholder="0,00" inputMode="decimal" style={inputStyle} />
               </div>
               <div>
-                <label style={{ fontSize: 11, color: "var(--fg-dim)", display: "block", marginBottom: 4 }}>
-                  Data do orçamento
-                </label>
+                <label style={{ fontSize: 11, color: "var(--fg-dim)", display: "block", marginBottom: 4 }}>Data do orçamento</label>
                 <input name="data" type="date" style={inputStyle} />
               </div>
             </div>
             <div>
-              <label style={{ fontSize: 11, color: "var(--fg-dim)", display: "block", marginBottom: 4 }}>
-                Link do documento (opcional)
-              </label>
+              <label style={{ fontSize: 11, color: "var(--fg-dim)", display: "block", marginBottom: 4 }}>Link do documento (opcional)</label>
               <input name="cotacaoUrl" type="url" placeholder="https://…" style={inputStyle} />
             </div>
             {addError && <p style={{ margin: 0, fontSize: 12, color: "var(--danger)" }}>{addError}</p>}
             <div style={{ display: "flex", gap: 8 }}>
-              <button type="submit" className="btn primary sm" disabled={adding}>
-                {adding ? "Salvando…" : "Salvar cotação"}
-              </button>
-              <button type="button" className="btn ghost sm" onClick={() => { setShowForm(false); setAddError(""); }}>
-                Cancelar
-              </button>
+              <button type="submit" className="btn primary sm" disabled={adding}>{adding ? "Salvando…" : "Salvar cotação"}</button>
+              <button type="button" className="btn ghost sm" onClick={() => { setShowForm(false); setAddError(""); }}>Cancelar</button>
             </div>
             {disponiveis.length === 0 && (
               <p style={{ margin: 0, fontSize: 11.5, color: "var(--fg-dim)" }}>
-                Todos os fornecedores cadastrados já enviaram cotação. Cadastre novos fornecedores em{" "}
-                <a href="/fornecedores" style={{ color: "var(--accent)" }}>Fornecedores</a>.
+                Todos os fornecedores já enviaram cotação.{" "}
+                <a href="/fornecedores" style={{ color: "var(--accent)" }}>Cadastre novos</a>.
               </p>
             )}
           </form>
         )}
       </div>
 
-      {/* Saving 3 camadas */}
+      {/* ── Cotação Consultiva AION ──────────────────────────────────── */}
+      <div className="card" style={{ border: "1px solid oklch(0.82 0.08 250)" }}>
+        <div className="card-head" style={{ background: "oklch(0.97 0.03 250)" }}>
+          <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+            <span style={{
+              display: "inline-flex", padding: "2px 8px", borderRadius: 4, fontSize: 10.5, fontWeight: 700,
+              background: "oklch(0.62 0.12 250)", color: "#fff", letterSpacing: "0.04em",
+            }}>AION</span>
+            <h3 style={{ margin: 0 }}>Cotação consultiva</h3>
+          </div>
+          <div className="spacer" />
+          {melhorValorConsultiva && melhorValorHospital && (
+            <span style={{ fontSize: 11.5, fontWeight: 600, color: melhorValorConsultiva < melhorValorHospital ? "var(--ok)" : "var(--danger)" }}>
+              {melhorValorConsultiva < melhorValorHospital
+                ? `−${fmtBRL(melhorValorHospital - melhorValorConsultiva)}/un vs hospital`
+                : `+${fmtBRL(melhorValorConsultiva - melhorValorHospital)}/un vs hospital`}
+            </span>
+          )}
+        </div>
+
+        {/* Banner de economia consultiva */}
+        {savingConsultivo !== null && savingConsultivo > 0 && (
+          <div style={{
+            padding: "10px 16px", borderBottom: "1px solid oklch(0.82 0.08 250)",
+            background: "oklch(0.96 0.04 145)",
+            display: "flex", alignItems: "center", gap: 12, fontSize: 12.5,
+          }}>
+            <span style={{ fontSize: 18 }}>💡</span>
+            <div>
+              <span style={{ fontWeight: 600, color: "var(--ok)" }}>
+                Economia adicional de {fmtBRL(savingConsultivo * item.faseUnicaQtd)}
+              </span>
+              <span style={{ color: "var(--fg-dim)" }}>
+                {" "}({fmtBRL(savingConsultivo)}/un × {item.faseUnicaQtd} un){" "}
+                em relação ao melhor preço do hospital
+              </span>
+            </div>
+          </div>
+        )}
+
+        <table className="tbl">
+          <thead>
+            <tr>
+              <th style={{ width: 36 }}>#</th>
+              <th>Fornecedor</th>
+              <th>Data</th>
+              <th style={{ textAlign: "right" }}>Unitário</th>
+              <th style={{ textAlign: "right" }}>Total ({item.faseUnicaQtd} un)</th>
+              <th style={{ textAlign: "right" }}>Δ vs hospital</th>
+              <th>Arquivos</th>
+              <th style={{ width: 40 }}></th>
+            </tr>
+          </thead>
+          <tbody>
+            {orcConsultiva.map((o) => {
+              const deltaUnit = melhorValorHospital != null ? o.valor - melhorValorHospital : null;
+              const deltaTotal = deltaUnit != null ? deltaUnit * item.faseUnicaQtd : null;
+              const isGain = deltaUnit != null && deltaUnit < 0;
+              return (
+                <tr key={o.id} style={{ background: isGain ? "oklch(0.97 0.02 145)" : undefined }}>
+                  <td className="num" style={{ color: "oklch(0.50 0.10 250)", fontWeight: 700 }}>C{o.numero}</td>
+                  <td>
+                    <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
+                      <span className="strong">{o.fornecedor}</span>
+                    </div>
+                  </td>
+                  <td className="num">{o.data ?? "—"}</td>
+                  <td className="num" style={{ textAlign: "right" }}>
+                    <span style={{ fontWeight: 600, color: isGain ? "var(--ok)" : "var(--fg)" }}>
+                      {fmtBRL(o.valor)}
+                    </span>
+                  </td>
+                  <td className="num" style={{ textAlign: "right", fontWeight: 600 }}>
+                    {fmtBRL(o.valor * item.faseUnicaQtd)}
+                  </td>
+                  <td className="num" style={{ textAlign: "right" }}>
+                    {deltaTotal != null ? (
+                      <span style={{ fontWeight: 700, color: isGain ? "var(--ok)" : "var(--danger)", fontSize: 12 }}>
+                        {isGain ? "−" : "+"}{fmtBRL(Math.abs(deltaTotal))}
+                      </span>
+                    ) : "—"}
+                  </td>
+                  <td style={{ minWidth: 200 }}>
+                    <OrcamentoRow o={o} item={item} removing={removing} onRemove={handleRemove} cellOnly />
+                  </td>
+                  <td>
+                    <button
+                      className="btn ghost sm"
+                      style={{ fontSize: 10.5, height: 22, padding: "0 7px", color: "var(--danger)" }}
+                      disabled={removing}
+                      onClick={() => handleRemove(o.id)}
+                    >×</button>
+                  </td>
+                </tr>
+              );
+            })}
+            {orcConsultiva.length === 0 && (
+              <tr>
+                <td colSpan={8} style={{ padding: "18px 14px", color: "var(--fg-faint)", fontSize: 12.5, textAlign: "center" }}>
+                  Nenhuma cotação consultiva cadastrada ainda.
+                  <br />
+                  <span style={{ fontSize: 11.5 }}>
+                    Adicione um preço obtido pela AION para comparar com o melhor preço do hospital.
+                  </span>
+                </td>
+              </tr>
+            )}
+          </tbody>
+        </table>
+
+        {!showConsultForm && (
+          <div style={{ padding: "10px 14px", borderTop: "1px solid oklch(0.82 0.08 250)" }}>
+            <button
+              className="btn sm"
+              onClick={() => setShowConsultForm(true)}
+              style={{ background: "oklch(0.97 0.03 250)", color: "oklch(0.40 0.12 250)", border: "1px solid oklch(0.82 0.08 250)" }}
+            >
+              + Adicionar cotação consultiva
+            </button>
+          </div>
+        )}
+
+        {showConsultForm && (
+          <form onSubmit={handleAddConsultiva} style={{ padding: 14, borderTop: "1px solid oklch(0.82 0.08 250)", display: "flex", flexDirection: "column", gap: 10, background: "oklch(0.98 0.01 250)" }}>
+            <div style={{ fontSize: 12, fontWeight: 600, color: "oklch(0.40 0.12 250)", marginBottom: 2 }}>
+              Nova cotação consultiva AION
+            </div>
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 10 }}>
+              <div>
+                <label style={{ fontSize: 11, color: "var(--fg-dim)", display: "block", marginBottom: 4 }}>Fornecedor *</label>
+                <select name="fornecedorId" required style={inputStyle}>
+                  <option value="">Selecione…</option>
+                  {fornecedoresList.map((f) => <option key={f.id} value={f.id}>{f.nome}</option>)}
+                </select>
+              </div>
+              <div>
+                <label style={{ fontSize: 11, color: "var(--fg-dim)", display: "block", marginBottom: 4 }}>Valor unitário (R$) *</label>
+                <input name="valor" required placeholder="0,00" inputMode="decimal" style={inputStyle} />
+              </div>
+              <div>
+                <label style={{ fontSize: 11, color: "var(--fg-dim)", display: "block", marginBottom: 4 }}>Data</label>
+                <input name="data" type="date" style={inputStyle} />
+              </div>
+            </div>
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10 }}>
+              <div>
+                <label style={{ fontSize: 11, color: "var(--fg-dim)", display: "block", marginBottom: 4 }}>Link do documento (opcional)</label>
+                <input name="cotacaoUrl" type="url" placeholder="https://…" style={inputStyle} />
+              </div>
+              <div>
+                <label style={{ fontSize: 11, color: "var(--fg-dim)", display: "block", marginBottom: 4 }}>Observação</label>
+                <input name="obs" placeholder="Ex: negociação direta após RFP" style={inputStyle} />
+              </div>
+            </div>
+            {consultError && <p style={{ margin: 0, fontSize: 12, color: "var(--danger)" }}>{consultError}</p>}
+            <div style={{ display: "flex", gap: 8 }}>
+              <button type="submit" className="btn primary sm" disabled={addingConsult}>{addingConsult ? "Salvando…" : "Salvar cotação consultiva"}</button>
+              <button type="button" className="btn ghost sm" onClick={() => { setShowConsultForm(false); setConsultError(""); }}>Cancelar</button>
+            </div>
+          </form>
+        )}
+      </div>
+
+      {/* ── Saving em camadas ─────────────────────────────────────────── */}
       {(savingMercado !== null || savingTotal !== null) && (
         <div className="card">
-          <div className="card-head"><h3>Saving em 3 camadas</h3></div>
+          <div className="card-head">
+            <h3>Saving em {orcConsultiva.length > 0 ? "4" : "3"} camadas</h3>
+          </div>
           <div className="card-body" style={{ display: "flex", flexDirection: "column", gap: 10 }}>
             <SavingRow label="Referência FNS" value={valorRef} highlight={false} />
-            <SavingRow label="Melhor cotação" value={melhorTotal} highlight={false} />
+            <SavingRow label="Melhor cotação hospital" value={melhorTotal} highlight={false} />
+            {consultTotal != null && <SavingRow label="Cotação consultiva AION" value={consultTotal} highlight={false} />}
             {valorContratado !== null && <SavingRow label="Valor contratado" value={valorContratado} highlight={false} />}
             <div style={{ height: 1, background: "var(--line-soft)", margin: "4px 0" }} />
             {savingMercado !== null && (
-              <SavingRow label="Saving mercado (FNS → cotação)" value={savingMercado} highlight saving />
+              <SavingRow label="Saving mercado (FNS → hospital)" value={savingMercado} highlight saving />
+            )}
+            {savingConsultivo !== null && (
+              <SavingRow label="Saving consultivo (hospital → AION)" value={savingConsultivo} highlight saving />
             )}
             {savingNegociacao !== null && (
-              <SavingRow label="Saving negociação (cotação → contrato)" value={savingNegociacao} highlight saving />
+              <SavingRow label="Saving negociação (→ contrato)" value={savingNegociacao} highlight saving />
             )}
             {savingTotal !== null && (
               <SavingRow label="Saving total (FNS → contrato)" value={savingTotal} highlight saving bold />

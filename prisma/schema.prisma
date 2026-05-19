@@ -197,6 +197,7 @@ model Orcamento {
   dataOrcamento DateTime?
   vencedor      Boolean       @default(false)
   validadeAte   DateTime?
+  consultiva    Boolean       @default(false)
   createdAt     DateTime      @default(now())
   anexos        Anexo[]
   contratacoes  Contratacao[]

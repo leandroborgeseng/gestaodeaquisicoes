@@ -302,7 +302,7 @@ const FASES_COTACAO = new Set<string>(["PENDENTE", "COTACAO_EM_ANDAMENTO", "COTA
 async function aplicarVencedorAutomatico(itemId: string) {
   const [orcamentos, item] = await Promise.all([
     prisma.orcamento.findMany({
-      where: { itemId },
+      where: { itemId, consultiva: false },   // só cotações normais do hospital
       select: { id: true, valor: true },
       orderBy: { valor: "asc" },
     }),
@@ -381,6 +381,56 @@ export async function adicionarOrcamento(itemId: string, formData: FormData) {
 
   await aplicarVencedorAutomatico(itemId);
   await prisma.log.create({ data: { itemId, autorId: user.id, acao: "COTACAO_REGISTRADA" } });
+  revalidatePath(`/itens/${itemId}`);
+  return { success: true };
+}
+
+export async function adicionarCotacaoConsultiva(itemId: string, formData: FormData) {
+  const user = await requireAuth();
+  if (user.role === "FORNECEDOR") return { error: "Sem permissão" };
+
+  const fornecedorId = (formData.get("fornecedorId") as string)?.trim();
+  const valorStr     = (formData.get("valor") as string)?.trim().replace(",", ".");
+  const data         = formData.get("data") as string | null;
+  const cotacaoUrl   = (formData.get("cotacaoUrl") as string | null) || null;
+  const obs          = (formData.get("obs") as string | null) || null;
+
+  if (!fornecedorId || !valorStr) return { error: "Fornecedor e valor são obrigatórios" };
+  const valor = parseFloat(valorStr);
+  if (isNaN(valor) || valor <= 0) return { error: "Valor inválido" };
+
+  // Consultiva pode ter o mesmo fornecedor (é uma proposta paralela)
+  const countAll = await prisma.orcamento.count({ where: { itemId } });
+
+  const orcamento = await prisma.orcamento.create({
+    data: {
+      itemId,
+      fornecedorId,
+      valor,
+      numero: countAll + 1,
+      dataOrcamento: data ? new Date(data) : null,
+      cotacaoUrl,
+      consultiva: true,
+    },
+    select: { id: true, item: { select: { numero: true } } },
+  });
+
+  if (cotacaoUrl) {
+    try {
+      await _baixarESalvar({
+        dbUserId:    user.id,
+        itemId,
+        itemNumero:  orcamento.item.numero,
+        externalUrl: cotacaoUrl,
+        category:    "cotacao",
+        orcamentoId: orcamento.id,
+      });
+    } catch { /* silencioso */ }
+  }
+
+  await prisma.log.create({
+    data: { itemId, autorId: user.id, acao: "COTACAO_CONSULTIVA_REGISTRADA", detalhes: { obs } },
+  });
   revalidatePath(`/itens/${itemId}`);
   return { success: true };
 }

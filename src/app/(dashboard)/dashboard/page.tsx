@@ -60,7 +60,7 @@ async function getFinanceChartData(): Promise<{ mes: string; valor: number }[]> 
 
 async function getDashboardData() {
   const now = new Date();
-  const [totalItems, byStatus, recentLogs, totalValueAgg, contratacoes, atrasados, aguardandoAprovacao, propostasVencidas, porCategoria, itensFns] = await Promise.all([
+  const [totalItems, byStatus, recentLogs, totalValueAgg, contratacoes, atrasados, aguardandoAprovacao, propostasVencidas, porCategoria, itensFns, orcConsultivas] = await Promise.all([
     prisma.item.count(),
     prisma.item.groupBy({ by: ["statusProcesso"], _count: { id: true } }),
     prisma.log.findMany({
@@ -88,6 +88,24 @@ async function getDashboardData() {
         valorReferenciaFns: true,
         faseUnicaQtd: true,
         faseUnicaValorTotal: true,
+      },
+    }),
+    // Cotações consultivas para cálculo de economia adicional
+    prisma.orcamento.findMany({
+      where: { consultiva: true },
+      select: {
+        valor: true,
+        item: {
+          select: {
+            faseUnicaQtd: true,
+            orcamentos: {
+              where: { consultiva: false },
+              select: { valor: true },
+              orderBy: { valor: "asc" },
+              take: 1,
+            },
+          },
+        },
       },
     }),
   ]);
@@ -147,6 +165,21 @@ async function getDashboardData() {
     ? totalFnsRef - totalMelhorCotacao
     : null;
 
+  // ── Economia consultiva AION ──────────────────────────────────────────────
+  let economiConsultivaTotalItens = 0;
+  let economiConsultivaValor = 0;
+  for (const orc of orcConsultivas) {
+    const melhorHospital = orc.item.orcamentos[0]?.valor ? Number(orc.item.orcamentos[0].valor) : null;
+    if (melhorHospital == null) continue;
+    const valConsultiva = Number(orc.valor);
+    const qtd = orc.item.faseUnicaQtd ?? 1;
+    const delta = (melhorHospital - valConsultiva) * qtd;
+    if (delta > 0) {
+      economiConsultivaTotalItens++;
+      economiConsultivaValor += delta;
+    }
+  }
+
   const acimaValor = acimaCount; // mantém compatibilidade com alertas
 
   return {
@@ -174,6 +207,8 @@ async function getDashboardData() {
     totalFnsRef,
     totalMelhorCotacao,
     saldoDisponivel,
+    economiConsultivaTotalItens,
+    economiConsultivaValor,
   };
 }
 
@@ -374,6 +409,7 @@ export default async function DashboardPage() {
           {/* ── Análise vs. Tabela FNS ── */}
           <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 10, marginBottom: 14 }}>
 
+
             {/* Abaixo da tabela */}
             <div style={{
               padding: "14px 16px", borderRadius: 8,
@@ -481,6 +517,37 @@ export default async function DashboardPage() {
             </div>
 
           </div>
+
+          {/* ── Economia Consultiva AION ── */}
+          {data.economiConsultivaValor > 0 && (
+            <div style={{
+              display: "flex", alignItems: "center", gap: 16,
+              padding: "14px 18px", borderRadius: 8, marginBottom: 14,
+              background: "oklch(0.96 0.04 250)", border: "1px solid oklch(0.82 0.08 250)",
+            }}>
+              <span style={{
+                display: "inline-flex", padding: "3px 10px", borderRadius: 5, fontSize: 11, fontWeight: 700,
+                background: "oklch(0.62 0.12 250)", color: "#fff", letterSpacing: "0.05em", flexShrink: 0,
+              }}>AION</span>
+              <div style={{ flex: 1 }}>
+                <span style={{ fontSize: 13, fontWeight: 600, color: "oklch(0.35 0.12 250)" }}>
+                  Economia consultiva adicional:{" "}
+                </span>
+                <span style={{ fontSize: 15, fontWeight: 700, color: "var(--ok)" }}>
+                  {fmtBRL(data.economiConsultivaValor)}
+                </span>
+                <span style={{ fontSize: 12, color: "var(--fg-dim)", marginLeft: 8 }}>
+                  em {data.economiConsultivaTotalItens} {data.economiConsultivaTotalItens === 1 ? "item" : "itens"} vs. melhor preço do hospital
+                </span>
+              </div>
+              <a
+                href="/itens"
+                style={{ fontSize: 11.5, color: "oklch(0.40 0.12 250)", textDecoration: "none", fontWeight: 500, flexShrink: 0 }}
+              >
+                Ver itens →
+              </a>
+            </div>
+          )}
 
           {/* KPI Row */}
           <div className="kpi-grid" style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 12, marginBottom: 18 }}>

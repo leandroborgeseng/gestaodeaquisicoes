@@ -178,6 +178,7 @@ export default async function ItemDetailPage({ params }: { params: { id: string 
               valor: Number(o.valor),
               cotacaoUrl: o.cotacaoUrl,
               vencedor: o.vencedor,
+              consultiva: o.consultiva,
               validadeAte: o.validadeAte ? fmtDate(o.validadeAte) : null,
               anexos: o.anexos.map((a) => ({ id: a.id, nomeOriginal: a.nomeOriginal, url: a.url, tamanho: a.tamanho, mimeType: a.mimeType })),
               data: o.dataOrcamento ? fmtDate(o.dataOrcamento) : null,
