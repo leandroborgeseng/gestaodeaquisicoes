@@ -935,69 +935,54 @@ function transformDriveUrl(url: string): string {
   return url;
 }
 
-export async function importarAnexoExterno(
-  itemId: string,
-  externalUrl: string,
-  category: "especificacao" | "cotacao" | "nf" | "entrega" | "teste" | "contrato" | "geral",
-  orcamentoId?: string,
-): Promise<{ success: true; id: string; url: string; nome: string } | { error: string }> {
-  const user = await requireAuth();
-  if (user.role === "FORNECEDOR") return { error: "Sem permissão" };
+// ─── Núcleo de download (sem auth — chamado por funções com auth) ─────────────
 
-  if (!externalUrl || !externalUrl.startsWith("http")) return { error: "URL inválida" };
-
-  const item = await prisma.item.findUnique({ where: { id: itemId }, select: { id: true, numero: true } });
-  if (!item) return { error: "Item não encontrado" };
-
-  // Check if already imported (same externalUrl linked to this item)
-  const already = await prisma.anexo.findFirst({
-    where: { itemId, nomeOriginal: { contains: "imported-from:" + externalUrl.slice(0, 60) } },
-  });
-  if (already) return { error: "Este link já foi importado anteriormente." };
-
-  // Transforma URLs do Google Drive/Sheets/Docs em links de download direto
+async function _baixarESalvar({
+  dbUserId, itemId, itemNumero, externalUrl, category, orcamentoId,
+}: {
+  dbUserId: string;
+  itemId: string;
+  itemNumero: string;
+  externalUrl: string;
+  category: string;
+  orcamentoId?: string;
+}): Promise<{ success: true; id: string; url: string; nome: string } | { error: string }> {
   const downloadUrl = transformDriveUrl(externalUrl);
 
-  // Fetch the file
   let response: Response;
   try {
     response = await fetch(downloadUrl, {
       headers: {
         "User-Agent": "Mozilla/5.0 (compatible; AION-Aquisicoes/1.0)",
-        // Necessário para o Google honrar o export direto
         "Accept": "application/pdf,application/octet-stream,*/*",
       },
       redirect: "follow",
     });
   } catch {
-    return { error: "Não foi possível acessar a URL informada." };
+    return { error: "Não foi possível acessar a URL" };
   }
 
-  if (!response.ok) return { error: `Erro ao baixar arquivo: HTTP ${response.status}` };
+  if (!response.ok) return { error: `HTTP ${response.status}` };
 
-  // Determine mime type — Google às vezes retorna text/html para autenticação
   const rawContentType = response.headers.get("content-type") ?? "application/octet-stream";
   if (rawContentType.includes("text/html")) {
-    return { error: "O Google exigiu autenticação para acessar este arquivo. Certifique-se de que o arquivo está compartilhado como 'Qualquer pessoa com o link pode visualizar'." };
+    return { error: "Arquivo privado — compartilhe como 'qualquer pessoa com o link'" };
   }
 
   const contentType = rawContentType.split(";")[0].trim();
-
-  // Infer extension from MIME or URL path
   let finalMime = contentType;
   let finalExt: string;
 
   if (ALLOWED_DOWNLOAD_TYPES[contentType] && ALLOWED_DOWNLOAD_TYPES[contentType] !== "bin") {
     finalExt = ALLOWED_DOWNLOAD_TYPES[contentType];
   } else {
-    // Try URL extension
     const urlPath = new URL(downloadUrl).pathname;
     const urlExt  = urlPath.split(".").pop()?.toLowerCase() ?? "";
     const extToMime: Record<string, string> = {
       pdf: "application/pdf", jpg: "image/jpeg", jpeg: "image/jpeg",
       png: "image/png", webp: "image/webp",
       xlsx: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-      xls: "application/vnd.ms-excel",
+      xls:  "application/vnd.ms-excel",
       docx: "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
       doc: "application/msword", csv: "text/csv",
     };
@@ -1005,33 +990,27 @@ export async function importarAnexoExterno(
       finalMime = extToMime[urlExt];
       finalExt  = urlExt;
     } else if (downloadUrl.includes("/export?format=pdf") || contentType === "application/octet-stream") {
-      // Google exported as PDF
       finalMime = "application/pdf";
       finalExt  = "pdf";
     } else {
-      return { error: `Tipo de arquivo não suportado (${contentType}). Use PDFs, imagens ou planilhas.` };
+      return { error: `Tipo não suportado: ${contentType}` };
     }
   }
 
   const buffer = Buffer.from(await response.arrayBuffer());
   if (buffer.byteLength > 30 * 1024 * 1024) return { error: "Arquivo muito grande (máx 30 MB)" };
 
-  // Build safe filename from URL
   const urlFilename = new URL(externalUrl).pathname.split("/").pop()?.replace(/[^a-zA-Z0-9._-]/g, "_") ?? "documento";
   const ts       = Date.now();
   const fileName = `${ts}-${urlFilename.slice(0, 60)}.${finalExt}`;
-  const dir      = path.join(UPLOAD_ROOT, "uploads", item.numero, category);
+  const dir      = path.join(UPLOAD_ROOT, "uploads", itemNumero, category);
   const filePath = path.join(dir, fileName);
 
   await mkdir(dir, { recursive: true });
   await writeFile(filePath, buffer);
 
-  const urlServePath = `/api/files/${item.numero}/${category}/${fileName}`;
-
-  const dbUser = await prisma.user.findUnique({ where: { email: user.email! }, select: { id: true } });
-  if (!dbUser) return { error: "Usuário não encontrado" };
-
-  const displayName = urlFilename.includes(".") ? urlFilename : `${urlFilename}.${finalExt}`;
+  const urlServePath = `/api/files/${itemNumero}/${category}/${fileName}`;
+  const displayName  = urlFilename.includes(".") ? urlFilename : `${urlFilename}.${finalExt}`;
 
   const anexo = await prisma.anexo.create({
     data: {
@@ -1041,16 +1020,151 @@ export async function importarAnexoExterno(
       tamanho: buffer.byteLength,
       url: urlServePath,
       bucket: "local",
-      autorId: dbUser.id,
-      itemId: item.id,
+      autorId: dbUserId,
+      itemId,
       ...(orcamentoId ? { orcamentoId } : {}),
     },
   });
 
-  await prisma.log.create({ data: { itemId: item.id, autorId: dbUser.id, acao: "ANEXO_IMPORTADO" } });
-  revalidatePath(`/itens/${itemId}`);
+  await prisma.log.create({ data: { itemId, autorId: dbUserId, acao: "ANEXO_IMPORTADO" } });
 
   return { success: true, id: anexo.id, url: urlServePath, nome: displayName };
+}
+
+// ─── Importar um link externo individual ─────────────────────────────────────
+
+export async function importarAnexoExterno(
+  itemId: string,
+  externalUrl: string,
+  category: "especificacao" | "cotacao" | "nf" | "entrega" | "teste" | "contrato" | "geral",
+  orcamentoId?: string,
+): Promise<{ success: true; id: string; url: string; nome: string } | { error: string }> {
+  const user = await requireAuth();
+  if (user.role === "FORNECEDOR") return { error: "Sem permissão" };
+  if (!externalUrl || !externalUrl.startsWith("http")) return { error: "URL inválida" };
+
+  const item = await prisma.item.findUnique({ where: { id: itemId }, select: { id: true, numero: true } });
+  if (!item) return { error: "Item não encontrado" };
+
+  const dbUser = await prisma.user.findUnique({ where: { email: user.email! }, select: { id: true } });
+  if (!dbUser) return { error: "Usuário não encontrado" };
+
+  const res = await _baixarESalvar({
+    dbUserId: dbUser.id, itemId: item.id, itemNumero: item.numero,
+    externalUrl, category, orcamentoId,
+  });
+
+  if ("success" in res) revalidatePath(`/itens/${itemId}`);
+  return res;
+}
+
+// ─── Importar TODOS os links externos em massa ───────────────────────────────
+
+export interface ResultadoImportacao {
+  especificacoes: {
+    total: number;
+    importadas: number;
+    jaExistiam: number;
+    erros: { numero: string; equipamento: string; erro: string }[];
+  };
+  cotacoes: {
+    total: number;
+    importadas: number;
+    jaExistiam: number;
+    erros: { numero: string; fornecedor: string; erro: string }[];
+  };
+}
+
+export async function importarTodosAnexosExternos(): Promise<ResultadoImportacao> {
+  const user = await requireAuth();
+  if (user.role === "FORNECEDOR") throw new Error("Sem permissão");
+
+  const dbUser = await prisma.user.findUnique({ where: { email: user.email! }, select: { id: true } });
+  if (!dbUser) throw new Error("Usuário não encontrado");
+
+  const espErros: ResultadoImportacao["especificacoes"]["erros"] = [];
+  let espTotal = 0, espImportadas = 0, espJaExistiam = 0;
+
+  const cotErros: ResultadoImportacao["cotacoes"]["erros"] = [];
+  let cotTotal = 0, cotImportadas = 0, cotJaExistiam = 0;
+
+  // ── 1. Especificações técnicas ──────────────────────────────────────────────
+  const itens = await prisma.item.findMany({
+    where: { especificacaoUrl: { not: null } },
+    select: {
+      id: true, numero: true, equipamento: true, especificacaoUrl: true,
+      // Verificar se já tem arquivo de especificação importado
+      anexos: { where: { url: { contains: "/especificacao/" } }, select: { id: true }, take: 1 },
+    },
+  });
+
+  for (const item of itens) {
+    if (!item.especificacaoUrl) continue;
+    espTotal++;
+
+    if (item.anexos.length > 0) {
+      espJaExistiam++;
+      continue;
+    }
+
+    const res = await _baixarESalvar({
+      dbUserId: dbUser.id,
+      itemId: item.id,
+      itemNumero: item.numero,
+      externalUrl: item.especificacaoUrl,
+      category: "especificacao",
+    });
+
+    if ("error" in res) {
+      espErros.push({ numero: item.numero, equipamento: item.equipamento, erro: res.error });
+    } else {
+      espImportadas++;
+    }
+  }
+
+  // ── 2. Cotações (orcamentos) ────────────────────────────────────────────────
+  const orcamentos = await prisma.orcamento.findMany({
+    where: { cotacaoUrl: { not: null } },
+    select: {
+      id: true, cotacaoUrl: true,
+      item:      { select: { id: true, numero: true } },
+      fornecedor: { select: { nome: true } },
+      // Verificar se este orçamento já tem arquivos
+      anexos: { select: { id: true }, take: 1 },
+    },
+  });
+
+  for (const orc of orcamentos) {
+    if (!orc.cotacaoUrl) continue;
+    cotTotal++;
+
+    if (orc.anexos.length > 0) {
+      cotJaExistiam++;
+      continue;
+    }
+
+    const res = await _baixarESalvar({
+      dbUserId: dbUser.id,
+      itemId: orc.item.id,
+      itemNumero: orc.item.numero,
+      externalUrl: orc.cotacaoUrl,
+      category: "cotacao",
+      orcamentoId: orc.id,
+    });
+
+    if ("error" in res) {
+      cotErros.push({ numero: orc.item.numero, fornecedor: orc.fornecedor.nome, erro: res.error });
+    } else {
+      cotImportadas++;
+    }
+  }
+
+  revalidatePath("/itens");
+
+  return {
+    especificacoes: { total: espTotal, importadas: espImportadas, jaExistiam: espJaExistiam, erros: espErros },
+    cotacoes:       { total: cotTotal, importadas: cotImportadas, jaExistiam: cotJaExistiam, erros: cotErros },
+  };
 }
 
 // ─── Reclassificar item individualmente ───────────────────────────────────────

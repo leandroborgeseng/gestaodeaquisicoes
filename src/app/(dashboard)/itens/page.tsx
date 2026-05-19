@@ -127,6 +127,9 @@ export default async function ItensPage({ searchParams }: { searchParams: Search
               <Link href="/itens/classificar" className="btn ghost sm">
                 🏷 Classificar itens
               </Link>
+              <Link href="/itens/sincronizar" className="btn ghost sm">
+                ☁ Sincronizar arquivos
+              </Link>
               <ImportarItensModal />
               <NovoItemModal setores={data.setores} fases={data.fases} defaultCategoria={activeCat !== "all" ? activeCat : "MEDICO_HOSPITALAR"} />
             </div>
