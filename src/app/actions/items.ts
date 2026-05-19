@@ -1184,6 +1184,29 @@ export async function importarTodosAnexosExternos(): Promise<ResultadoImportacao
   };
 }
 
+// ─── Atualizar URL da cotação de um orçamento existente ──────────────────────
+
+export async function atualizarCotacaoUrl(
+  orcamentoId: string,
+  itemId: string,
+  url: string,
+): Promise<{ success: true } | { error: string }> {
+  const user = await requireAuth();
+  if (user.role === "FORNECEDOR") return { error: "Sem permissão" };
+
+  await prisma.orcamento.update({
+    where: { id: orcamentoId },
+    data: { cotacaoUrl: url.trim() || null },
+  });
+
+  await prisma.log.create({
+    data: { itemId, autorId: user.id, acao: "COTACAO_URL_ATUALIZADA" },
+  });
+
+  revalidatePath(`/itens/${itemId}`);
+  return { success: true };
+}
+
 // ─── Reclassificar item individualmente ───────────────────────────────────────
 
 export async function reclassificarItem(id: string, categoria: string): Promise<void> {

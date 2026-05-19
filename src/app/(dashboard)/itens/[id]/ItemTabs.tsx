@@ -30,7 +30,7 @@ import {
 } from "@/components/modals/ItemModals";
 import { EditarItemModal } from "@/components/modals/GestaoModals";
 import { AnexoUpload } from "@/components/AnexoUpload";
-import { marcarConcluido, reclassificarItem } from "@/app/actions/items";
+import { marcarConcluido, reclassificarItem, atualizarCotacaoUrl } from "@/app/actions/items";
 import { PrintLabel } from "@/components/PrintLabel";
 import { useTextPreview, useFilePreview } from "@/components/FilePreview";
 
@@ -1050,9 +1050,12 @@ function OrcamentoRow({ o, item, removing, onRemove }: {
   onRemove: (id: string) => void;
 }) {
   const hadLocal = o.anexos.length > 0;
-  const hasUrl   = !!o.cotacaoUrl;
 
-  // Estado inicial: se já tem arquivo local → ok; se tem URL → inicia download; caso contrário sem_link
+  // cotacaoUrl fica em estado local para que edições inline funcionem sem re-render do servidor
+  const [cotacaoUrl, setCotacaoUrl] = useState<string | null>(o.cotacaoUrl);
+  const hasUrl = !!cotacaoUrl;
+
+  // Estado inicial: arquivo local → ok; URL presente → baixando (auto-trigger); sem nada → sem_link
   const [status, setStatus]   = useState<DownloadStatus>(() =>
     hadLocal ? "ok" : hasUrl ? "baixando" : "sem_link"
   );
@@ -1060,17 +1063,24 @@ function OrcamentoRow({ o, item, removing, onRemove }: {
   const [localFiles, setLocalFiles] = useState(
     o.anexos.map((a) => ({ id: a.id, nomeOriginal: a.nomeOriginal, url: a.url, mimeType: a.mimeType }))
   );
-  const [, start] = useTransition();
+  const [, start]             = useTransition();
   const { open: openPreview } = useFilePreview();
+
+  // Controle do input inline de URL
+  const [showUrlInput, setShowUrlInput] = useState(false);
+  const [urlInput, setUrlInput]         = useState(o.cotacaoUrl ?? "");
+  const [savingUrl, setSavingUrl]       = useState(false);
+  const [urlError, setUrlError]         = useState<string | null>(null);
 
   const diff = item.valorReferenciaFns ? (o.valor - item.valorReferenciaFns) / item.valorReferenciaFns : 0;
 
-  function doDownload() {
-    if (!o.cotacaoUrl) return;
+  function doDownload(urlOverride?: string) {
+    const url = urlOverride ?? cotacaoUrl;
+    if (!url) return;
     setStatus("baixando");
     setErrMsg(null);
     start(async () => {
-      const res = await importarAnexoExterno(item.id, o.cotacaoUrl!, "cotacao", o.id);
+      const res = await importarAnexoExterno(item.id, url, "cotacao", o.id);
       if ("error" in res) {
         setStatus("erro");
         setErrMsg(res.error);
@@ -1084,13 +1094,76 @@ function OrcamentoRow({ o, item, removing, onRemove }: {
     });
   }
 
-  // Auto-inicia o download ao montar se há link mas ainda não tem arquivo local
+  // Auto-inicia o download ao montar se há URL e ainda não tem arquivo local
   useEffect(() => {
-    if (status === "baixando" && !hadLocal) {
-      doDownload();
+    if (status === "baixando" && !hadLocal && cotacaoUrl) {
+      doDownload(cotacaoUrl);
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  async function handleSaveUrl() {
+    const url = urlInput.trim();
+    if (!url) return;
+    setSavingUrl(true);
+    setUrlError(null);
+    try {
+      const res = await atualizarCotacaoUrl(o.id, item.id, url);
+      if ("error" in res) {
+        setUrlError(res.error);
+        return;
+      }
+      setCotacaoUrl(url);
+      setShowUrlInput(false);
+      doDownload(url);
+    } catch {
+      setUrlError("Erro ao salvar o link.");
+    } finally {
+      setSavingUrl(false);
+    }
+  }
+
+  // Componente auxiliar: input inline de URL
+  function UrlInputInline() {
+    return (
+      <div style={{ display: "flex", flexDirection: "column", gap: 4, width: "100%" }}>
+        <div style={{ display: "flex", gap: 4, alignItems: "center" }}>
+          <input
+            autoFocus
+            value={urlInput}
+            onChange={(e) => setUrlInput(e.target.value)}
+            onKeyDown={(e) => {
+              if (e.key === "Enter") handleSaveUrl();
+              if (e.key === "Escape") { setShowUrlInput(false); setUrlError(null); }
+            }}
+            placeholder="Cole o link do Drive, Sheets ou arquivo…"
+            disabled={savingUrl}
+            style={{
+              flex: 1, fontSize: 11, height: 26, padding: "0 8px",
+              border: "1px solid var(--line)", borderRadius: 4,
+              background: "var(--bg)", color: "var(--fg)",
+            }}
+          />
+          <button
+            className="btn primary sm"
+            onClick={handleSaveUrl}
+            disabled={savingUrl || !urlInput.trim()}
+            style={{ height: 26, fontSize: 11, padding: "0 10px", flexShrink: 0 }}
+          >
+            {savingUrl ? "…" : "↓ Baixar"}
+          </button>
+          <button
+            className="btn ghost sm"
+            onClick={() => { setShowUrlInput(false); setUrlError(null); }}
+            style={{ height: 26, fontSize: 11, padding: "0 7px", flexShrink: 0 }}
+          >×</button>
+        </div>
+        {urlError && (
+          <div style={{ fontSize: 10.5, color: "var(--danger)" }}>{urlError}</div>
+        )}
+      </div>
+    );
+  }
 
   return (
     <tr style={{ background: o.vencedor ? "var(--ok-soft)" : undefined }}>
@@ -1115,8 +1188,10 @@ function OrcamentoRow({ o, item, removing, onRemove }: {
       <td className="num strong" style={{ textAlign: "right" }}>{fmtBRL(o.valor * item.faseUnicaQtd)}</td>
 
       {/* ── Coluna de arquivos com status ── */}
-      <td style={{ minWidth: 220, verticalAlign: "middle" }}>
-        {status === "baixando" && (
+      <td style={{ minWidth: 240, verticalAlign: "middle" }}>
+        {showUrlInput ? (
+          <UrlInputInline />
+        ) : status === "baixando" ? (
           <div style={{ display: "flex", alignItems: "center", gap: 7, padding: "4px 0" }}>
             <div style={{
               width: 13, height: 13, borderRadius: "50%", flexShrink: 0,
@@ -1124,16 +1199,14 @@ function OrcamentoRow({ o, item, removing, onRemove }: {
               animation: "spin 0.7s linear infinite",
             }} />
             <span style={{ fontSize: 11, color: "var(--fg-dim)" }}>Baixando do Drive…</span>
-            {o.cotacaoUrl && (
-              <a href={o.cotacaoUrl} target="_blank" rel="noopener noreferrer"
+            {cotacaoUrl && (
+              <a href={cotacaoUrl} target="_blank" rel="noopener noreferrer"
                 style={{ fontSize: 10, color: "var(--accent)", marginLeft: 2 }}>
-                ↗ Drive
+                ↗
               </a>
             )}
           </div>
-        )}
-
-        {status === "ok" && (
+        ) : status === "ok" ? (
           <div style={{ display: "flex", flexWrap: "wrap", gap: 4, alignItems: "center" }}>
             {localFiles.map((f) => (
               <button
@@ -1146,7 +1219,7 @@ function OrcamentoRow({ o, item, removing, onRemove }: {
                   padding: "3px 8px", borderRadius: 4, fontSize: 11, fontWeight: 500,
                   background: "var(--ok-soft)", border: "1px solid oklch(0.80 0.08 145)",
                   color: "var(--ok)", cursor: "pointer",
-                  maxWidth: 180, overflow: "hidden",
+                  maxWidth: 170, overflow: "hidden",
                 }}
               >
                 <Icons.Doc style={{ width: 11, height: 11 }} />
@@ -1155,12 +1228,16 @@ function OrcamentoRow({ o, item, removing, onRemove }: {
                 </span>
               </button>
             ))}
-            {/* Upload adicional */}
+            <button
+              type="button"
+              className="btn ghost sm"
+              onClick={() => { setUrlInput(cotacaoUrl ?? ""); setShowUrlInput(true); }}
+              title="Atualizar link da cotação"
+              style={{ height: 22, fontSize: 10, padding: "0 6px" }}
+            >↺ link</button>
             <AnexoUpload itemId={item.id} orcamentoId={o.id} category="cotacao" existing={[]} compact label="" />
           </div>
-        )}
-
-        {status === "erro" && (
+        ) : status === "erro" ? (
           <div style={{ display: "flex", flexDirection: "column", gap: 5 }}>
             <div style={{
               display: "flex", alignItems: "flex-start", gap: 6,
@@ -1177,36 +1254,52 @@ function OrcamentoRow({ o, item, removing, onRemove }: {
                 </div>
               </div>
             </div>
-            <div style={{ display: "flex", gap: 4, alignItems: "center" }}>
+            <div style={{ display: "flex", gap: 4, alignItems: "center", flexWrap: "wrap" }}>
               <button
                 type="button"
                 className="btn ghost sm"
-                onClick={doDownload}
+                onClick={() => doDownload()}
                 style={{ fontSize: 10.5, height: 22 }}
-              >
-                ↺ Tentar novamente
-              </button>
-              {o.cotacaoUrl && (
-                <a href={o.cotacaoUrl} target="_blank" rel="noopener noreferrer"
+              >↺ Tentar novamente</button>
+              <button
+                type="button"
+                className="btn ghost sm"
+                onClick={() => { setUrlInput(cotacaoUrl ?? ""); setShowUrlInput(true); }}
+                style={{ fontSize: 10.5, height: 22 }}
+              >✎ Mudar link</button>
+              {cotacaoUrl && (
+                <a href={cotacaoUrl} target="_blank" rel="noopener noreferrer"
                   className="btn ghost sm"
                   style={{ fontSize: 10.5, height: 22, textDecoration: "none", display: "inline-flex", alignItems: "center" }}>
-                  ↗ Abrir no Drive
+                  ↗ Drive
                 </a>
               )}
             </div>
-            {/* Upload manual como fallback */}
             <AnexoUpload itemId={item.id} orcamentoId={o.id} category="cotacao" existing={[]} compact label="Ou anexe manualmente" />
           </div>
-        )}
-
-        {status === "sem_link" && (
-          <AnexoUpload
-            itemId={item.id}
-            orcamentoId={o.id}
-            category="cotacao"
-            existing={localFiles.map((f) => ({ ...f, tamanho: 0, autor: { name: "" } }))}
-            compact
-          />
+        ) : (
+          /* sem_link */
+          <div style={{ display: "flex", gap: 4, alignItems: "center" }}>
+            <button
+              type="button"
+              className="btn ghost sm"
+              onClick={() => { setUrlInput(""); setShowUrlInput(true); }}
+              style={{
+                fontSize: 10.5, height: 26, padding: "0 10px",
+                color: "var(--accent)", borderColor: "var(--accent-soft)",
+              }}
+            >
+              + Link da cotação
+            </button>
+            <span style={{ fontSize: 10, color: "var(--fg-faint)" }}>ou</span>
+            <AnexoUpload
+              itemId={item.id}
+              orcamentoId={o.id}
+              category="cotacao"
+              existing={localFiles.map((f) => ({ ...f, tamanho: 0, autor: { name: "" } }))}
+              compact
+            />
+          </div>
         )}
       </td>
 
