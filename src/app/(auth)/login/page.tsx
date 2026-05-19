@@ -41,7 +41,7 @@ export default function LoginPage() {
         <div style={{ flex: "1 1 50%", display: "flex", flexDirection: "column", padding: "40px 56px" }}>
           {/* Brand */}
           <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-            <Image src="/aion-engenharia.png" alt="AION Engenharia" width={140} height={47} style={{ display: "block", objectFit: "contain" }} />
+            <Image src="/aion-engenharia.png" alt="AION Engenharia" width={140} height={47} unoptimized style={{ display: "block", objectFit: "contain" }} />
           </div>
 
           {/* Form */}

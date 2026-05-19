@@ -114,7 +114,7 @@ export function Sidebar({ counts }: { counts: SidebarCounts }) {
 
       <aside className={`sidebar${open ? " sidebar-open" : ""}`}>
         <div className="sidebar-brand">
-          <Image src="/aion-engenharia.png" alt="AION Engenharia" width={108} height={36} style={{ display: "block", objectFit: "contain" }} />
+          <Image src="/aion-engenharia.png" alt="AION Engenharia" width={108} height={36} unoptimized style={{ display: "block", objectFit: "contain" }} />
           <div style={{ fontSize: 10.5, color: "var(--fg-dim)", letterSpacing: "0.01em", paddingLeft: 2 }}>
             Sistema de Aquisição de Equipamentos
           </div>
