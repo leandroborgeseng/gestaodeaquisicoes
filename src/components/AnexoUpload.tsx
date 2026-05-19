@@ -21,6 +21,7 @@ interface Props {
   existing?: AnexoItem[];
   label?: string;
   compact?: boolean; // modo compacto para linhas de tabela
+  acceptOffice?: boolean; // permite Excel/Word além de PDF/imagem
 }
 
 function fmtBytes(n: number) {
@@ -35,12 +36,18 @@ function FileIcon({ mime }: { mime: string }) {
   return <Icons.Clip style={{ width: 13, height: 13, color: "var(--fg-faint)" }} />;
 }
 
-export function AnexoUpload({ itemId, category, orcamentoId, existing = [], label = "Anexar arquivo", compact = false }: Props) {
+export function AnexoUpload({ itemId, category, orcamentoId, existing = [], label = "Anexar arquivo", compact = false, acceptOffice = false }: Props) {
   const inputRef  = useRef<HTMLInputElement>(null);
   const [files, setFiles]     = useState<AnexoItem[]>(existing);
   const [error, setError]     = useState("");
   const [pending, start]      = useTransition();
   const { open: openPreview } = useFilePreview();
+
+  // Categorias que aceitam planilhas por padrão
+  const isOfficeCategory = category === "cotacao" || acceptOffice;
+  const acceptStr = isOfficeCategory
+    ? ".pdf,.jpg,.jpeg,.png,.webp,.xlsx,.xls,.docx,.doc,.csv"
+    : ".pdf,.jpg,.jpeg,.png,.webp";
 
   async function handleFiles(selected: FileList | null) {
     if (!selected || selected.length === 0) return;
@@ -82,7 +89,7 @@ export function AnexoUpload({ itemId, category, orcamentoId, existing = [], labe
       ref={inputRef}
       type="file"
       multiple
-      accept=".pdf,.jpg,.jpeg,.png,.webp"
+      accept={acceptStr}
       style={{ display: "none" }}
       onChange={(e) => handleFiles(e.target.files)}
     />
@@ -153,7 +160,7 @@ export function AnexoUpload({ itemId, category, orcamentoId, existing = [], labe
           {pending ? "Enviando…" : label}
         </div>
         <div style={{ fontSize: 10.5, color: "var(--fg-faint)" }}>
-          PDF, JPEG ou PNG · máx 20 MB
+          {isOfficeCategory ? "PDF, Excel, Word, imagem · máx 30 MB" : "PDF, JPEG ou PNG · máx 30 MB"}
         </div>
       </div>
 

@@ -12,6 +12,11 @@ const MIME: Record<string, string> = {
   png:  "image/png",
   webp: "image/webp",
   gif:  "image/gif",
+  xlsx: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+  xls:  "application/vnd.ms-excel",
+  docx: "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+  doc:  "application/msword",
+  csv:  "text/csv",
 };
 
 export async function GET(
@@ -38,7 +43,7 @@ export async function GET(
 
   const ext      = absPath.split(".").pop()?.toLowerCase() ?? "";
   const mimeType = MIME[ext] ?? "application/octet-stream";
-  const inline   = ["pdf", "jpg", "jpeg", "png", "webp", "gif"].includes(ext);
+  const inline   = ["pdf", "jpg", "jpeg", "png", "webp", "gif", "csv"].includes(ext);
   const fileName = absPath.split("/").pop() ?? "arquivo";
 
   return new NextResponse(buffer.buffer as ArrayBuffer, {

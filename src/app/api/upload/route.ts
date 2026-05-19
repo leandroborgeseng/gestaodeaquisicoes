@@ -13,9 +13,15 @@ const ALLOWED_TYPES: Record<string, string> = {
   "image/png": "png",
   "image/webp": "webp",
   "image/gif": "gif",
+  // Planilhas e documentos de cotação
+  "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet": "xlsx",
+  "application/vnd.ms-excel": "xls",
+  "application/vnd.openxmlformats-officedocument.wordprocessingml.document": "docx",
+  "application/msword": "doc",
+  "text/csv": "csv",
 };
 
-const MAX_SIZE = 20 * 1024 * 1024; // 20 MB
+const MAX_SIZE = 30 * 1024 * 1024; // 30 MB
 
 export async function POST(req: NextRequest) {
   const session = await auth();
@@ -31,8 +37,8 @@ export async function POST(req: NextRequest) {
   if (!itemId) return NextResponse.json({ error: "itemId obrigatório" }, { status: 400 });
 
   const ext = ALLOWED_TYPES[file.type];
-  if (!ext) return NextResponse.json({ error: "Tipo de arquivo não permitido. Use PDF, JPEG ou PNG." }, { status: 400 });
-  if (file.size > MAX_SIZE) return NextResponse.json({ error: "Arquivo muito grande (máx 20 MB)" }, { status: 400 });
+  if (!ext) return NextResponse.json({ error: "Tipo não permitido. Use PDF, imagem, Excel (.xlsx) ou Word (.docx)." }, { status: 400 });
+  if (file.size > MAX_SIZE) return NextResponse.json({ error: "Arquivo muito grande (máx 30 MB)" }, { status: 400 });
 
   // Validate item exists
   const item = await prisma.item.findUnique({ where: { id: itemId }, select: { id: true, numero: true } });

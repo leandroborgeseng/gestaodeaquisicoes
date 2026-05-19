@@ -30,8 +30,9 @@ import {
 } from "@/components/modals/ItemModals";
 import { EditarItemModal } from "@/components/modals/GestaoModals";
 import { AnexoUpload } from "@/components/AnexoUpload";
-import { marcarConcluido } from "@/app/actions/items";
+import { marcarConcluido, reclassificarItem } from "@/app/actions/items";
 import { PrintLabel } from "@/components/PrintLabel";
+import { useTextPreview } from "@/components/FilePreview";
 
 interface ItemData {
   id: string;
@@ -138,7 +139,10 @@ export function ItemTabs({
   const [obsText, setObsText] = useState("");
   const [obsPending, startObsTransition] = useTransition();
   const [conclPending, startConcl] = useTransition();
-  const TABS = ALL_TABS.filter(t => !t.medico || item.categoria === "MEDICO_HOSPITALAR");
+  const [reclassificando, startReclassificar] = useTransition();
+  const [catAtual, setCatAtual] = useState(item.categoria);
+  const [showReclassify, setShowReclassify] = useState(false);
+  const TABS = ALL_TABS.filter(t => !t.medico || catAtual === "MEDICO_HOSPITALAR");
   const menorValor = item.orcamentos.reduce(
     (min, o) => o.valor < (min?.valor ?? Infinity) ? o : min,
     item.orcamentos[0]
@@ -162,28 +166,72 @@ export function ItemTabs({
     <div style={{ display: "flex", flexDirection: "column", gap: 0 }}>
       {/* Tab bar */}
       <div className="tabs-bar" style={{ display: "flex", borderBottom: "1px solid var(--line)", gap: 0, marginBottom: 18, alignItems: "flex-end", overflowX: "auto" }}>
-        {/* Category badge — always visible */}
+        {/* Category badge — clicável para reclassificar */}
         {(() => {
           const CAT_CFG: Record<string, { l: string; color: string; bg: string }> = {
-            MEDICO_HOSPITALAR: { l: "🏥 Médico-Hospitalar", color: "var(--accent)",               bg: "var(--accent-soft)" },
-            TI:               { l: "💻 TI",                color: "oklch(0.62 0.12 250)",         bg: "oklch(0.95 0.04 250)" },
-            MOBILIARIO:       { l: "🪑 Mobiliário",         color: "oklch(0.60 0.10 85)",          bg: "oklch(0.95 0.03 85)"  },
+            MEDICO_HOSPITALAR: { l: "🏥 Médico-Hospitalar", color: "var(--accent)",       bg: "var(--accent-soft)" },
+            TI:               { l: "💻 TI",                color: "oklch(0.62 0.12 250)", bg: "oklch(0.95 0.04 250)" },
+            MOBILIARIO:       { l: "🪑 Mobiliário",         color: "oklch(0.60 0.10 85)",  bg: "oklch(0.95 0.03 85)"  },
           };
-          const cfg = CAT_CFG[item.categoria];
+          const cfg = CAT_CFG[catAtual];
           if (!cfg) return null;
+
+          function handleReclassificar(nova: string) {
+            if (nova === catAtual) { setShowReclassify(false); return; }
+            startReclassificar(async () => {
+              await reclassificarItem(item.id, nova);
+              setCatAtual(nova);
+              setShowReclassify(false);
+            });
+          }
+
           return (
-            <div style={{
-              display: "flex", alignItems: "center", paddingBottom: 6, paddingRight: 12,
-              flexShrink: 0,
-            }}>
-              <span style={{
-                fontSize: 10.5, fontWeight: 600, padding: "3px 8px", borderRadius: 5,
-                background: cfg.bg, color: cfg.color,
-                border: `1px solid ${cfg.color}44`,
-                letterSpacing: "0.01em",
-              }}>
-                {cfg.l}
-              </span>
+            <div style={{ display: "flex", alignItems: "center", paddingBottom: 6, paddingRight: 8, flexShrink: 0, position: "relative" }}>
+              {showReclassify ? (
+                <div style={{ display: "flex", alignItems: "center", gap: 4 }}>
+                  <select
+                    autoFocus
+                    value={catAtual}
+                    disabled={reclassificando}
+                    onChange={(e) => handleReclassificar(e.target.value)}
+                    onBlur={() => setShowReclassify(false)}
+                    style={{
+                      fontSize: 11, padding: "2px 6px", borderRadius: 5,
+                      border: `1px solid ${cfg.color}66`,
+                      background: cfg.bg, color: cfg.color,
+                      fontWeight: 600, outline: "none", cursor: "pointer",
+                    }}
+                  >
+                    <option value="MEDICO_HOSPITALAR">🏥 Médico-Hospitalar</option>
+                    <option value="TI">💻 TI</option>
+                    <option value="MOBILIARIO">🪑 Mobiliário</option>
+                  </select>
+                  <button
+                    className="btn ghost sm"
+                    onClick={() => setShowReclassify(false)}
+                    style={{ height: 20, padding: "0 5px", fontSize: 12 }}
+                  >×</button>
+                </div>
+              ) : (
+                <button
+                  title="Clique para reclassificar"
+                  onClick={() => userRole !== "FORNECEDOR" && setShowReclassify(true)}
+                  style={{
+                    display: "inline-flex", alignItems: "center", gap: 5,
+                    fontSize: 10.5, fontWeight: 600, padding: "3px 8px", borderRadius: 5,
+                    background: cfg.bg, color: cfg.color,
+                    border: `1px solid ${cfg.color}44`,
+                    letterSpacing: "0.01em",
+                    cursor: userRole !== "FORNECEDOR" ? "pointer" : "default",
+                    opacity: reclassificando ? 0.6 : 1,
+                  }}
+                >
+                  {reclassificando ? "Salvando…" : cfg.l}
+                  {userRole !== "FORNECEDOR" && (
+                    <span style={{ fontSize: 9, opacity: 0.6 }}>✎</span>
+                  )}
+                </button>
+              )}
             </div>
           );
         })()}
@@ -638,6 +686,7 @@ function DescritivoCard({ item }: { item: ItemData }) {
   const [saving, startSave] = useTransition();
   const [saved, setSaved] = useState(false);
   const [fnsExpanded, setFnsExpanded] = useState(false);
+  const { open: openText } = useTextPreview();
 
   const hasFns = !!(item.descritivoFns || item.descritivoRenem);
   const fnsText = item.descritivoFns || item.descritivoRenem || "";
@@ -664,30 +713,42 @@ function DescritivoCard({ item }: { item: ItemData }) {
         )}
       </div>
 
-      {/* FNS base — collapsible */}
+      {/* FNS base — collapsible + clicável para expandir em modal */}
       {hasFns && (
         <div style={{ borderBottom: "1px solid var(--line-soft)", padding: "10px 14px" }}>
-          <button
-            onClick={() => setFnsExpanded((v) => !v)}
-            style={{
-              display: "flex", alignItems: "center", gap: 6, width: "100%",
-              background: "none", border: "none", cursor: "pointer",
-              fontSize: 11, color: "var(--fg-dim)", fontWeight: 600,
-              textTransform: "uppercase", letterSpacing: "0.04em",
-              padding: 0,
-            }}
-          >
-            <span style={{
-              display: "inline-block", transform: fnsExpanded ? "rotate(90deg)" : "rotate(0deg)",
-              transition: "transform 0.2s", fontSize: 10,
-            }}>▶</span>
-            Descritivo FNS / RENEM (referência imutável)
-          </button>
+          <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
+            <button
+              onClick={() => setFnsExpanded((v) => !v)}
+              style={{
+                flex: 1, display: "flex", alignItems: "center", gap: 6,
+                background: "none", border: "none", cursor: "pointer",
+                fontSize: 11, color: "var(--fg-dim)", fontWeight: 600,
+                textTransform: "uppercase", letterSpacing: "0.04em",
+                padding: 0, textAlign: "left",
+              }}
+            >
+              <span style={{
+                display: "inline-block", transform: fnsExpanded ? "rotate(90deg)" : "rotate(0deg)",
+                transition: "transform 0.2s", fontSize: 10,
+              }}>▶</span>
+              Descritivo FNS / RENEM (referência imutável)
+            </button>
+            <button
+              onClick={() => openText({ title: "Descritivo FNS / RENEM", text: fnsText, subtitle: item.equipamento })}
+              className="btn ghost sm"
+              style={{ height: 20, padding: "0 6px", fontSize: 10.5, flexShrink: 0 }}
+              title="Abrir em tela cheia"
+            >
+              ⤢ Expandir
+            </button>
+          </div>
           {fnsExpanded && (
             <p style={{
               margin: "8px 0 0", fontSize: 12.5, lineHeight: 1.6,
               color: "var(--fg-mid)", background: "var(--bg-soft)",
               padding: "10px 12px", borderRadius: 6, whiteSpace: "pre-wrap",
+              maxHeight: 180, overflow: "hidden",
+              maskImage: "linear-gradient(to bottom, black 70%, transparent 100%)",
             }}>
               {fnsText}
             </p>
@@ -724,10 +785,22 @@ function DescritivoCard({ item }: { item: ItemData }) {
           </div>
         ) : item.descritivoTecnico ? (
           <div>
-            <div style={{ fontSize: 11, fontWeight: 600, color: "var(--fg-dim)", textTransform: "uppercase", letterSpacing: "0.04em", marginBottom: 6 }}>
-              Descritivo AION (especificação de compra)
+            <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 6 }}>
+              <div style={{ flex: 1, fontSize: 11, fontWeight: 600, color: "var(--fg-dim)", textTransform: "uppercase", letterSpacing: "0.04em" }}>
+                Descritivo AION (especificação de compra)
+              </div>
+              <button
+                onClick={() => openText({ title: "Descritivo técnico AION", text: item.descritivoTecnico!, subtitle: item.equipamento })}
+                className="btn ghost sm"
+                style={{ height: 20, padding: "0 6px", fontSize: 10.5 }}
+                title="Abrir em tela cheia"
+              >⤢ Expandir</button>
             </div>
-            <p style={{ margin: 0, fontSize: 13, lineHeight: 1.6, color: "var(--fg)", whiteSpace: "pre-wrap" }}>
+            <p style={{
+              margin: 0, fontSize: 13, lineHeight: 1.6, color: "var(--fg)", whiteSpace: "pre-wrap",
+              maxHeight: 200, overflow: "hidden",
+              maskImage: "linear-gradient(to bottom, black 75%, transparent 100%)",
+            }}>
               {item.descritivoTecnico}
             </p>
           </div>
@@ -754,6 +827,7 @@ function TabGeral({ item, menorValor }: { item: ItemData; menorValor: typeof ite
   const max = Math.max(item.valorReferenciaFns ?? 0, ...item.orcamentos.map((o) => o.valor)) * 1.04;
   const [importingSpec, startImportSpec] = useTransition();
   const [importSpecMsg, setImportSpecMsg] = useState<string | null>(null);
+  const { open: openText } = useTextPreview();
 
   function handleImportSpec() {
     if (!item.especificacaoUrl) return;
@@ -779,11 +853,22 @@ function TabGeral({ item, menorValor }: { item: ItemData; menorValor: typeof ite
           <span className="sub">Fonte: RENEM</span>
         </div>
         <div className="card-body">
-          <p style={{ margin: 0, fontSize: 13, lineHeight: 1.55, color: "var(--fg-mid)" }}>
-            {(item.especificacao && !item.especificacao.toLowerCase().startsWith("clique"))
-              ? item.especificacao
-              : "Sem especificação cadastrada."}
-          </p>
+          {(item.especificacao && !item.especificacao.toLowerCase().startsWith("clique")) ? (
+            <div>
+              <p style={{ margin: "0 0 6px", fontSize: 13, lineHeight: 1.55, color: "var(--fg-mid)", maxHeight: 100, overflow: "hidden", maskImage: "linear-gradient(to bottom, black 60%, transparent 100%)" }}>
+                {item.especificacao}
+              </p>
+              <button
+                onClick={() => openText({ title: "Especificação técnica", text: item.especificacao!, subtitle: "Fonte: RENEM" })}
+                className="btn ghost sm"
+                style={{ fontSize: 11, marginTop: 4 }}
+              >
+                ⤢ Ver especificação completa
+              </button>
+            </div>
+          ) : (
+            <p style={{ margin: 0, fontSize: 13, lineHeight: 1.55, color: "var(--fg-mid)" }}>Sem especificação cadastrada.</p>
+          )}
           <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12, marginTop: 16 }}>
             <MetaField label="Quantidade" value={`${item.faseUnicaQtd} unidades`} />
             <MetaField label="Presença em ATA" value={item.presencaEmAta ? "Sim" : "Não"} />

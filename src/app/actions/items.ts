@@ -900,7 +900,40 @@ const ALLOWED_DOWNLOAD_TYPES: Record<string, string> = {
   "image/png": "png",
   "image/webp": "webp",
   "image/gif": "gif",
+  // Office / planilhas
+  "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet": "xlsx",
+  "application/vnd.ms-excel": "xls",
+  "application/vnd.openxmlformats-officedocument.wordprocessingml.document": "docx",
+  "application/msword": "doc",
+  "text/csv": "csv",
+  // Fallback genérico (Google Drive/octet-stream)
+  "application/octet-stream": "bin",
 };
+
+/** Transforma URLs do Google Drive/Sheets/Docs em links de download direto */
+function transformDriveUrl(url: string): string {
+  // Google Drive file: .../file/d/{ID}/view
+  const driveFile = url.match(/drive\.google\.com\/file\/d\/([a-zA-Z0-9_-]+)/);
+  if (driveFile) return `https://drive.google.com/uc?id=${driveFile[1]}&export=download`;
+
+  // Google Drive open link: ...open?id={ID}
+  const driveOpen = url.match(/drive\.google\.com\/open\?id=([a-zA-Z0-9_-]+)/);
+  if (driveOpen) return `https://drive.google.com/uc?id=${driveOpen[1]}&export=download`;
+
+  // Google Sheets → exportar como PDF
+  const sheets = url.match(/docs\.google\.com\/spreadsheets\/d\/([a-zA-Z0-9_-]+)/);
+  if (sheets) return `https://docs.google.com/spreadsheets/d/${sheets[1]}/export?format=pdf`;
+
+  // Google Docs → exportar como PDF
+  const docs = url.match(/docs\.google\.com\/document\/d\/([a-zA-Z0-9_-]+)/);
+  if (docs) return `https://docs.google.com/document/d/${docs[1]}/export?format=pdf`;
+
+  // Google Slides → exportar como PDF
+  const slides = url.match(/docs\.google\.com\/presentation\/d\/([a-zA-Z0-9_-]+)/);
+  if (slides) return `https://docs.google.com/presentation/d/${slides[1]}/export?format=pdf`;
+
+  return url;
+}
 
 export async function importarAnexoExterno(
   itemId: string,
@@ -922,11 +955,18 @@ export async function importarAnexoExterno(
   });
   if (already) return { error: "Este link já foi importado anteriormente." };
 
+  // Transforma URLs do Google Drive/Sheets/Docs em links de download direto
+  const downloadUrl = transformDriveUrl(externalUrl);
+
   // Fetch the file
   let response: Response;
   try {
-    response = await fetch(externalUrl, {
-      headers: { "User-Agent": "AION-Aquisicoes/1.0" },
+    response = await fetch(downloadUrl, {
+      headers: {
+        "User-Agent": "Mozilla/5.0 (compatible; AION-Aquisicoes/1.0)",
+        // Necessário para o Google honrar o export direto
+        "Accept": "application/pdf,application/octet-stream,*/*",
+      },
       redirect: "follow",
     });
   } catch {
@@ -935,24 +975,43 @@ export async function importarAnexoExterno(
 
   if (!response.ok) return { error: `Erro ao baixar arquivo: HTTP ${response.status}` };
 
-  // Determine mime type
-  const contentType = (response.headers.get("content-type") ?? "application/octet-stream").split(";")[0].trim();
-  const ext = ALLOWED_DOWNLOAD_TYPES[contentType];
-  if (!ext) {
-    // Try to infer from URL path
-    const urlPath = new URL(externalUrl).pathname;
-    const urlExt  = urlPath.split(".").pop()?.toLowerCase();
-    const mimeFromUrl: Record<string, string> = {
-      pdf: "application/pdf", jpg: "image/jpeg", jpeg: "image/jpeg",
-      png: "image/png", webp: "image/webp",
-    };
-    if (!urlExt || !mimeFromUrl[urlExt]) {
-      return { error: "Tipo de arquivo não suportado. Use links para PDF ou imagens." };
-    }
+  // Determine mime type — Google às vezes retorna text/html para autenticação
+  const rawContentType = response.headers.get("content-type") ?? "application/octet-stream";
+  if (rawContentType.includes("text/html")) {
+    return { error: "O Google exigiu autenticação para acessar este arquivo. Certifique-se de que o arquivo está compartilhado como 'Qualquer pessoa com o link pode visualizar'." };
   }
 
-  const finalMime = ALLOWED_DOWNLOAD_TYPES[contentType] ? contentType : "application/pdf";
-  const finalExt  = ALLOWED_DOWNLOAD_TYPES[finalMime] ?? "pdf";
+  const contentType = rawContentType.split(";")[0].trim();
+
+  // Infer extension from MIME or URL path
+  let finalMime = contentType;
+  let finalExt: string;
+
+  if (ALLOWED_DOWNLOAD_TYPES[contentType] && ALLOWED_DOWNLOAD_TYPES[contentType] !== "bin") {
+    finalExt = ALLOWED_DOWNLOAD_TYPES[contentType];
+  } else {
+    // Try URL extension
+    const urlPath = new URL(downloadUrl).pathname;
+    const urlExt  = urlPath.split(".").pop()?.toLowerCase() ?? "";
+    const extToMime: Record<string, string> = {
+      pdf: "application/pdf", jpg: "image/jpeg", jpeg: "image/jpeg",
+      png: "image/png", webp: "image/webp",
+      xlsx: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+      xls: "application/vnd.ms-excel",
+      docx: "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+      doc: "application/msword", csv: "text/csv",
+    };
+    if (extToMime[urlExt]) {
+      finalMime = extToMime[urlExt];
+      finalExt  = urlExt;
+    } else if (downloadUrl.includes("/export?format=pdf") || contentType === "application/octet-stream") {
+      // Google exported as PDF
+      finalMime = "application/pdf";
+      finalExt  = "pdf";
+    } else {
+      return { error: `Tipo de arquivo não suportado (${contentType}). Use PDFs, imagens ou planilhas.` };
+    }
+  }
 
   const buffer = Buffer.from(await response.arrayBuffer());
   if (buffer.byteLength > 30 * 1024 * 1024) return { error: "Arquivo muito grande (máx 30 MB)" };
@@ -992,4 +1051,26 @@ export async function importarAnexoExterno(
   revalidatePath(`/itens/${itemId}`);
 
   return { success: true, id: anexo.id, url: urlServePath, nome: displayName };
+}
+
+// ─── Reclassificar item individualmente ───────────────────────────────────────
+
+export async function reclassificarItem(id: string, categoria: string): Promise<void> {
+  const user = await requireAuth();
+  if (user.role === "FORNECEDOR") throw new Error("Sem permissão");
+
+  await prisma.item.update({
+    where: { id },
+    data: { categoria: categoria as CategoriaItem },
+  });
+
+  const dbUser = await prisma.user.findUnique({ where: { email: user.email! }, select: { id: true } });
+  if (dbUser) {
+    await prisma.log.create({
+      data: { itemId: id, autorId: dbUser.id, acao: `RECLASSIFICADO: ${categoria}` },
+    });
+  }
+
+  revalidatePath(`/itens/${id}`);
+  revalidatePath("/itens");
 }
