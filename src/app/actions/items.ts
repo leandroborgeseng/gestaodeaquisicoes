@@ -351,7 +351,7 @@ export async function adicionarOrcamento(itemId: string, formData: FormData) {
 
   const count = await prisma.orcamento.count({ where: { itemId } });
 
-  await prisma.orcamento.create({
+  const orcamento = await prisma.orcamento.create({
     data: {
       itemId,
       fornecedorId,
@@ -360,7 +360,24 @@ export async function adicionarOrcamento(itemId: string, formData: FormData) {
       dataOrcamento: data ? new Date(data) : null,
       cotacaoUrl,
     },
+    select: { id: true, item: { select: { numero: true } } },
   });
+
+  // ── Auto-importar o arquivo da cotação para o filesystem ──────────────────
+  if (cotacaoUrl) {
+    try {
+      await _baixarESalvar({
+        dbUserId:    user.id,
+        itemId,
+        itemNumero:  orcamento.item.numero,
+        externalUrl: cotacaoUrl,
+        category:    "cotacao",
+        orcamentoId: orcamento.id,
+      });
+    } catch {
+      // Falha silenciosa — orçamento já foi salvo, arquivo pode ser importado depois
+    }
+  }
 
   await aplicarVencedorAutomatico(itemId);
   await prisma.log.create({ data: { itemId, autorId: user.id, acao: "COTACAO_REGISTRADA" } });
