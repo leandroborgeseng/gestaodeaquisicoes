@@ -34,6 +34,7 @@ function getNav(role: string, c: SidebarCounts): NavGroup[] {
       heading: "Cadastros",
       links: [
         { key: "fornecedores", label: "Fornecedores", href: "/fornecedores", icon: <Icons.Suppliers />, count: c.fornecedores },
+        { key: "setores", label: "Setores", href: "/setores", icon: <Icons.Layers /> },
         { key: "usuarios", label: "Usuários", href: "/usuarios", icon: <Icons.Users />, count: c.usuarios },
       ],
     },

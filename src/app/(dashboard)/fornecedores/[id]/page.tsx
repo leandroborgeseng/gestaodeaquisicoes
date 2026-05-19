@@ -1,9 +1,11 @@
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import { prisma } from "@/lib/prisma";
+import { auth } from "@/lib/auth";
 import { Topbar } from "@/components/Topbar";
 import { StatusPill } from "@/components/StatusPill";
 import { fmtBRL, fmtDate } from "@/lib/utils";
+import { EditarFornecedorModal } from "@/components/modals/GestaoModals";
 
 export const dynamic = "force-dynamic";
 
@@ -66,21 +68,36 @@ function Avatar({ nome }: { nome: string }) {
   );
 }
 
-function MetaItem({ label, value }: { label: string; value: React.ReactNode }) {
+function KpiCard({
+  label,
+  value,
+  sub,
+  accent,
+}: {
+  label: string;
+  value: string;
+  sub?: string;
+  accent?: boolean;
+}) {
   return (
-    <div>
-      <div
-        style={{
-          fontSize: 10,
-          color: "var(--fg-faint)",
-          textTransform: "uppercase",
-          letterSpacing: "0.04em",
-          marginBottom: 2,
-        }}
-      >
+    <div
+      className="card"
+      style={{
+        padding: "14px 16px",
+        flex: "1 1 0",
+        minWidth: 0,
+        borderLeft: accent ? "3px solid var(--accent)" : undefined,
+      }}
+    >
+      <div style={{ fontSize: 10.5, color: "var(--fg-faint)", textTransform: "uppercase", letterSpacing: "0.05em", marginBottom: 6 }}>
         {label}
       </div>
-      <div style={{ fontSize: 13, color: "var(--fg-dim)" }}>{value || "—"}</div>
+      <div style={{ fontSize: 20, fontWeight: 700, letterSpacing: "-0.02em", color: accent ? "var(--accent)" : "var(--fg)" }}>
+        {value}
+      </div>
+      {sub && (
+        <div style={{ fontSize: 11, color: "var(--fg-faint)", marginTop: 3 }}>{sub}</div>
+      )}
     </div>
   );
 }
@@ -91,13 +108,25 @@ export default async function FornecedorDetailPage({
   params: { id: string };
 }) {
   const { id } = params;
-  const fornecedor = await getFornecedor(id);
+  const [fornecedor, session] = await Promise.all([getFornecedor(id), auth()]);
   if (!fornecedor) notFound();
+  const isAdmin = session?.user?.role === "ADMIN";
 
   const contratosAtivos = fornecedor.contratacoes.filter(
-    (c) =>
-      !["CANCELADO", "CONCLUIDO"].includes(c.item.statusProcesso)
+    (c) => !["CANCELADO", "CONCLUIDO"].includes(c.item.statusProcesso)
   );
+  const contratosConcluidos = fornecedor.contratacoes.filter(
+    (c) => c.item.statusProcesso === "CONCLUIDO"
+  );
+
+  // KPI calculations
+  const valorTotalContratado = fornecedor.contratacoes.reduce(
+    (acc, c) => acc + (c.valorContratado ? Number(c.valorContratado) : 0),
+    0
+  );
+  const orcVencedores = fornecedor.orcamentos.filter((o) => o.vencedor && !o.consultiva).length;
+  const orcHospital = fornecedor.orcamentos.filter((o) => !o.consultiva).length;
+  const taxaVitoria = orcHospital > 0 ? Math.round((orcVencedores / orcHospital) * 100) : 0;
 
   return (
     <>
@@ -120,7 +149,7 @@ export default async function FornecedorDetailPage({
                 <div
                   style={{
                     display: "flex",
-                    gap: 20,
+                    gap: 16,
                     flexWrap: "wrap",
                     fontSize: 12.5,
                     color: "var(--fg-dim)",
@@ -129,21 +158,52 @@ export default async function FornecedorDetailPage({
                   {fornecedor.cnpj && (
                     <span className="mono">{fornecedor.cnpj}</span>
                   )}
-                  {fornecedor.email && <span>{fornecedor.email}</span>}
+                  {fornecedor.email && (
+                    <a href={`mailto:${fornecedor.email}`} style={{ color: "var(--accent)" }}>
+                      {fornecedor.email}
+                    </a>
+                  )}
                   {fornecedor.telefone && <span>{fornecedor.telefone}</span>}
+                  {!fornecedor.cnpj && !fornecedor.email && !fornecedor.telefone && (
+                    <span style={{ color: "var(--fg-faint)" }}>Sem dados de contato</span>
+                  )}
                 </div>
               </div>
-              <div style={{ display: "flex", gap: 10 }}>
-                <MetaItem
-                  label="Contratos"
-                  value={fornecedor._count.contratacoes}
-                />
-                <MetaItem
-                  label="Orçamentos"
-                  value={fornecedor._count.orcamentos}
-                />
-              </div>
+              {isAdmin && (
+                <EditarFornecedorModal fornecedor={{
+                  id: fornecedor.id,
+                  nome: fornecedor.nome,
+                  cnpj: fornecedor.cnpj,
+                  email: fornecedor.email,
+                  telefone: fornecedor.telefone,
+                }} />
+              )}
             </div>
+          </div>
+
+          {/* KPI row */}
+          <div style={{ display: "flex", gap: 12, marginBottom: 16, flexWrap: "wrap" }}>
+            <KpiCard
+              label="Valor total contratado"
+              value={valorTotalContratado > 0 ? fmtBRL(valorTotalContratado) : "—"}
+              sub={`${fornecedor._count.contratacoes} contrato(s)`}
+              accent={valorTotalContratado > 0}
+            />
+            <KpiCard
+              label="Contratos ativos"
+              value={String(contratosAtivos.length)}
+              sub={`${contratosConcluidos.length} concluído(s)`}
+            />
+            <KpiCard
+              label="Orçamentos enviados"
+              value={String(orcHospital)}
+              sub={`${orcVencedores} vencedor(es)`}
+            />
+            <KpiCard
+              label="Taxa de vitória"
+              value={orcHospital > 0 ? `${taxaVitoria}%` : "—"}
+              sub={orcHospital > 0 ? `${orcVencedores} de ${orcHospital} concorrências` : "Sem orçamentos"}
+            />
           </div>
 
           {/* Card 1 — Contratos ativos */}
@@ -182,8 +242,10 @@ export default async function FornecedorDetailPage({
                     {contratosAtivos.map((c) => (
                       <tr key={c.id}>
                         <td>
-                          <span className="num">{c.item.numero}</span>{" "}
-                          <span className="strong">{c.item.equipamento}</span>
+                          <Link href={`/itens/${c.itemId}`} className="link">
+                            <span className="num">{c.item.numero}</span>{" "}
+                            <span className="strong">{c.item.equipamento}</span>
+                          </Link>
                         </td>
                         <td className="num">
                           {c.valorContratado
@@ -205,7 +267,45 @@ export default async function FornecedorDetailPage({
             </div>
           </div>
 
-          {/* Card 2 — Orçamentos */}
+          {/* Card 2 — Todos os contratos (histórico) */}
+          {contratosConcluidos.length > 0 && (
+            <div className="card" style={{ marginBottom: 16 }}>
+              <div className="card-head">
+                <h3>Contratos concluídos</h3>
+                <div className="spacer" />
+                <span className="pill-soft">{contratosConcluidos.length}</span>
+              </div>
+              <div className="tbl-scroll">
+                <table className="tbl">
+                  <thead>
+                    <tr>
+                      <th>Item</th>
+                      <th>Valor contratado</th>
+                      <th>Assinatura</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {contratosConcluidos.map((c) => (
+                      <tr key={c.id}>
+                        <td>
+                          <Link href={`/itens/${c.itemId}`} className="link">
+                            <span className="num">{c.item.numero}</span>{" "}
+                            <span className="strong">{c.item.equipamento}</span>
+                          </Link>
+                        </td>
+                        <td className="num">
+                          {c.valorContratado ? fmtBRL(Number(c.valorContratado)) : "—"}
+                        </td>
+                        <td className="num">{fmtDate(c.dataAssinatura)}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          )}
+
+          {/* Card 3 — Orçamentos */}
           <div className="card" style={{ marginBottom: 16 }}>
             <div className="card-head">
               <h3>Orçamentos</h3>
@@ -233,6 +333,7 @@ export default async function FornecedorDetailPage({
                       <th>Item</th>
                       <th>Valor</th>
                       <th>Validade</th>
+                      <th>Tipo</th>
                       <th>Resultado</th>
                     </tr>
                   </thead>
@@ -240,13 +341,24 @@ export default async function FornecedorDetailPage({
                     {fornecedor.orcamentos.map((o) => (
                       <tr key={o.id}>
                         <td>
-                          <span className="num">{o.item.numero}</span>{" "}
-                          <span className="strong">{o.item.equipamento}</span>
+                          <Link href={`/itens/${o.itemId}`} className="link">
+                            <span className="num">{o.item.numero}</span>{" "}
+                            <span className="strong">{o.item.equipamento}</span>
+                          </Link>
                         </td>
                         <td className="num">{fmtBRL(Number(o.valor))}</td>
                         <td className="num">{fmtDate(o.validadeAte)}</td>
                         <td>
-                          {o.vencedor ? (
+                          {o.consultiva ? (
+                            <span className="pill-soft" style={{ background: "var(--accent-soft)", color: "var(--accent)", fontSize: 10 }}>Consultiva AION</span>
+                          ) : (
+                            <span className="pill-soft" style={{ fontSize: 10 }}>Hospital</span>
+                          )}
+                        </td>
+                        <td>
+                          {o.consultiva ? (
+                            <span style={{ color: "var(--fg-faint)", fontSize: 12 }}>—</span>
+                          ) : o.vencedor ? (
                             <span className="pill-soft ok">Vencedor</span>
                           ) : (
                             <span className="pill-soft">Não vencedor</span>
@@ -260,7 +372,7 @@ export default async function FornecedorDetailPage({
             </div>
           </div>
 
-          {/* Card 3 — Usuários vinculados */}
+          {/* Card 4 — Usuários vinculados */}
           {fornecedor.users.length > 0 && (
             <div className="card">
               <div className="card-head">

@@ -3,7 +3,7 @@
 import { useState, useTransition } from "react";
 import * as Dialog from "@radix-ui/react-dialog";
 import { Icons } from "@/components/Icons";
-import { criarUsuario, criarFornecedor, criarItem, editarItem } from "@/app/actions/items";
+import { criarUsuario, criarFornecedor, editarFornecedor, criarItem, editarItem, criarSetor, editarSetor, removerSetor } from "@/app/actions/items";
 
 const inputStyle: React.CSSProperties = {
   width: "100%", height: 32, padding: "0 10px", border: "1px solid var(--line)",
@@ -278,6 +278,218 @@ export function EditarItemModal({
         </Dialog.Content>
       </Dialog.Portal>
     </Dialog.Root>
+  );
+}
+
+export function EditarFornecedorModal({
+  fornecedor,
+}: {
+  fornecedor: { id: string; nome: string; cnpj: string | null; email: string | null; telefone: string | null };
+}) {
+  const [open, setOpen] = useState(false);
+  const [error, setError] = useState("");
+  const [pending, startTransition] = useTransition();
+
+  function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
+    e.preventDefault();
+    const fd = new FormData(e.currentTarget);
+    startTransition(async () => {
+      const res = await editarFornecedor(fornecedor.id, fd);
+      if ("error" in res) { setError(String(res.error ?? "")); } else { setOpen(false); setError(""); }
+    });
+  }
+
+  return (
+    <Dialog.Root open={open} onOpenChange={setOpen}>
+      <Dialog.Trigger asChild>
+        <button className="btn ghost sm">
+          <Icons.Settings style={{ width: 11, height: 11 }} /> Editar
+        </button>
+      </Dialog.Trigger>
+      <Dialog.Portal>
+        <Dialog.Overlay className="dialog-overlay" />
+        <Dialog.Content className="dialog" aria-describedby={undefined}>
+          <div className="dialog-head">
+            <Dialog.Title style={{ margin: 0, fontSize: 14, fontWeight: 600 }}>Editar fornecedor</Dialog.Title>
+            <Dialog.Close asChild>
+              <button className="btn ghost sm" style={{ padding: "0 6px", height: 24 }}>✕</button>
+            </Dialog.Close>
+          </div>
+          <form onSubmit={handleSubmit}>
+            <div className="dialog-body">
+              <Field label="Razão social / Nome *">
+                <input style={inputStyle} name="nome" required defaultValue={fornecedor.nome} />
+              </Field>
+              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
+                <Field label="CNPJ">
+                  <input style={inputStyle} name="cnpj" placeholder="00.000.000/0001-00" defaultValue={fornecedor.cnpj ?? ""} />
+                </Field>
+                <Field label="Telefone">
+                  <input style={inputStyle} name="telefone" placeholder="(00) 0000-0000" defaultValue={fornecedor.telefone ?? ""} />
+                </Field>
+              </div>
+              <Field label="E-mail">
+                <input style={inputStyle} name="email" type="email" defaultValue={fornecedor.email ?? ""} />
+              </Field>
+              {error && <p style={{ color: "var(--danger)", fontSize: 12, margin: 0 }}>{error}</p>}
+            </div>
+            <div className="dialog-foot">
+              <Dialog.Close asChild>
+                <button type="button" className="btn ghost sm">Cancelar</button>
+              </Dialog.Close>
+              <button type="submit" className="btn primary sm" disabled={pending}>
+                {pending ? "Salvando…" : "Salvar alterações"}
+              </button>
+            </div>
+          </form>
+        </Dialog.Content>
+      </Dialog.Portal>
+    </Dialog.Root>
+  );
+}
+
+// ─── Setores ────────────────────────────────────────────────────────────────
+
+const PRESET_CORES = ["#4f8ef7", "#22c55e", "#f59e0b", "#ef4444", "#8b5cf6", "#06b6d4", "#f97316", "#ec4899", "#64748b"];
+
+interface SetorData { id: string; nome: string; sigla: string | null; cor: string | null; _count: { itens: number } }
+
+function SetorForm({
+  initial,
+  onClose,
+}: {
+  initial?: SetorData;
+  onClose: () => void;
+}) {
+  const [error, setError] = useState("");
+  const [pending, startTransition] = useTransition();
+  const [cor, setCor] = useState(initial?.cor ?? PRESET_CORES[0]);
+  const editing = !!initial;
+
+  function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
+    e.preventDefault();
+    const fd = new FormData(e.currentTarget);
+    fd.set("cor", cor);
+    startTransition(async () => {
+      const res = editing ? await editarSetor(initial!.id, fd) : await criarSetor(fd);
+      if ("error" in res) { setError(String(res.error ?? "")); }
+      else { onClose(); setError(""); }
+    });
+  }
+
+  return (
+    <form onSubmit={handleSubmit}>
+      <div className="dialog-body">
+        <div style={{ display: "grid", gridTemplateColumns: "1fr 100px", gap: 12 }}>
+          <Field label="Nome do setor *">
+            <input style={inputStyle} name="nome" required defaultValue={initial?.nome ?? ""} placeholder="Ex: Bloco Cirúrgico" />
+          </Field>
+          <Field label="Sigla">
+            <input style={inputStyle} name="sigla" defaultValue={initial?.sigla ?? ""} placeholder="Ex: BC" maxLength={6} />
+          </Field>
+        </div>
+        <Field label="Cor de identificação">
+          <div style={{ display: "flex", gap: 8, flexWrap: "wrap", marginTop: 4 }}>
+            {PRESET_CORES.map((c) => (
+              <button
+                key={c}
+                type="button"
+                onClick={() => setCor(c)}
+                style={{
+                  width: 26, height: 26, borderRadius: "50%",
+                  background: c, border: `3px solid ${cor === c ? "var(--fg)" : "transparent"}`,
+                  cursor: "pointer", outline: "none", padding: 0,
+                  boxShadow: cor === c ? `0 0 0 1px var(--bg)` : "none",
+                }}
+              />
+            ))}
+          </div>
+        </Field>
+        {error && <p style={{ color: "var(--danger)", fontSize: 12, margin: 0 }}>{error}</p>}
+      </div>
+      <div className="dialog-foot">
+        <button type="button" className="btn ghost sm" onClick={onClose} disabled={pending}>Cancelar</button>
+        <button type="submit" className="btn primary sm" disabled={pending}>
+          {pending ? (editing ? "Salvando…" : "Criando…") : (editing ? "Salvar alterações" : "Criar setor")}
+        </button>
+      </div>
+    </form>
+  );
+}
+
+export function NovoSetorModal() {
+  const [open, setOpen] = useState(false);
+  return (
+    <Dialog.Root open={open} onOpenChange={setOpen}>
+      <Dialog.Trigger asChild>
+        <button className="btn primary sm">
+          <Icons.Plus style={{ width: 12, height: 12 }} /> Novo setor
+        </button>
+      </Dialog.Trigger>
+      <Dialog.Portal>
+        <Dialog.Overlay className="dialog-overlay" />
+        <Dialog.Content className="dialog" aria-describedby={undefined} style={{ maxWidth: 480 }}>
+          <div className="dialog-head">
+            <Dialog.Title style={{ margin: 0, fontSize: 14, fontWeight: 600 }}>Novo setor</Dialog.Title>
+            <Dialog.Close asChild>
+              <button className="btn ghost sm" style={{ padding: "0 6px", height: 24 }}>✕</button>
+            </Dialog.Close>
+          </div>
+          <SetorForm onClose={() => setOpen(false)} />
+        </Dialog.Content>
+      </Dialog.Portal>
+    </Dialog.Root>
+  );
+}
+
+export function EditarSetorModal({ setor }: { setor: SetorData }) {
+  const [open, setOpen] = useState(false);
+  return (
+    <Dialog.Root open={open} onOpenChange={setOpen}>
+      <Dialog.Trigger asChild>
+        <button className="btn ghost sm" style={{ padding: "0 8px", height: 26 }}>Editar</button>
+      </Dialog.Trigger>
+      <Dialog.Portal>
+        <Dialog.Overlay className="dialog-overlay" />
+        <Dialog.Content className="dialog" aria-describedby={undefined} style={{ maxWidth: 480 }}>
+          <div className="dialog-head">
+            <Dialog.Title style={{ margin: 0, fontSize: 14, fontWeight: 600 }}>Editar setor</Dialog.Title>
+            <Dialog.Close asChild>
+              <button className="btn ghost sm" style={{ padding: "0 6px", height: 24 }}>✕</button>
+            </Dialog.Close>
+          </div>
+          <SetorForm initial={setor} onClose={() => setOpen(false)} />
+        </Dialog.Content>
+      </Dialog.Portal>
+    </Dialog.Root>
+  );
+}
+
+export function RemoverSetorButton({ setor }: { setor: SetorData }) {
+  const [pending, startTransition] = useTransition();
+  const [error, setError] = useState("");
+
+  function handleClick() {
+    if (!confirm(`Remover setor "${setor.nome}"? Esta ação não pode ser desfeita.`)) return;
+    startTransition(async () => {
+      const res = await removerSetor(setor.id);
+      if ("error" in res) setError(String(res.error ?? ""));
+    });
+  }
+
+  return (
+    <div>
+      <button
+        className="btn ghost sm"
+        style={{ padding: "0 8px", height: 26, color: setor._count.itens > 0 ? "var(--fg-faint)" : "var(--danger)" }}
+        onClick={handleClick}
+        disabled={pending || setor._count.itens > 0}
+        title={setor._count.itens > 0 ? `${setor._count.itens} item(s) vinculado(s)` : "Remover setor"}
+      >
+        {pending ? "…" : "Remover"}
+      </button>
+      {error && <p style={{ color: "var(--danger)", fontSize: 11, margin: "4px 0 0" }}>{error}</p>}
+    </div>
   );
 }
 

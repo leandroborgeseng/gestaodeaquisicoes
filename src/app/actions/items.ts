@@ -654,6 +654,90 @@ export async function criarFornecedor(formData: FormData) {
   return { success: true };
 }
 
+export async function editarFornecedor(id: string, formData: FormData) {
+  const user = await requireAuth();
+  if (user.role !== "ADMIN") return { error: "Sem permissão" };
+
+  const nome     = (formData.get("nome") as string)?.trim();
+  const cnpj     = (formData.get("cnpj") as string)?.trim() || null;
+  const email    = (formData.get("email") as string)?.trim() || null;
+  const telefone = (formData.get("telefone") as string)?.trim() || null;
+
+  if (!nome) return { error: "Nome obrigatório" };
+
+  try {
+    await prisma.fornecedor.update({
+      where: { id },
+      data: { nome, cnpj, email, telefone },
+    });
+  } catch (e: any) {
+    if (e.code === "P2002") return { error: "Já existe um fornecedor com este nome" };
+    throw e;
+  }
+
+  revalidatePath(`/fornecedores/${id}`);
+  revalidatePath("/fornecedores");
+  return { success: true };
+}
+
+export async function criarSetor(formData: FormData) {
+  const user = await requireAuth();
+  if (user.role !== "ADMIN") return { error: "Sem permissão" };
+
+  const nome  = (formData.get("nome") as string)?.trim();
+  const sigla = (formData.get("sigla") as string)?.trim() || null;
+  const cor   = (formData.get("cor") as string) || null;
+
+  if (!nome) return { error: "Nome obrigatório" };
+
+  try {
+    await prisma.setor.create({ data: { nome, sigla, cor } });
+  } catch (e: any) {
+    if (e.code === "P2002") return { error: "Setor com este nome já existe" };
+    throw e;
+  }
+
+  revalidatePath("/setores");
+  revalidatePath("/itens");
+  return { success: true };
+}
+
+export async function editarSetor(id: string, formData: FormData) {
+  const user = await requireAuth();
+  if (user.role !== "ADMIN") return { error: "Sem permissão" };
+
+  const nome  = (formData.get("nome") as string)?.trim();
+  const sigla = (formData.get("sigla") as string)?.trim() || null;
+  const cor   = (formData.get("cor") as string) || null;
+
+  if (!nome) return { error: "Nome obrigatório" };
+
+  try {
+    await prisma.setor.update({ where: { id }, data: { nome, sigla, cor } });
+  } catch (e: any) {
+    if (e.code === "P2002") return { error: "Já existe um setor com este nome" };
+    throw e;
+  }
+
+  revalidatePath("/setores");
+  revalidatePath("/itens");
+  return { success: true };
+}
+
+export async function removerSetor(id: string) {
+  const user = await requireAuth();
+  if (user.role !== "ADMIN") return { error: "Sem permissão" };
+
+  const count = await prisma.item.count({ where: { setorId: id } });
+  if (count > 0) return { error: `Este setor possui ${count} item(s) vinculado(s). Desvincule antes de remover.` };
+
+  await prisma.setor.delete({ where: { id } });
+
+  revalidatePath("/setores");
+  revalidatePath("/itens");
+  return { success: true };
+}
+
 export async function criarItem(formData: FormData) {
   const user = await requireAuth();
   if (user.role === "FORNECEDOR") return { error: "Sem permissão" };
