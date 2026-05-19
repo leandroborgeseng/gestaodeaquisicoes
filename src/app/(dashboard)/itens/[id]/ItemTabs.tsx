@@ -19,6 +19,7 @@ import {
   definirPrioridade,
   atualizarPrazoMulta,
   importarAnexoExterno,
+  salvarCamposMedicos,
 } from "@/app/actions/items";
 import {
   RegistrarCotacaoModal,
@@ -93,17 +94,33 @@ interface ItemData {
   logs: { autor: string; acao: string; data: string }[];
   economia: number | null;
   valorRef: number | null;
+  // ── Categorização ──────────────────────────────────────────────────────────
+  categoria: string;
+  // ── Campos médico-hospitalares ─────────────────────────────────────────────
+  fabricante?: string | null;
+  modelo?: string | null;
+  registroAnvisa?: string | null;
+  criticidade?: string | null;
+  precisaInstalacao: boolean;
+  precisaTreinamento: boolean;
+  precisaCalibracao: boolean;
+  precisaTesteEletrico: boolean;
+  responsavelTecnico?: string | null;
+  dataAceiteTecnico?: string | null;
+  statusInstalacao?: string | null;
+  statusTreinamento?: string | null;
 }
 
-const TABS = [
-  { id: "geral", label: "Visão geral" },
-  { id: "orc", label: "Orçamentos", badge: (d: ItemData) => d.orcamentos.length },
-  { id: "cot", label: "Cotação" },
-  { id: "ctr", label: "Contratação" },
-  { id: "ent", label: "Entregas", badge: (d: ItemData) => d.entregas.length },
-  { id: "nf", label: "Notas fiscais", badge: (d: ItemData) => d.notasFiscais.length },
-  { id: "tst", label: "Testes iniciais", badge: (d: ItemData) => d.testes.length },
-  { id: "his", label: "Histórico" },
+const ALL_TABS = [
+  { id: "geral", label: "Visão geral",    medico: false },
+  { id: "orc",   label: "Orçamentos",     medico: false, badge: (d: ItemData) => d.orcamentos.length },
+  { id: "cot",   label: "Cotação",        medico: false },
+  { id: "ctr",   label: "Contratação",    medico: false },
+  { id: "ent",   label: "Entregas",       medico: false, badge: (d: ItemData) => d.entregas.length },
+  { id: "nf",    label: "Notas fiscais",  medico: false, badge: (d: ItemData) => d.notasFiscais.length },
+  { id: "tst",   label: "Testes iniciais",medico: false, badge: (d: ItemData) => d.testes.length },
+  { id: "ec",    label: "Eng. Clínica",   medico: true  },
+  { id: "his",   label: "Histórico",      medico: false },
 ];
 
 interface SetorOpt { id: string; nome: string; sigla: string | null }
@@ -121,6 +138,7 @@ export function ItemTabs({
   const [obsText, setObsText] = useState("");
   const [obsPending, startObsTransition] = useTransition();
   const [conclPending, startConcl] = useTransition();
+  const TABS = ALL_TABS.filter(t => !t.medico || item.categoria === "MEDICO_HOSPITALAR");
   const menorValor = item.orcamentos.reduce(
     (min, o) => o.valor < (min?.valor ?? Infinity) ? o : min,
     item.orcamentos[0]
@@ -144,6 +162,31 @@ export function ItemTabs({
     <div style={{ display: "flex", flexDirection: "column", gap: 0 }}>
       {/* Tab bar */}
       <div className="tabs-bar" style={{ display: "flex", borderBottom: "1px solid var(--line)", gap: 0, marginBottom: 18, alignItems: "flex-end", overflowX: "auto" }}>
+        {/* Category badge — always visible */}
+        {(() => {
+          const CAT_CFG: Record<string, { l: string; color: string; bg: string }> = {
+            MEDICO_HOSPITALAR: { l: "🏥 Médico-Hospitalar", color: "var(--accent)",               bg: "var(--accent-soft)" },
+            TI:               { l: "💻 TI",                color: "oklch(0.62 0.12 250)",         bg: "oklch(0.95 0.04 250)" },
+            MOBILIARIO:       { l: "🪑 Mobiliário",         color: "oklch(0.60 0.10 85)",          bg: "oklch(0.95 0.03 85)"  },
+          };
+          const cfg = CAT_CFG[item.categoria];
+          if (!cfg) return null;
+          return (
+            <div style={{
+              display: "flex", alignItems: "center", paddingBottom: 6, paddingRight: 12,
+              flexShrink: 0,
+            }}>
+              <span style={{
+                fontSize: 10.5, fontWeight: 600, padding: "3px 8px", borderRadius: 5,
+                background: cfg.bg, color: cfg.color,
+                border: `1px solid ${cfg.color}44`,
+                letterSpacing: "0.01em",
+              }}>
+                {cfg.l}
+              </span>
+            </div>
+          );
+        })()}
         {TABS.map((t) => {
           const badge = typeof t.badge === "function" ? t.badge(item) : undefined;
           const active = activeTab === t.id;
@@ -177,6 +220,7 @@ export function ItemTabs({
                 setorId: item.setor?.id ?? null,
                 faseId: item.faseCompra?.id ?? null,
                 presencaEmAta: item.presencaEmAta,
+                categoria: item.categoria,
               }}
             />
           )}
@@ -210,6 +254,7 @@ export function ItemTabs({
           )}
           {activeTab === "nf" && <TabNotasFiscais item={item} />}
           {activeTab === "tst" && <TabTestes item={item} />}
+          {activeTab === "ec"  && item.categoria === "MEDICO_HOSPITALAR" && <TabEngClinica item={item} />}
           {activeTab === "his" && <TabHistorico item={item} />}
         </div>
 
@@ -1456,6 +1501,257 @@ function TabTestes({ item }: { item: ItemData }) {
           label="Anexar laudo técnico, checklist ou relatório de teste"
           existing={item.anexosGerais.filter((a) => a.url.includes("/teste/"))}
         />
+      </div>
+    </div>
+  );
+}
+
+// ─── Tab: Engenharia Clínica (MEDICO_HOSPITALAR only) ────────────────────────
+
+function TabEngClinica({ item }: { item: ItemData }) {
+  const [editingFicha, setEditingFicha] = useState(false);
+  const [editingImpl,  setEditingImpl]  = useState(false);
+  const [saving, startSave]             = useTransition();
+  const [saved, setSaved]               = useState("");
+
+  // Ficha técnica
+  const [fabricante,   setFabricante]   = useState(item.fabricante   ?? "");
+  const [modelo,       setModelo]       = useState(item.modelo       ?? "");
+  const [anvisa,       setAnvisa]       = useState(item.registroAnvisa ?? "");
+  const [criticidade,  setCriticidade]  = useState(item.criticidade  ?? "");
+
+  // Implantação
+  const [instStatus,   setInstStatus]   = useState(item.statusInstalacao   ?? "");
+  const [treinStatus,  setTreinStatus]  = useState(item.statusTreinamento  ?? "");
+  const [respTecnico,  setRespTecnico]  = useState(item.responsavelTecnico ?? "");
+  const [dataAceite,   setDataAceite]   = useState("");
+  const [precInstall,  setPrecInstall]  = useState(item.precisaInstalacao);
+  const [precTrein,    setPrecTrein]    = useState(item.precisaTreinamento);
+  const [precCalib,    setPrecCalib]    = useState(item.precisaCalibracao);
+  const [precEletrico, setPrecEletrico] = useState(item.precisaTesteEletrico);
+
+  const sel: React.CSSProperties = {
+    width: "100%", padding: "6px 8px", fontSize: 12.5,
+    border: "1px solid var(--line)", borderRadius: 5,
+    background: "var(--bg)", color: "var(--fg)", outline: "none",
+  };
+
+  const statusInstOpts  = [
+    { v: "",              l: "— não definido —" },
+    { v: "PENDENTE",      l: "Pendente" },
+    { v: "AGENDADA",      l: "Agendada" },
+    { v: "EM_ANDAMENTO",  l: "Em andamento" },
+    { v: "CONCLUIDA",     l: "Concluída ✓" },
+    { v: "NAO_APLICAVEL", l: "Não se aplica" },
+  ];
+  const statusTreinOpts = [
+    { v: "",              l: "— não definido —" },
+    { v: "PENDENTE",      l: "Pendente" },
+    { v: "AGENDADO",      l: "Agendado" },
+    { v: "REALIZADO",     l: "Realizado ✓" },
+    { v: "DISPENSADO",    l: "Dispensado" },
+    { v: "NAO_APLICAVEL", l: "Não se aplica" },
+  ];
+  const STATUS_INST_LABEL: Record<string, string> = {
+    PENDENTE: "Pendente", AGENDADA: "Agendada", EM_ANDAMENTO: "Em andamento",
+    CONCLUIDA: "Concluída ✓", NAO_APLICAVEL: "Não se aplica",
+  };
+  const STATUS_TREIN_LABEL: Record<string, string> = {
+    PENDENTE: "Pendente", AGENDADO: "Agendado", REALIZADO: "Realizado ✓",
+    DISPENSADO: "Dispensado", NAO_APLICAVEL: "Não se aplica",
+  };
+  const critColor = (c?: string | null) =>
+    c === "ALTA" ? "var(--danger)" : c === "MEDIA" ? "var(--warn)" : "var(--ok)";
+
+  function handleSaveFicha() {
+    startSave(async () => {
+      await salvarCamposMedicos(item.id, {
+        fabricante:     fabricante.trim()  || undefined,
+        modelo:         modelo.trim()      || undefined,
+        registroAnvisa: anvisa.trim()      || undefined,
+        criticidade:    (criticidade as any) || null,
+      });
+      setEditingFicha(false);
+      setSaved("ficha");
+      setTimeout(() => setSaved(""), 2500);
+    });
+  }
+
+  function handleSaveImpl() {
+    startSave(async () => {
+      await salvarCamposMedicos(item.id, {
+        precisaInstalacao:   precInstall,
+        precisaTreinamento:  precTrein,
+        precisaCalibracao:   precCalib,
+        precisaTesteEletrico: precEletrico,
+        statusInstalacao:    (instStatus  as any) || null,
+        statusTreinamento:   (treinStatus as any) || null,
+        responsavelTecnico:  respTecnico.trim()   || undefined,
+        dataAceiteTecnico:   dataAceite            || null,
+      });
+      setEditingImpl(false);
+      setSaved("impl");
+      setTimeout(() => setSaved(""), 2500);
+    });
+  }
+
+  return (
+    <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
+
+      {/* ── Ficha técnica ── */}
+      <div className="card">
+        <div className="card-head">
+          <h3>Ficha técnica</h3>
+          <div className="spacer" />
+          {saved === "ficha" && <span style={{ fontSize: 11, color: "var(--ok)" }}>Salvo ✓</span>}
+          {!editingFicha && (
+            <button className="btn ghost sm" onClick={() => { setEditingFicha(true); setSaved(""); }}>
+              {(item.fabricante || item.modelo) ? "Editar" : "Preencher"}
+            </button>
+          )}
+        </div>
+        <div className="card-body">
+          {editingFicha ? (
+            <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
+                <div className="field"><label>Fabricante</label>
+                  <input value={fabricante} onChange={e => setFabricante(e.target.value)} placeholder="Ex: Mindray, Philips, Siemens…" disabled={saving} /></div>
+                <div className="field"><label>Modelo</label>
+                  <input value={modelo} onChange={e => setModelo(e.target.value)} placeholder="Ex: DC-80, IntelliVue MX40…" disabled={saving} /></div>
+              </div>
+              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
+                <div className="field"><label>Registro ANVISA</label>
+                  <input value={anvisa} onChange={e => setAnvisa(e.target.value)} placeholder="XXXXXX/XXXX-XX" disabled={saving} /></div>
+                <div className="field">
+                  <label>Criticidade</label>
+                  <select value={criticidade} onChange={e => setCriticidade(e.target.value)} disabled={saving} style={sel}>
+                    <option value="">— não definida —</option>
+                    <option value="ALTA">⚠ Alta — suporte a vida / diagnóstico crítico</option>
+                    <option value="MEDIA">◈ Média — uso clínico relevante</option>
+                    <option value="BAIXA">◯ Baixa — uso de apoio</option>
+                  </select>
+                </div>
+              </div>
+              <div style={{ display: "flex", gap: 8, justifyContent: "flex-end" }}>
+                <button className="btn ghost sm" onClick={() => setEditingFicha(false)} disabled={saving}>Cancelar</button>
+                <button className="btn primary sm" onClick={handleSaveFicha} disabled={saving}>{saving ? "Salvando…" : "Salvar"}</button>
+              </div>
+            </div>
+          ) : (item.fabricante || item.modelo || item.registroAnvisa || item.criticidade) ? (
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 14 }}>
+              {item.fabricante    && <MetaField label="Fabricante"       value={item.fabricante} />}
+              {item.modelo        && <MetaField label="Modelo"           value={<span className="mono">{item.modelo}</span>} />}
+              {item.registroAnvisa && <MetaField label="Registro ANVISA" value={<span className="mono">{item.registroAnvisa}</span>} />}
+              {item.criticidade   && (
+                <MetaField label="Criticidade" value={
+                  <span style={{ color: critColor(item.criticidade), fontWeight: 600 }}>
+                    {item.criticidade === "ALTA" ? "⚠ Alta" : item.criticidade === "MEDIA" ? "◈ Média" : "◯ Baixa"}
+                  </span>
+                } />
+              )}
+            </div>
+          ) : (
+            <p style={{ margin: 0, fontSize: 12.5, color: "var(--fg-faint)" }}>
+              Fabricante, modelo e registro ANVISA ainda não preenchidos. Clique em "Preencher".
+            </p>
+          )}
+        </div>
+      </div>
+
+      {/* ── Implantação e aceite técnico ── */}
+      <div className="card">
+        <div className="card-head">
+          <h3>Implantação e aceite técnico</h3>
+          <div className="spacer" />
+          {saved === "impl" && <span style={{ fontSize: 11, color: "var(--ok)" }}>Salvo ✓</span>}
+          {!editingImpl && (
+            <button className="btn ghost sm" onClick={() => { setEditingImpl(true); setSaved(""); }}>Editar</button>
+          )}
+        </div>
+        <div className="card-body">
+          {editingImpl ? (
+            <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 8 }}>
+                {([
+                  { label: "Precisa instalação técnica",       val: precInstall,  set: setPrecInstall },
+                  { label: "Precisa treinamento de operadores", val: precTrein,    set: setPrecTrein },
+                  { label: "Precisa calibração periódica",      val: precCalib,    set: setPrecCalib },
+                  { label: "Teste de segurança elétrica (IEC)", val: precEletrico, set: setPrecEletrico },
+                ] as const).map(cb => (
+                  <label key={cb.label} style={{ display: "flex", alignItems: "center", gap: 8, fontSize: 12.5, cursor: "pointer", userSelect: "none" }}>
+                    <input type="checkbox" checked={cb.val} onChange={e => cb.set(e.target.checked)} disabled={saving} style={{ width: 14, height: 14 }} />
+                    {cb.label}
+                  </label>
+                ))}
+              </div>
+              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
+                <div className="field">
+                  <label>Status da instalação</label>
+                  <select value={instStatus} onChange={e => setInstStatus(e.target.value)} disabled={saving || !precInstall} style={sel}>
+                    {statusInstOpts.map(o => <option key={o.v} value={o.v}>{o.l}</option>)}
+                  </select>
+                </div>
+                <div className="field">
+                  <label>Status do treinamento</label>
+                  <select value={treinStatus} onChange={e => setTreinStatus(e.target.value)} disabled={saving || !precTrein} style={sel}>
+                    {statusTreinOpts.map(o => <option key={o.v} value={o.v}>{o.l}</option>)}
+                  </select>
+                </div>
+              </div>
+              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
+                <div className="field">
+                  <label>Responsável técnico (Eng. Clínica)</label>
+                  <input value={respTecnico} onChange={e => setRespTecnico(e.target.value)} placeholder="Nome do engenheiro responsável" disabled={saving} />
+                </div>
+                <div className="field">
+                  <label>Data de aceite técnico</label>
+                  <input type="date" value={dataAceite} onChange={e => setDataAceite(e.target.value)} disabled={saving} />
+                </div>
+              </div>
+              <div style={{ display: "flex", gap: 8, justifyContent: "flex-end" }}>
+                <button className="btn ghost sm" onClick={() => setEditingImpl(false)} disabled={saving}>Cancelar</button>
+                <button className="btn primary sm" onClick={handleSaveImpl} disabled={saving}>{saving ? "Salvando…" : "Salvar"}</button>
+              </div>
+            </div>
+          ) : (
+            <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+              {/* Requirement checklist */}
+              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 8 }}>
+                {([
+                  { label: "Instalação técnica",       ok: item.precisaInstalacao,   status: item.statusInstalacao   ? STATUS_INST_LABEL[item.statusInstalacao]   : null },
+                  { label: "Treinamento",               ok: item.precisaTreinamento,  status: item.statusTreinamento  ? STATUS_TREIN_LABEL[item.statusTreinamento] : null },
+                  { label: "Calibração",                ok: item.precisaCalibracao,   status: null },
+                  { label: "Teste seg. elétrica (IEC)", ok: item.precisaTesteEletrico, status: null },
+                ]).map(row => {
+                  const isOk = row.ok;
+                  const isDone = row.status?.includes("✓");
+                  return (
+                    <div key={row.label} style={{
+                      display: "flex", alignItems: "center", gap: 8,
+                      padding: "9px 12px", borderRadius: 6,
+                      background: isDone ? "var(--ok-soft)" : isOk ? "var(--bg-soft)" : "var(--bg-panel)",
+                      border: `1px solid ${isDone ? "oklch(0.88 0.08 155)" : isOk ? "var(--line)" : "var(--line-soft)"}`,
+                    }}>
+                      <span style={{ fontSize: 16, lineHeight: 1, color: isDone ? "var(--ok)" : isOk ? "var(--accent)" : "var(--fg-faint)" }}>
+                        {isDone ? "✓" : isOk ? "○" : "—"}
+                      </span>
+                      <div>
+                        <div style={{ fontSize: 12, fontWeight: 500, color: isOk ? "var(--fg)" : "var(--fg-faint)" }}>{row.label}</div>
+                        {row.status && <div style={{ fontSize: 10.5, color: "var(--fg-dim)", marginTop: 1 }}>{row.status}</div>}
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+              {(item.responsavelTecnico || item.dataAceiteTecnico) && (
+                <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12, marginTop: 4, paddingTop: 12, borderTop: "1px solid var(--line-soft)" }}>
+                  {item.responsavelTecnico && <MetaField label="Responsável técnico" value={item.responsavelTecnico} />}
+                  {item.dataAceiteTecnico  && <MetaField label="Aceite técnico"       value={<span className="mono" style={{ color: "var(--ok)", fontWeight: 600 }}>✓ {item.dataAceiteTecnico}</span>} />}
+                </div>
+              )}
+            </div>
+          )}
+        </div>
       </div>
     </div>
   );

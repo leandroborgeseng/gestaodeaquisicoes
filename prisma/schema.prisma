@@ -39,6 +39,34 @@ enum PrioridadeItem {
   BAIXA
 }
 
+enum CategoriaItem {
+  MEDICO_HOSPITALAR
+  TI
+  MOBILIARIO
+}
+
+enum CriticidadeItem {
+  ALTA
+  MEDIA
+  BAIXA
+}
+
+enum StatusInstalacao {
+  PENDENTE
+  AGENDADA
+  EM_ANDAMENTO
+  CONCLUIDA
+  NAO_APLICAVEL
+}
+
+enum StatusTreinamento {
+  PENDENTE
+  AGENDADO
+  REALIZADO
+  DISPENSADO
+  NAO_APLICAVEL
+}
+
 model FaseCompra {
   id        String   @id @default(cuid())
   nome      String   @unique
@@ -126,6 +154,24 @@ model Item {
   numeroSerie           String?
   localizacaoFisica     String?
   patrimonioHospital    String?
+
+  // ── Categorização ─────────────────────────────────────────────────────────
+  categoria              CategoriaItem       @default(MEDICO_HOSPITALAR)
+
+  // ── Campos: Equipamentos Médico-Hospitalares ───────────────────────────────
+  fabricante             String?
+  modelo                 String?
+  registroAnvisa         String?
+  criticidade            CriticidadeItem?
+  precisaInstalacao      Boolean             @default(false)
+  precisaTreinamento     Boolean             @default(false)
+  precisaCalibracao      Boolean             @default(false)
+  precisaTesteEletrico   Boolean             @default(false)
+  responsavelTecnico     String?
+  dataAceiteTecnico      DateTime?
+  statusInstalacao       StatusInstalacao?
+  statusTreinamento      StatusTreinamento?
+
   orcamentos            Orcamento[]
   cotacao               Cotacao?
   contratacao           Contratacao?

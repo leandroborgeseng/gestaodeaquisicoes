@@ -60,7 +60,7 @@ async function getFinanceChartData(): Promise<{ mes: string; valor: number }[]> 
 
 async function getDashboardData() {
   const now = new Date();
-  const [totalItems, byStatus, recentLogs, totalValueAgg, contratacoes, acimaValor, atrasados, aguardandoAprovacao, propostasVencidas] = await Promise.all([
+  const [totalItems, byStatus, recentLogs, totalValueAgg, contratacoes, acimaValor, atrasados, aguardandoAprovacao, propostasVencidas, porCategoria] = await Promise.all([
     prisma.item.count(),
     prisma.item.groupBy({ by: ["statusProcesso"], _count: { id: true } }),
     prisma.log.findMany({
@@ -81,6 +81,7 @@ async function getDashboardData() {
     prisma.entrega.count({ where: { dataPrevisao: { lt: now }, dataEntrega: null } }),
     prisma.item.count({ where: { aprovado: false, statusProcesso: { notIn: ["CANCELADO", "CONCLUIDO"] } } }),
     prisma.orcamento.count({ where: { validadeAte: { lt: now }, vencedor: false } }),
+    prisma.item.groupBy({ by: ["categoria"], _count: { id: true } }),
   ]);
 
   const contratadosTotal = byStatus
@@ -99,6 +100,12 @@ async function getDashboardData() {
   const savingTotal = somaRefContratados > 0 ? somaRefContratados - somaContratado : null;
   const savingPct   = somaRefContratados > 0 ? (savingTotal! / somaRefContratados) * 100 : null;
 
+  const catCount = {
+    MEDICO_HOSPITALAR: porCategoria.find(c => c.categoria === "MEDICO_HOSPITALAR")?._count.id ?? 0,
+    TI:               porCategoria.find(c => c.categoria === "TI")?._count.id               ?? 0,
+    MOBILIARIO:       porCategoria.find(c => c.categoria === "MOBILIARIO")?._count.id        ?? 0,
+  };
+
   return {
     totalItems,
     byStatus,
@@ -112,6 +119,7 @@ async function getDashboardData() {
     aguardandoAprovacao,
     propostasVencidas,
     recentLogs,
+    catCount,
   };
 }
 
@@ -279,6 +287,34 @@ export default async function DashboardPage() {
                 <Icons.Spark style={{ width: 12, height: 12 }} /> Nova rodada de cotação
               </button>
             </div>
+          </div>
+
+          {/* Category KPIs */}
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 10, marginBottom: 14 }}>
+            {([
+              { v: "MEDICO_HOSPITALAR", l: "Equipamentos Médicos", icon: "🏥", color: "var(--accent)",         bg: "var(--accent-soft)" },
+              { v: "TI",               l: "Tecnologia da Informação", icon: "💻", color: "oklch(0.62 0.12 250)", bg: "oklch(0.95 0.04 250)" },
+              { v: "MOBILIARIO",       l: "Mobiliário",            icon: "🪑", color: "oklch(0.60 0.10 85)",   bg: "oklch(0.95 0.03 85)"  },
+            ] as const).map((cat) => (
+              <a
+                key={cat.v}
+                href={`/itens?categoria=${cat.v}`}
+                style={{
+                  display: "flex", alignItems: "center", gap: 12,
+                  padding: "12px 14px", borderRadius: 8, textDecoration: "none",
+                  background: cat.bg, border: `1px solid ${cat.color}33`,
+                  transition: "opacity 0.1s",
+                }}
+              >
+                <span style={{ fontSize: 22, flexShrink: 0 }}>{cat.icon}</span>
+                <div style={{ minWidth: 0 }}>
+                  <div style={{ fontSize: 22, fontWeight: 700, letterSpacing: "-0.02em", color: cat.color, lineHeight: 1 }}>
+                    {fmtNum(data.catCount[cat.v as keyof typeof data.catCount])}
+                  </div>
+                  <div style={{ fontSize: 11, color: "var(--fg-dim)", marginTop: 2, whiteSpace: "nowrap" }}>{cat.l}</div>
+                </div>
+              </a>
+            ))}
           </div>
 
           {/* KPI Row */}

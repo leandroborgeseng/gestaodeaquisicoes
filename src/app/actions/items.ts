@@ -3,7 +3,7 @@
 import { prisma } from "@/lib/prisma";
 import { auth } from "@/lib/auth";
 import { revalidatePath } from "next/cache";
-import { StatusProcesso, PrioridadeItem } from "@prisma/client";
+import { StatusProcesso, PrioridadeItem, CategoriaItem, CriticidadeItem, StatusInstalacao, StatusTreinamento } from "@prisma/client";
 import {
   emailItemAprovado,
   emailItemPausado,
@@ -596,12 +596,13 @@ export async function criarItem(formData: FormData) {
   if (!equipamento) return { error: "Nome do equipamento obrigatório" };
   if (!numero)      return { error: "Número do item obrigatório" };
 
-  const qtd     = parseInt(formData.get("qtd") as string) || 1;
-  const siaf    = parseInt(formData.get("siafisico") as string) || null;
-  const valRef  = parseDecimal(formData.get("valorRef") as string);
-  const setorId = (formData.get("setorId") as string) || null;
-  const faseId  = (formData.get("faseId") as string) || null;
-  const especif = (formData.get("especificacao") as string)?.trim() || null;
+  const qtd       = parseInt(formData.get("qtd") as string) || 1;
+  const siaf      = parseInt(formData.get("siafisico") as string) || null;
+  const valRef    = parseDecimal(formData.get("valorRef") as string);
+  const setorId   = (formData.get("setorId") as string) || null;
+  const faseId    = (formData.get("faseId") as string) || null;
+  const especif   = (formData.get("especificacao") as string)?.trim() || null;
+  const categoria = ((formData.get("categoria") as string) || "MEDICO_HOSPITALAR") as CategoriaItem;
 
   try {
     const item = await prisma.item.create({
@@ -615,6 +616,7 @@ export async function criarItem(formData: FormData) {
         setorId:    setorId || undefined,
         faseCompraId: faseId || undefined,
         statusProcesso: "PENDENTE",
+        categoria,
       },
     });
     await prisma.log.create({ data: { itemId: item.id, autorId: user.id, acao: "ITEM_CRIADO" } });
@@ -634,13 +636,15 @@ export async function editarItem(itemId: string, formData: FormData) {
   const equipamento = (formData.get("equipamento") as string)?.trim();
   if (!equipamento) return { error: "Nome do equipamento obrigatório" };
 
-  const qtd    = parseInt(formData.get("qtd") as string) || undefined;
-  const siaf   = parseInt(formData.get("siafisico") as string) || null;
-  const valRef = parseDecimal(formData.get("valorRef") as string);
-  const setorId  = (formData.get("setorId") as string) || null;
-  const faseId   = (formData.get("faseId") as string) || null;
-  const especif  = (formData.get("especificacao") as string)?.trim() || null;
-  const ata      = formData.get("presencaEmAta") === "true";
+  const qtd       = parseInt(formData.get("qtd") as string) || undefined;
+  const siaf      = parseInt(formData.get("siafisico") as string) || null;
+  const valRef    = parseDecimal(formData.get("valorRef") as string);
+  const setorId   = (formData.get("setorId") as string) || null;
+  const faseId    = (formData.get("faseId") as string) || null;
+  const especif   = (formData.get("especificacao") as string)?.trim() || null;
+  const ata       = formData.get("presencaEmAta") === "true";
+  const catRaw    = formData.get("categoria") as string | null;
+  const categoria = catRaw ? (catRaw as CategoriaItem) : undefined;
 
   await prisma.item.update({
     where: { id: itemId },
@@ -653,6 +657,7 @@ export async function editarItem(itemId: string, formData: FormData) {
       setorId:     setorId || null,
       faseCompraId: faseId || null,
       presencaEmAta: ata,
+      ...(categoria ? { categoria } : {}),
     },
   });
   await prisma.log.create({ data: { itemId, autorId: user.id, acao: "ITEM_EDITADO" } });
@@ -825,6 +830,52 @@ export async function importarItens(formData: FormData): Promise<ImportResult> {
 
   revalidatePath("/itens");
   return { created, skipped: skippedCount, errors };
+}
+
+// ─── Campos exclusivos de Equipamentos Médico-Hospitalares ───────────────────
+
+export async function salvarCamposMedicos(
+  itemId: string,
+  data: {
+    fabricante?:          string;
+    modelo?:              string;
+    registroAnvisa?:      string;
+    criticidade?:         CriticidadeItem | null;
+    precisaInstalacao?:   boolean;
+    precisaTreinamento?:  boolean;
+    precisaCalibracao?:   boolean;
+    precisaTesteEletrico?: boolean;
+    responsavelTecnico?:  string;
+    statusInstalacao?:    StatusInstalacao | null;
+    statusTreinamento?:   StatusTreinamento | null;
+    dataAceiteTecnico?:   string | null;
+  },
+) {
+  const user = await requireAuth();
+  if (user.role === "FORNECEDOR") return { error: "Sem permissão" };
+
+  await prisma.item.update({
+    where: { id: itemId },
+    data: {
+      fabricante:          data.fabricante          ?? undefined,
+      modelo:              data.modelo              ?? undefined,
+      registroAnvisa:      data.registroAnvisa      ?? undefined,
+      criticidade:         data.criticidade         ?? undefined,
+      precisaInstalacao:   data.precisaInstalacao   ?? undefined,
+      precisaTreinamento:  data.precisaTreinamento  ?? undefined,
+      precisaCalibracao:   data.precisaCalibracao   ?? undefined,
+      precisaTesteEletrico: data.precisaTesteEletrico ?? undefined,
+      responsavelTecnico:  data.responsavelTecnico  ?? undefined,
+      statusInstalacao:    data.statusInstalacao    ?? undefined,
+      statusTreinamento:   data.statusTreinamento   ?? undefined,
+      dataAceiteTecnico:   data.dataAceiteTecnico
+        ? new Date(data.dataAceiteTecnico)
+        : data.dataAceiteTecnico === null ? null : undefined,
+    },
+  });
+  await prisma.log.create({ data: { itemId, autorId: user.id, acao: "CAMPOS_MEDICOS_ATUALIZADOS" } });
+  revalidatePath(`/itens/${itemId}`);
+  return { success: true };
 }
 
 export async function marcarConcluido(itemId: string) {

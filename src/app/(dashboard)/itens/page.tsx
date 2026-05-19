@@ -11,14 +11,34 @@ import { ImportarItensModal } from "@/components/modals/ImportarItensModal";
 
 export const dynamic = "force-dynamic";
 
-interface SearchParams { status?: string; q?: string; page?: string; vsRef?: string; setor?: string; fase?: string; prioridade?: string }
+interface SearchParams {
+  status?: string; q?: string; page?: string; vsRef?: string;
+  setor?: string; fase?: string; prioridade?: string; categoria?: string;
+}
+
+const CAT_TABS = [
+  { v: "MEDICO_HOSPITALAR", l: "Equipamentos Médicos", icon: "🏥" },
+  { v: "TI",                l: "Tecnologia da Informação", icon: "💻" },
+  { v: "MOBILIARIO",        l: "Mobiliário", icon: "🪑" },
+  { v: "all",               l: "Todos", icon: "" },
+] as const;
+
+const CAT_BADGE: Record<string, { l: string; color: string }> = {
+  MEDICO_HOSPITALAR: { l: "Médico",    color: "var(--accent)" },
+  TI:               { l: "TI",         color: "oklch(0.62 0.12 250)" },
+  MOBILIARIO:       { l: "Mobiliário", color: "oklch(0.60 0.10 85)"  },
+};
 
 async function getItems(params: SearchParams) {
   const page = Math.max(1, parseInt(params.page ?? "1"));
   const take = 50;
   const skip = (page - 1) * take;
 
+  // Default category = MEDICO_HOSPITALAR (main operational focus)
+  const cat = params.categoria && params.categoria !== "all" ? params.categoria : "MEDICO_HOSPITALAR";
+
   const where: Record<string, unknown> = {};
+  if (cat !== "all") where.categoria = cat;
   if (params.status && params.status !== "all") where.statusProcesso = params.status;
   if (params.vsRef && params.vsRef !== "all") where.statusVsReferenciaFns = params.vsRef;
   if (params.setor && params.setor !== "all") where.setorId = params.setor;
@@ -52,6 +72,7 @@ async function getItems(params: SearchParams) {
 
 export default async function ItensPage({ searchParams }: { searchParams: SearchParams }) {
   const data = await getItems(searchParams);
+  const activeCat = searchParams.categoria ?? "MEDICO_HOSPITALAR";
 
   return (
     <>
@@ -59,21 +80,52 @@ export default async function ItensPage({ searchParams }: { searchParams: Search
         <button className="btn ghost sm">
           <Icons.Download style={{ width: 12, height: 12 }} /> Exportar
         </button>
-        <button className="btn sm">
-          <Icons.Filter style={{ width: 12, height: 12 }} /> Filtros
-        </button>
       </Topbar>
 
       <div className="content">
         <div className="content-inner">
-          <div className="page-head">
+
+          {/* ── Category tabs ──────────────────────────────────────────────── */}
+          <div style={{
+            display: "flex", borderBottom: "1px solid var(--line)",
+            marginBottom: 0, overflowX: "auto",
+          }}>
+            {CAT_TABS.map((c) => {
+              const active = activeCat === c.v;
+              return (
+                <Link
+                  key={c.v}
+                  href={`/itens?categoria=${c.v}`}
+                  style={{
+                    padding: "10px 18px", fontSize: 12.5, fontWeight: 500,
+                    color: active ? "var(--fg)" : "var(--fg-dim)",
+                    borderBottom: active ? "2px solid var(--accent)" : "2px solid transparent",
+                    marginBottom: -1, textDecoration: "none", whiteSpace: "nowrap",
+                    display: "flex", alignItems: "center", gap: 6,
+                    background: active ? "var(--bg-soft)" : "none",
+                    transition: "color 0.1s",
+                  }}
+                >
+                  {c.icon && <span style={{ fontSize: 14 }}>{c.icon}</span>}
+                  {c.l}
+                </Link>
+              );
+            })}
+          </div>
+
+          <div style={{ height: 18 }} />
+
+          <div className="page-head" style={{ marginTop: 0 }}>
             <div>
-              <h1>Itens</h1>
-              <p>{data.total} equipamentos · Fase Única 2026 · R$ 24,99M referência FNS</p>
+              <h1 style={{ display: "flex", alignItems: "center", gap: 10 }}>
+                {CAT_TABS.find(c => c.v === activeCat)?.icon}{" "}
+                {activeCat === "all" ? "Todos os itens" : CAT_TABS.find(c => c.v === activeCat)?.l ?? "Itens"}
+              </h1>
+              <p>{data.total} {activeCat === "MEDICO_HOSPITALAR" ? "equipamentos médicos" : activeCat === "TI" ? "itens de TI" : activeCat === "MOBILIARIO" ? "itens de mobiliário" : "itens"} · Fase Única 2026</p>
             </div>
             <div className="actions">
               <ImportarItensModal />
-              <NovoItemModal setores={data.setores} fases={data.fases} />
+              <NovoItemModal setores={data.setores} fases={data.fases} defaultCategoria={activeCat !== "all" ? activeCat : "MEDICO_HOSPITALAR"} />
             </div>
           </div>
 
@@ -115,6 +167,21 @@ export default async function ItensPage({ searchParams }: { searchParams: Search
                             {item.equipamento}
                           </span>
                           <div style={{ display: "flex", gap: 4, flexWrap: "wrap" }}>
+                            {/* Show category badge only when in "all" view */}
+                            {activeCat === "all" && (item as any).categoria && (
+                              <span style={{
+                                fontSize: 9.5, padding: "1px 5px", borderRadius: 4,
+                                border: `1px solid ${CAT_BADGE[(item as any).categoria]?.color ?? "var(--line)"}`,
+                                color: CAT_BADGE[(item as any).categoria]?.color ?? "var(--fg-dim)",
+                                fontWeight: 600, letterSpacing: "0.02em",
+                              }}>
+                                {CAT_BADGE[(item as any).categoria]?.l}
+                              </span>
+                            )}
+                            {/* Fabricante/modelo pill for medical items */}
+                            {activeCat === "MEDICO_HOSPITALAR" && (item as any).fabricante && (
+                              <span className="pill-soft" style={{ fontSize: 9.5 }}>{(item as any).fabricante}</span>
+                            )}
                             {item.presencaEmAta && (
                               <span className="pill-soft ok" style={{ fontSize: 9.5 }}>ATA</span>
                             )}

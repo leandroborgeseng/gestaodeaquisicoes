@@ -236,6 +236,21 @@ export default async function ItemDetailPage({ params }: { params: { id: string 
             })),
             economia,
             valorRef,
+            // ── Categorização ──────────────────────────────────────────────
+            categoria: item.categoria,
+            // ── Campos médico-hospitalares ──────────────────────────────────
+            fabricante:           item.fabricante,
+            modelo:               item.modelo,
+            registroAnvisa:       item.registroAnvisa,
+            criticidade:          item.criticidade,
+            precisaInstalacao:    item.precisaInstalacao,
+            precisaTreinamento:   item.precisaTreinamento,
+            precisaCalibracao:    item.precisaCalibracao,
+            precisaTesteEletrico: item.precisaTesteEletrico,
+            responsavelTecnico:   item.responsavelTecnico,
+            dataAceiteTecnico:    item.dataAceiteTecnico ? fmtDate(item.dataAceiteTecnico) : null,
+            statusInstalacao:     item.statusInstalacao,
+            statusTreinamento:    item.statusTreinamento,
           }} />
         </div>
       </div>

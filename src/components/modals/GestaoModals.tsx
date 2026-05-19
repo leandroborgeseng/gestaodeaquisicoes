@@ -109,11 +109,13 @@ interface ItemFormProps {
     id: string; numero: string; equipamento: string; especificacao: string | null;
     qtd: number; siafisico: number | null; valorRef: number | null;
     setorId: string | null; faseId: string | null; presencaEmAta: boolean;
+    categoria?: string;
   };
+  defaultCategoria?: string;
   onClose: () => void;
 }
 
-function ItemForm({ setores, fases, initial, onClose }: ItemFormProps) {
+function ItemForm({ setores, fases, initial, defaultCategoria, onClose }: ItemFormProps) {
   const [error, setError] = useState("");
   const [pending, startTransition] = useTransition();
   const editing = !!initial;
@@ -130,9 +132,28 @@ function ItemForm({ setores, fases, initial, onClose }: ItemFormProps) {
     });
   }
 
+  const CAT_OPTS = [
+    { v: "MEDICO_HOSPITALAR", l: "🏥 Equipamento Médico-Hospitalar" },
+    { v: "TI",                l: "💻 Tecnologia da Informação" },
+    { v: "MOBILIARIO",        l: "🪑 Mobiliário" },
+  ];
+
   return (
     <form onSubmit={handleSubmit}>
       <div className="dialog-body">
+        {/* Categoria — always first and prominent */}
+        <Field label="Categoria *">
+          <select
+            name="categoria"
+            defaultValue={initial?.categoria ?? defaultCategoria ?? "MEDICO_HOSPITALAR"}
+            style={{ ...inputStyle, cursor: "pointer", fontWeight: 500 }}
+          >
+            {CAT_OPTS.map((o) => (
+              <option key={o.v} value={o.v}>{o.l}</option>
+            ))}
+          </select>
+        </Field>
+
         <div style={{ display: "grid", gridTemplateColumns: "100px 1fr", gap: 12 }}>
           <Field label="Nº do item *">
             <input
@@ -204,7 +225,7 @@ function ItemForm({ setores, fases, initial, onClose }: ItemFormProps) {
   );
 }
 
-export function NovoItemModal({ setores, fases }: { setores: SetorOpt[]; fases: FaseOpt[] }) {
+export function NovoItemModal({ setores, fases, defaultCategoria }: { setores: SetorOpt[]; fases: FaseOpt[]; defaultCategoria?: string }) {
   const [open, setOpen] = useState(false);
   return (
     <Dialog.Root open={open} onOpenChange={setOpen}>
@@ -222,7 +243,7 @@ export function NovoItemModal({ setores, fases }: { setores: SetorOpt[]; fases: 
               <button className="btn ghost sm" style={{ padding: "0 6px", height: 24 }}>✕</button>
             </Dialog.Close>
           </div>
-          <ItemForm setores={setores} fases={fases} onClose={() => setOpen(false)} />
+          <ItemForm setores={setores} fases={fases} defaultCategoria={defaultCategoria} onClose={() => setOpen(false)} />
         </Dialog.Content>
       </Dialog.Portal>
     </Dialog.Root>
@@ -234,7 +255,7 @@ export function EditarItemModal({
 }: {
   setores: SetorOpt[];
   fases: FaseOpt[];
-  item: ItemFormProps["initial"] & {};
+  item: NonNullable<ItemFormProps["initial"]>;
 }) {
   const [open, setOpen] = useState(false);
   return (
