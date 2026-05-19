@@ -60,6 +60,19 @@ async function getFinanceChartData(): Promise<{ mes: string; valor: number }[]> 
 
 async function getDashboardData() {
   const now = new Date();
+  const today = new Date();
+
+  // Items with expired contract delivery deadline
+  const contratacosAtrasadosRows = await prisma.$queryRaw<{ id: string }[]>`
+    SELECT i.id FROM "Item" i
+    JOIN "Contratacao" c ON c."itemId" = i.id
+    WHERE i."statusProcesso" IN ('CONTRATADO', 'ENTREGA_PARCIAL')
+      AND c."prazoEntregaDias" IS NOT NULL
+      AND c."dataAssinatura" IS NOT NULL
+      AND c."dataAssinatura" + (c."prazoEntregaDias" * INTERVAL '1 day') < ${today}
+  `;
+  const contratacosComPrazoVencido = contratacosAtrasadosRows.length;
+
   const [totalItems, byStatus, recentLogs, totalValueAgg, contratacoes, atrasados, aguardandoAprovacao, propostasVencidas, porCategoria, itensFns, orcConsultivas] = await Promise.all([
     prisma.item.count(),
     prisma.item.groupBy({ by: ["statusProcesso"], _count: { id: true } }),
@@ -192,6 +205,7 @@ async function getDashboardData() {
     savingPct,
     acimaValor,
     atrasados,
+    contratacosComPrazoVencido,
     aguardandoAprovacao,
     propostasVencidas,
     recentLogs,
@@ -342,10 +356,16 @@ export default async function DashboardPage() {
     .filter((d) => d.count > 0);
 
   const alertas = [
-    ...(data.atrasados > 0 ? [{ titulo: "Entregas atrasadas", motivo: `${data.atrasados} entregas com prazo vencido`, severidade: "alta" as const }] : []),
-    ...(data.acimaValor > 0 ? [{ titulo: "Itens acima do valor FNS", motivo: `${data.acimaValor} itens sem justificativa`, severidade: "alta" as const }] : []),
-    ...(data.aguardandoAprovacao > 0 ? [{ titulo: "Itens aguardando aprovação", motivo: `${data.aguardandoAprovacao} ${data.aguardandoAprovacao === 1 ? "item aguarda" : "itens aguardam"} aprovação do administrador`, severidade: "media" as const }] : []),
-    ...(data.propostasVencidas > 0 ? [{ titulo: "Propostas com validade expirada", motivo: `${data.propostasVencidas} orçamentos com proposta vencida`, severidade: "media" as const }] : []),
+    ...(data.contratacosComPrazoVencido > 0 ? [{
+      titulo: "Contratos com prazo de entrega vencido",
+      motivo: `${data.contratacosComPrazoVencido} item${data.contratacosComPrazoVencido !== 1 ? "s" : ""} aguardando entrega com prazo expirado`,
+      severidade: "alta" as const,
+      href: "/itens?atrasado=true",
+    }] : []),
+    ...(data.atrasados > 0 ? [{ titulo: "Previsões de entrega vencidas", motivo: `${data.atrasados} entregas com data prevista no passado`, severidade: "alta" as const, href: undefined }] : []),
+    ...(data.acimaValor > 0 ? [{ titulo: "Itens acima do valor FNS", motivo: `${data.acimaValor} itens com cotação acima da referência`, severidade: "alta" as const, href: "/itens?vsRef=ACIMA_DO_VALOR" }] : []),
+    ...(data.aguardandoAprovacao > 0 ? [{ titulo: "Itens aguardando aprovação", motivo: `${data.aguardandoAprovacao} ${data.aguardandoAprovacao === 1 ? "item aguarda" : "itens aguardam"} aprovação`, severidade: "media" as const, href: undefined }] : []),
+    ...(data.propostasVencidas > 0 ? [{ titulo: "Propostas com validade expirada", motivo: `${data.propostasVencidas} orçamentos com proposta vencida`, severidade: "media" as const, href: undefined }] : []),
   ];
 
   return (
@@ -604,9 +624,9 @@ export default async function DashboardPage() {
               </div>
               <div className="value">{alertas.length}</div>
               <div className="meta">
+                {data.contratacosComPrazoVencido > 0 && <span className="danger-text">{data.contratacosComPrazoVencido} prazo vencido · </span>}
                 {data.aguardandoAprovacao > 0 && <span className="warn-text">{data.aguardandoAprovacao} aguard. aprovação · </span>}
-                <span className="danger-text">{data.atrasados} atrasadas</span>
-                {data.propostasVencidas > 0 && <span className="muted"> · {data.propostasVencidas} propostas vencidas</span>}
+                <span className="muted">{data.atrasados} prev. vencidas</span>
               </div>
             </div>
           </div>
@@ -702,10 +722,12 @@ export default async function DashboardPage() {
                   <div key={i} style={{
                     display: "flex", gap: 10, padding: "10px 14px",
                     borderBottom: i < alertas.length - 1 ? "1px solid var(--line-soft)" : "0",
+                    alignItems: "center",
                   }}>
                     <div style={{
                       width: 26, height: 26, borderRadius: 5, flexShrink: 0,
-                      background: "var(--danger-soft)", color: "var(--danger)",
+                      background: a.severidade === "alta" ? "var(--danger-soft)" : "oklch(0.96 0.06 60)",
+                      color: a.severidade === "alta" ? "var(--danger)" : "oklch(0.55 0.14 60)",
                       display: "grid", placeItems: "center",
                     }}>
                       <Icons.Alert style={{ width: 13, height: 13 }} />
@@ -714,6 +736,11 @@ export default async function DashboardPage() {
                       <div style={{ fontSize: 12.5, fontWeight: 500, marginBottom: 2 }}>{a.titulo}</div>
                       <div style={{ fontSize: 11.5, color: "var(--fg-dim)", lineHeight: 1.4 }}>{a.motivo}</div>
                     </div>
+                    {a.href && (
+                      <a href={a.href} style={{ fontSize: 11, color: "var(--accent)", textDecoration: "none", whiteSpace: "nowrap", fontWeight: 500 }}>
+                        Ver →
+                      </a>
+                    )}
                   </div>
                 ))}
               </div>
