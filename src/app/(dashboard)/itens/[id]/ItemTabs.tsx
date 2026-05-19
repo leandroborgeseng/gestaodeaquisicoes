@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useTransition } from "react";
+import { useState, useTransition, useEffect } from "react";
 import { Icons } from "@/components/Icons";
 import { fmtBRL } from "@/lib/utils";
 import {
@@ -32,7 +32,7 @@ import { EditarItemModal } from "@/components/modals/GestaoModals";
 import { AnexoUpload } from "@/components/AnexoUpload";
 import { marcarConcluido, reclassificarItem } from "@/app/actions/items";
 import { PrintLabel } from "@/components/PrintLabel";
-import { useTextPreview } from "@/components/FilePreview";
+import { useTextPreview, useFilePreview } from "@/components/FilePreview";
 
 interface ItemData {
   id: string;
@@ -825,17 +825,53 @@ function DescritivoCard({ item }: { item: ItemData }) {
 
 function TabGeral({ item, menorValor }: { item: ItemData; menorValor: typeof item.orcamentos[0] | undefined }) {
   const max = Math.max(item.valorReferenciaFns ?? 0, ...item.orcamentos.map((o) => o.valor)) * 1.04;
-  const [importingSpec, startImportSpec] = useTransition();
-  const [importSpecMsg, setImportSpecMsg] = useState<string | null>(null);
   const { open: openText } = useTextPreview();
+  const { open: openPreview } = useFilePreview();
 
-  function handleImportSpec() {
+  const specFiles = item.anexosGerais.filter((a) => a.url.includes("/especificacao/"));
+  const hadSpecLocal = specFiles.length > 0;
+  const hasSpecUrl   = !!item.especificacaoUrl;
+
+  const [specStatus, setSpecStatus]   = useState<DownloadStatus>(() =>
+    hadSpecLocal ? "ok" : hasSpecUrl ? "baixando" : "sem_link"
+  );
+  const [specErr, setSpecErr]         = useState<string | null>(null);
+  const [localSpecFiles, setLocalSpecFiles] = useState(specFiles);
+  const [, startSpecImport] = useTransition();
+
+  useEffect(() => {
+    if (specStatus === "baixando" && !hadSpecLocal && item.especificacaoUrl) {
+      startSpecImport(async () => {
+        const res = await importarAnexoExterno(item.id, item.especificacaoUrl!, "especificacao");
+        if ("error" in res) {
+          setSpecStatus("erro");
+          setSpecErr(res.error);
+        } else {
+          setSpecStatus("ok");
+          setLocalSpecFiles((prev) => [
+            ...prev,
+            { id: res.id, nomeOriginal: res.nome, url: res.url, mimeType: guessMime(res.nome), tamanho: 0, autor: { name: "" } },
+          ]);
+        }
+      });
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  function retrySpec() {
     if (!item.especificacaoUrl) return;
-    setImportSpecMsg(null);
-    startImportSpec(async () => {
+    setSpecStatus("baixando");
+    setSpecErr(null);
+    startSpecImport(async () => {
       const res = await importarAnexoExterno(item.id, item.especificacaoUrl!, "especificacao");
-      if ("error" in res) setImportSpecMsg("❌ " + res.error);
-      else setImportSpecMsg("✓ Arquivo importado com sucesso.");
+      if ("error" in res) { setSpecStatus("erro"); setSpecErr(res.error); }
+      else {
+        setSpecStatus("ok");
+        setLocalSpecFiles((prev) => [
+          ...prev,
+          { id: res.id, nomeOriginal: res.nome, url: res.url, mimeType: guessMime(res.nome), tamanho: 0, autor: { name: "" } },
+        ]);
+      }
     });
   }
 
@@ -876,41 +912,65 @@ function TabGeral({ item, menorValor }: { item: ItemData; menorValor: typeof ite
             {item.valorReferenciaFns && <MetaField label="Referência FNS" value={<span className="mono">{fmtBRL(item.valorReferenciaFns)}/un</span>} />}
           </div>
 
-          {/* Arquivos da especificação técnica */}
+          {/* Arquivos da especificação técnica — com status de download */}
           <div style={{ marginTop: 18, paddingTop: 14, borderTop: "1px solid var(--line-soft)" }}>
-            <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 10 }}>
-              <div style={{ fontSize: 11, fontWeight: 600, color: "var(--fg-dim)", textTransform: "uppercase", letterSpacing: "0.04em" }}>
-                Arquivos da especificação
-              </div>
-              {item.especificacaoUrl && (
-                <button
-                  type="button"
-                  className="btn ghost sm"
-                  disabled={importingSpec}
-                  onClick={handleImportSpec}
-                  title="Importar o arquivo do link do Drive para o sistema"
-                  style={{ fontSize: 10.5, height: 22, padding: "0 8px" }}
-                >
-                  <Icons.Download style={{ width: 10, height: 10 }} />
-                  {importingSpec ? " Importando…" : " Importar do Drive"}
-                </button>
-              )}
+            <div style={{ fontSize: 11, fontWeight: 600, color: "var(--fg-dim)", textTransform: "uppercase", letterSpacing: "0.04em", marginBottom: 10 }}>
+              Arquivo da especificação
             </div>
-            {importSpecMsg && (
-              <div style={{ fontSize: 11.5, marginBottom: 8, color: importSpecMsg.startsWith("✓") ? "var(--ok)" : "var(--danger)" }}>
-                {importSpecMsg}
+
+            {specStatus === "baixando" && (
+              <div style={{ display: "flex", alignItems: "center", gap: 8, padding: "8px 10px", borderRadius: 6, background: "var(--bg-soft)", border: "1px solid var(--line)", marginBottom: 8 }}>
+                <div style={{ width: 14, height: 14, borderRadius: "50%", border: "2px solid var(--accent)", borderTopColor: "transparent", animation: "spin 0.7s linear infinite", flexShrink: 0 }} />
+                <span style={{ fontSize: 12, color: "var(--fg-dim)" }}>Baixando especificação do Drive…</span>
+                {item.especificacaoUrl && (
+                  <a href={item.especificacaoUrl} target="_blank" rel="noopener noreferrer" style={{ fontSize: 11, color: "var(--accent)", marginLeft: "auto" }}>↗ Drive</a>
+                )}
               </div>
             )}
+
+            {specStatus === "ok" && (
+              <div style={{ display: "flex", flexWrap: "wrap", gap: 6, marginBottom: 8 }}>
+                {localSpecFiles.map((f) => (
+                  <button key={f.id} type="button"
+                    onClick={() => openPreview({ url: f.url, filename: f.nomeOriginal, mimeType: f.mimeType })}
+                    style={{
+                      display: "inline-flex", alignItems: "center", gap: 5,
+                      padding: "5px 10px", borderRadius: 5, fontSize: 12, fontWeight: 500,
+                      background: "var(--ok-soft)", border: "1px solid oklch(0.80 0.08 145)",
+                      color: "var(--ok)", cursor: "pointer",
+                    }}
+                  >
+                    <Icons.Doc style={{ width: 12, height: 12 }} />
+                    {f.nomeOriginal}
+                  </button>
+                ))}
+              </div>
+            )}
+
+            {specStatus === "erro" && (
+              <div style={{ marginBottom: 8, display: "flex", flexDirection: "column", gap: 6 }}>
+                <div style={{ padding: "8px 10px", borderRadius: 6, background: "var(--danger-soft)", border: "1px solid oklch(0.88 0.06 25)" }}>
+                  <div style={{ fontSize: 12, color: "var(--danger)", fontWeight: 500, marginBottom: 3 }}>✕ Falha ao baixar especificação</div>
+                  <div style={{ fontSize: 11.5, color: "var(--fg-mid)" }}>{specErr}</div>
+                </div>
+                <div style={{ display: "flex", gap: 6 }}>
+                  <button type="button" className="btn ghost sm" onClick={retrySpec} style={{ fontSize: 11 }}>↺ Tentar novamente</button>
+                  {item.especificacaoUrl && (
+                    <a href={item.especificacaoUrl} target="_blank" rel="noopener noreferrer" className="btn ghost sm" style={{ fontSize: 11, textDecoration: "none", display: "inline-flex", alignItems: "center" }}>↗ Abrir no Drive</a>
+                  )}
+                </div>
+              </div>
+            )}
+
             <AnexoUpload
               itemId={item.id}
               category="especificacao"
-              existing={item.anexosGerais
-                .filter((a) => a.url.includes("/especificacao/"))
-                .map((a) => ({ ...a, autor: { name: a.autor.name } }))
-              }
-              label="Anexar especificação técnica (PDF, imagem)"
+              existing={[]}
+              label={specStatus === "ok" ? "Anexar arquivo adicional" : "Ou anexe manualmente (PDF, imagem)"}
             />
           </div>
+
+          <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
         </div>
       </div>
 
@@ -967,33 +1027,73 @@ function TabGeral({ item, menorValor }: { item: ItemData; menorValor: typeof ite
   );
 }
 
+// ── Status de download individual por orçamento ──────────────────────────────
+
+type DownloadStatus = "baixando" | "ok" | "erro" | "sem_link";
+
+function guessMime(nome: string): string {
+  const ext = nome.split(".").pop()?.toLowerCase() ?? "";
+  const map: Record<string, string> = {
+    pdf: "application/pdf", jpg: "image/jpeg", jpeg: "image/jpeg",
+    png: "image/png", xlsx: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+    xls: "application/vnd.ms-excel",
+    docx: "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+    doc: "application/msword", csv: "text/csv",
+  };
+  return map[ext] ?? "application/octet-stream";
+}
+
 function OrcamentoRow({ o, item, removing, onRemove }: {
   o: ItemData["orcamentos"][0];
   item: ItemData;
   removing: boolean;
   onRemove: (id: string) => void;
 }) {
-  const [importing, startImport] = useTransition();
-  const [importMsg, setImportMsg] = useState<string | null>(null);
+  const hadLocal = o.anexos.length > 0;
+  const hasUrl   = !!o.cotacaoUrl;
 
-  function handleImportCotacao() {
+  // Estado inicial: se já tem arquivo local → ok; se tem URL → inicia download; caso contrário sem_link
+  const [status, setStatus]   = useState<DownloadStatus>(() =>
+    hadLocal ? "ok" : hasUrl ? "baixando" : "sem_link"
+  );
+  const [errMsg, setErrMsg]   = useState<string | null>(null);
+  const [localFiles, setLocalFiles] = useState(
+    o.anexos.map((a) => ({ id: a.id, nomeOriginal: a.nomeOriginal, url: a.url, mimeType: a.mimeType }))
+  );
+  const [, start] = useTransition();
+  const { open: openPreview } = useFilePreview();
+
+  const diff = item.valorReferenciaFns ? (o.valor - item.valorReferenciaFns) / item.valorReferenciaFns : 0;
+
+  function doDownload() {
     if (!o.cotacaoUrl) return;
-    setImportMsg(null);
-    startImport(async () => {
+    setStatus("baixando");
+    setErrMsg(null);
+    start(async () => {
       const res = await importarAnexoExterno(item.id, o.cotacaoUrl!, "cotacao", o.id);
-      if ("error" in res) setImportMsg("❌ " + res.error);
-      else setImportMsg("✓ Importado");
+      if ("error" in res) {
+        setStatus("erro");
+        setErrMsg(res.error);
+      } else {
+        setStatus("ok");
+        setLocalFiles((prev) => [
+          ...prev,
+          { id: res.id, nomeOriginal: res.nome, url: res.url, mimeType: guessMime(res.nome) },
+        ]);
+      }
     });
   }
 
-  const diff = item.valorReferenciaFns ? (o.valor - item.valorReferenciaFns) / item.valorReferenciaFns : 0;
-  const existingAnexos = o.anexos.map((a) => ({
-    id: a.id, nomeOriginal: a.nomeOriginal, url: a.url,
-    tamanho: a.tamanho, mimeType: a.mimeType, autor: { name: "" },
-  }));
+  // Auto-inicia o download ao montar se há link mas ainda não tem arquivo local
+  useEffect(() => {
+    if (status === "baixando" && !hadLocal) {
+      doDownload();
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   return (
-    <tr key={o.numero} style={{ background: o.vencedor ? "var(--ok-soft)" : undefined }}>
+    <tr style={{ background: o.vencedor ? "var(--ok-soft)" : undefined }}>
       <td className="num">0{o.numero}</td>
       <td>
         <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
@@ -1013,52 +1113,103 @@ function OrcamentoRow({ o, item, removing, onRemove }: {
         )}
       </td>
       <td className="num strong" style={{ textAlign: "right" }}>{fmtBRL(o.valor * item.faseUnicaQtd)}</td>
-      <td style={{ minWidth: 180 }}>
-        <div style={{ display: "flex", flexWrap: "wrap", gap: 4, alignItems: "center" }}>
-          {/* Link externo + botão importar */}
-          {o.cotacaoUrl && (
-            <div style={{ display: "flex", alignItems: "center", gap: 3 }}>
-              <a
-                href={o.cotacaoUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                title="Abrir link externo"
+
+      {/* ── Coluna de arquivos com status ── */}
+      <td style={{ minWidth: 220, verticalAlign: "middle" }}>
+        {status === "baixando" && (
+          <div style={{ display: "flex", alignItems: "center", gap: 7, padding: "4px 0" }}>
+            <div style={{
+              width: 13, height: 13, borderRadius: "50%", flexShrink: 0,
+              border: "2px solid var(--accent)", borderTopColor: "transparent",
+              animation: "spin 0.7s linear infinite",
+            }} />
+            <span style={{ fontSize: 11, color: "var(--fg-dim)" }}>Baixando do Drive…</span>
+            {o.cotacaoUrl && (
+              <a href={o.cotacaoUrl} target="_blank" rel="noopener noreferrer"
+                style={{ fontSize: 10, color: "var(--accent)", marginLeft: 2 }}>
+                ↗ Drive
+              </a>
+            )}
+          </div>
+        )}
+
+        {status === "ok" && (
+          <div style={{ display: "flex", flexWrap: "wrap", gap: 4, alignItems: "center" }}>
+            {localFiles.map((f) => (
+              <button
+                key={f.id}
+                type="button"
+                onClick={() => openPreview({ url: f.url, filename: f.nomeOriginal, mimeType: f.mimeType })}
+                title={`Visualizar: ${f.nomeOriginal}`}
                 style={{
                   display: "inline-flex", alignItems: "center", gap: 4,
                   padding: "3px 8px", borderRadius: 4, fontSize: 11, fontWeight: 500,
-                  background: "var(--bg-soft)", border: "1px solid var(--line)",
-                  color: "var(--fg-mid)", textDecoration: "none",
+                  background: "var(--ok-soft)", border: "1px solid oklch(0.80 0.08 145)",
+                  color: "var(--ok)", cursor: "pointer",
+                  maxWidth: 180, overflow: "hidden",
                 }}
               >
-                <Icons.Doc style={{ width: 11, height: 11 }} /> Drive
-              </a>
+                <Icons.Doc style={{ width: 11, height: 11 }} />
+                <span style={{ overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+                  {f.nomeOriginal}
+                </span>
+              </button>
+            ))}
+            {/* Upload adicional */}
+            <AnexoUpload itemId={item.id} orcamentoId={o.id} category="cotacao" existing={[]} compact label="" />
+          </div>
+        )}
+
+        {status === "erro" && (
+          <div style={{ display: "flex", flexDirection: "column", gap: 5 }}>
+            <div style={{
+              display: "flex", alignItems: "flex-start", gap: 6,
+              padding: "6px 8px", borderRadius: 5,
+              background: "var(--danger-soft)", border: "1px solid oklch(0.88 0.06 25)",
+            }}>
+              <span style={{ color: "var(--danger)", fontSize: 13, flexShrink: 0, lineHeight: 1.2 }}>✕</span>
+              <div style={{ flex: 1, minWidth: 0 }}>
+                <div style={{ fontSize: 11, color: "var(--danger)", fontWeight: 500, marginBottom: 2 }}>
+                  Falha no download
+                </div>
+                <div style={{ fontSize: 10.5, color: "var(--fg-mid)", lineHeight: 1.4, wordBreak: "break-word" }}>
+                  {errMsg}
+                </div>
+              </div>
+            </div>
+            <div style={{ display: "flex", gap: 4, alignItems: "center" }}>
               <button
                 type="button"
                 className="btn ghost sm"
-                disabled={importing}
-                onClick={handleImportCotacao}
-                title="Importar arquivo do Drive para o sistema"
-                style={{ fontSize: 10, height: 22, padding: "0 6px" }}
+                onClick={doDownload}
+                style={{ fontSize: 10.5, height: 22 }}
               >
-                {importing ? "…" : <Icons.Download style={{ width: 10, height: 10 }} />}
+                ↺ Tentar novamente
               </button>
+              {o.cotacaoUrl && (
+                <a href={o.cotacaoUrl} target="_blank" rel="noopener noreferrer"
+                  className="btn ghost sm"
+                  style={{ fontSize: 10.5, height: 22, textDecoration: "none", display: "inline-flex", alignItems: "center" }}>
+                  ↗ Abrir no Drive
+                </a>
+              )}
             </div>
-          )}
-          {importMsg && (
-            <span style={{ fontSize: 10.5, color: importMsg.startsWith("✓") ? "var(--ok)" : "var(--danger)" }}>
-              {importMsg}
-            </span>
-          )}
-          {/* Arquivos locais com preview */}
+            {/* Upload manual como fallback */}
+            <AnexoUpload itemId={item.id} orcamentoId={o.id} category="cotacao" existing={[]} compact label="Ou anexe manualmente" />
+          </div>
+        )}
+
+        {status === "sem_link" && (
           <AnexoUpload
             itemId={item.id}
             orcamentoId={o.id}
             category="cotacao"
-            existing={existingAnexos}
+            existing={localFiles.map((f) => ({ ...f, tamanho: 0, autor: { name: "" } }))}
             compact
           />
-        </div>
+        )}
       </td>
+
       <td>
         <button
           className="btn ghost sm"
