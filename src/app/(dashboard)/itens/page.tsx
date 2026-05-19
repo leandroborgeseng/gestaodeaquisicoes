@@ -124,6 +124,9 @@ export default async function ItensPage({ searchParams }: { searchParams: Search
               <p>{data.total} {activeCat === "MEDICO_HOSPITALAR" ? "equipamentos médicos" : activeCat === "TI" ? "itens de TI" : activeCat === "MOBILIARIO" ? "itens de mobiliário" : "itens"} · Fase Única 2026</p>
             </div>
             <div className="actions">
+              <Link href="/itens/classificar" className="btn ghost sm">
+                🏷 Classificar itens
+              </Link>
               <ImportarItensModal />
               <NovoItemModal setores={data.setores} fases={data.fases} defaultCategoria={activeCat !== "all" ? activeCat : "MEDICO_HOSPITALAR"} />
             </div>
